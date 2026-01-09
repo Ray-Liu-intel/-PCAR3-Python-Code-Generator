@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PCAR3 Python Code Generator - Company</title>
+  <style>
+    body {
+      background: #f5f7fa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    .intel-header {
+      background: #0071C5;
+      color: #fff;
+      padding: 24px 0 16px 0;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      position: relative;
+    }
+    .intel-logo {
+      height: 48px;
+      vertical-align: middle;
+      margin-right: 16px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .container {
+      max-width: 1400px;
+      margin: 32px auto 24px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,113,197,0.08);
+      padding: 32px 32px 24px 32px;
+    }
+    .plb-block {
+      border: 1px solid #e0e6ed;
+      margin: 18px 0;
+      padding: 18px 12px 12px 12px;
+      position: relative;
+      border-radius: 8px;
+      background: #f8fafc;
+      box-shadow: 0 2px 8px rgba(0,113,197,0.03);
+    }
+    .plb-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .plb-toggle-btn {
+      background: #0071C5;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 12px;
+      transition: background 0.2s;
+      min-width: 80px;
+    }
+    .plb-toggle-btn:hover {
+      background: #005fa3;
+    }
+    .delete-plb-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #fff;
+      color: #0071C5;
+      border: 1px solid #0071C5;
+      border-radius: 6px;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .delete-plb-btn:hover {
+      background: #0071C5;
+      color: #fff;
+    }
+    .plb-content {
+      transition: all 0.3s ease;
+    }
+    .plb-collapsed .plb-content {
+      display: none;
+    }
+    .plb-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .param-group {
+      margin-right: 24px;
+      margin-bottom: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background: #f0f6fa;
+      border-radius: 6px;
+      border: 1px dashed #0071C5;
+      padding: 4px 12px;
+    }
+    .param-group label {
+      margin-right: 18px;
+      margin-bottom: 4px;
+    }
+    .item-block {
+      margin-left: 20px;
+      margin-bottom: 8px;
+      background: #fff;
+      border: 1px dashed #b3c6d9;
+      padding: 8px 8px 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: text;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,113,197,0.03);
+      flex-wrap: wrap;
+    }
+    .item-content {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
+    }
+    .item-actions {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .drag-handle {
+      cursor: grab;
+      user-select: none;
+      margin-right: 12px;
+      font-size: 20px;
+      color: #0071C5;
+      flex-shrink: 0;
+    }
+    input[type="text"], select {
+      font-size: 15px;
+      padding: 4px 8px;
+      margin: 0 12px 0 8px;
+      border: 1px solid #b3c6d9;
+      border-radius: 5px;
+      background: #fff;
+      transition: border 0.2s;
+    }
+    input[type="text"]:focus, select:focus {
+      border: 1.5px solid #0071C5;
+      outline: none;
+    }
+    label {
+      margin-right: 16px;
+      margin-left: 8px;
+    }
+    .item-block > b,
+    .item-block > select {
+      margin-right: 16px;
+      margin-left: 8px;
+    }
+    .item-block button {
+      margin-left: 16px;
+      background: #fff;
+      color: #0071C5;
+      border: 1px solid #0071C5;
+      border-radius: 5px;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .item-block button:hover {
+      background: #0071C5;
+      color: #fff;
+    }
+    button {
+      background: #0071C5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 18px;
+      font-size: 15px;
+      margin: 8px 8px 8px 0;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(0,113,197,0.06);
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    h3 {
+      margin-top: 32px;
+      color: #0071C5;
+      font-weight: 400;
+    }
+    #codebox {
+      background: #f4f7fa;
+      border: 1px solid #e0e6ed;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+      font-size: 15px;
+      color: #222;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+    .intel-footer {
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+      margin: 32px 0 12px 0;
+    }
+    /* QueryTid区域优化 */
+    .pats-querytid,
+    .pre-querytid,
+    .post-querytid {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      align-items: center;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+    .pats-querytid label,
+    .pre-querytid label,
+    .post-querytid label {
+      margin-right: 0;
+      min-width: 110px;
+    }
+    .pats-querytid input,
+    .pre-querytid input,
+    .post-querytid input {
+      min-width: 120px;
+    }
+    @media (max-width: 700px) {
+      .container { padding: 12px 2vw; }
+      .plb-block { padding: 10px 4px 8px 4px; }
+      .item-block { padding: 6px 2px 6px 0; flex-direction: column; align-items: flex-start; }
+      .item-content { margin-bottom: 8px; }
+      .item-actions { margin-left: 0; }
+      #codebox { padding: 8px; }
+      .plb-row { flex-direction: column; align-items: flex-start; }
+      .param-group { margin-bottom: 10px; }
+      .pats-querytid,
+      .pre-querytid,
+      .post-querytid {
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <div class="intel-header">
+    <img class="intel-logo" src="https://images.socialchorus.com/image/fetch/c_fill,dpr_2.0,b_rgb:ffffff,q_75,f_auto/https%3A%2F%2Fassets.socialchorus.com%2Fproduction%2F12717%2Fimages%2F17b859bf-87aa-4456-8836-da0d82fb5e6a.jpeg" alt="Company Logo">
+    <span style="font-size: 2rem; font-weight: 500;">PCAR3 Python Code Generator</span>
+  </div>
+  <div class="container">
+    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist"></label>
+    <button onclick="addPlb()">Add Plb</button>
+    <div id="plbContainer"></div>
+    <button onclick="generateCode()">Generate Code</button>
+    <h3>Generated Result:</h3>
+    <pre id="codebox"></pre>
+  </div>
+  <div class="intel-footer">
+    &copy; 2024 Your Company Name. All rights reserved.
+  </div>
+<script>
+let plbCount = 0;
+
+function addPlb() {
+  plbCount++;
+  const plbDiv = document.createElement('div');
+  plbDiv.className = 'plb-block';
+  plbDiv.id = `plb${plbCount}`;
+  plbDiv.innerHTML = `
+    <button class="delete-plb-btn" onclick="deletePlb('${plbDiv.id}')">Delete Plb</button>
+    <div class="plb-header">
+      <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">⌵</button>
+      <label>Plb Name: <input type="text" class="plb-name" value="PList${String.fromCharCode(64+plbCount)}"></label>
+    </div>
+    <div class="plb-content">
+      <div class="plb-row">
+        <span class="param-group">
+          <b>pre:</b>
+          <label>preplist:<input type="text" class="preplist"></label>
+          <label>prepattern:<input type="text" class="prepattern"></label>
+        </span>
+      </div>
+      <div class="plb-row">
+        <span class="param-group">
+          <b>post:</b>
+          <label>postplist:<input type="text" class="postplist"></label>
+          <label>postpattern:<input type="text" class="postpattern"></label>
+        </span>
+      </div>
+      <div class="plb-row">
+        <button onclick="addItem('${plbDiv.id}', 'pats')">Add Pats</button>
+        <button onclick="addItem('${plbDiv.id}', 'preexecref')">Add PreExecRefPList</button>
+        <button onclick="addItem('${plbDiv.id}', 'pre')">Add PreExecPat</button>
+        <button onclick="addItem('${plbDiv.id}', 'ref')">Add RefPlb</button>
+        <button onclick="addItem('${plbDiv.id}', 'postexecref')">Add PostExecRefPList</button>
+        <button onclick="addItem('${plbDiv.id}', 'post')">Add PostExecPat</button>
+        <button onclick="addItem('${plbDiv.id}', 'comment')">Add Comment</button>
+      </div>
+      <div class="item-list"></div>
+    </div>
+  `;
+  document.getElementById('plbContainer').appendChild(plbDiv);
+
+  setTimeout(() => {
+    const itemList = plbDiv.querySelector('.item-list');
+    Sortable.create(itemList, {
+      animation: 150,
+      ghostClass: 'drag-over',
+      handle: '.drag-handle'
+    });
+  }, 0);
+}
+
+function togglePlb(plbId, btn) {
+  const plbDiv = document.getElementById(plbId);
+  if (plbDiv) {
+    plbDiv.classList.toggle('plb-collapsed');
+    btn.textContent = plbDiv.classList.contains('plb-collapsed') ? '>' : '⌵';
+  }
+}
+
+function deletePlb(plbId) {
+  const plbDiv = document.getElementById(plbId);
+  if (plbDiv) plbDiv.remove();
+}
+
+function addItem(plbId, type) {
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item-block';
+  itemDiv.setAttribute('data-type', type);
+
+  let handle = `<span class="drag-handle">&#9776;</span>`;
+
+  if (type === 'pats') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="togglePatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="display:none">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'pre' || type === 'post') {
+    const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>${prefix}:</b>
+        <select class="${type}-mode" onchange="togglePrePostMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="${type}-default">
+          <input type="text" class="${type}-value" value="">
+        </span>
+        <span class="${type}-tids" style="display:none">
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+          <label>chunk: <input type="text" class="${type}-tids-chunk" value=""></label>
+        </span>
+        <span class="${type}-querytid" style="display:none">
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="${type}-querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'ref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>RefPlb:</b>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
+        <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
+        <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'preexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PreExecRefPList:</b>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'postexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PostExecRefPList:</b>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'comment') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Comment:</b>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  }
+  document.querySelector(`#${plbId} .item-list`).appendChild(itemDiv);
+}
+
+function togglePatsMode(sel) {
+  const parent = sel.closest('.item-content');
+  parent.querySelector('.pats-default').style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector('.pats-tids').style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector('.pats-querytid').style.display = sel.value === 'querytid' ? '' : 'none';
+}
+function togglePrePostMode(sel) {
+  const type = sel.className.split('-')[0]; // pre or post
+  const parent = sel.closest('.item-content');
+  parent.querySelector(`.${type}-default`).style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector(`.${type}-tids`).style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector(`.${type}-querytid`).style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+function generateCode() {
+  const plistfile = document.getElementById('plistfile').value;
+  let code = `from veplib.plist_builder_pcar3 import PlistFile, Plb, Pats, Tids, QueryTid, pcar3, Amble, Comment, RefPlb, NameFilter, PreExecPat, PostExecPat, PreExecRefPList, PostExecRefPList\n`;
+  code += `pcar3.tos_ver = "tos4"\n\n`;
+  code += `level0 = PlistFile('${plistfile}')\n`;
+
+  const plbDivs = Array.from(document.querySelectorAll('.plb-block'));
+  plbDivs.forEach((plbDiv) => {
+    const plbName = plbDiv.querySelector('.plb-name').value;
+    let plbParams = [];
+    const preplist = plbDiv.querySelector('.preplist').value;
+    if (preplist) plbParams.push(`preplist="${preplist}"`);
+    const postplist = plbDiv.querySelector('.postplist').value;
+    if (postplist) plbParams.push(`postplist="${postplist}"`);
+    const prepattern = plbDiv.querySelector('.prepattern').value;
+    if (prepattern) plbParams.push(`prepattern=Pats("${prepattern}")`);
+    const postpattern = plbDiv.querySelector('.postpattern').value;
+    if (postpattern) plbParams.push(`postpattern=Pats("${postpattern}")`);
+
+    code += `level1 = level0.add(Plb("${plbName}"${plbParams.length ? ', ' + plbParams.join(', ') : ''}))\n`;
+
+    plbDiv.querySelectorAll('.item-list .item-block').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      if (type === 'pats') {
+        const mode = itemDiv.querySelector('.pats-mode').value;
+        if (mode === 'default') {
+          const val = itemDiv.querySelector('.pats-value').value;
+          if (val)
+            code += `level1.add(Pats(['${val}']))\n`;
+        } else if (mode === 'tids') {
+          const tids = itemDiv.querySelector('.tids-value').value;
+          const chunk = itemDiv.querySelector('.tids-chunk').value;
+          let patsArgs = [];
+          if (chunk) patsArgs.push(`chunk="${chunk}"`);
+          code += `level1.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+        } else if (mode === 'querytid') {
+          const testname = itemDiv.querySelector('.querytid-testname').value;
+          const testtype = itemDiv.querySelector('.querytid-testtype').value;
+          const chunk = itemDiv.querySelector('.querytid-chunk').value;
+          let qtArgs = [];
+          if (testname) qtArgs.push(`testname='${testname}'`);
+          if (testtype) qtArgs.push(`testtype='${testtype}'`);
+          let args = [];
+          if (chunk) args.push(`chunk="${chunk}"`);
+          code += `level1.add(Pats(QueryTid(${qtArgs.join(', ')})${args.length ? ', ' + args.join(', ') : ''}))\n`;
+        }
+      } else if (type === 'pre' || type === 'post') {
+        const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+        const mode = itemDiv.querySelector(`.${type}-mode`).value;
+        if (mode === 'default') {
+          const val = itemDiv.querySelector(`.${type}-value`).value;
+          if (val)
+            code += `level1.add(${prefix}(pat=Pats(['${val}'])))\n`;
+        } else if (mode === 'tids') {
+          const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
+          const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+          let patsArgs = [];
+          if (chunk) patsArgs.push(`chunk="${chunk}"`);
+          code += `level1.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+        } else if (mode === 'querytid') {
+          const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+          const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+          const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+          let qtArgs = [];
+          if (testname) qtArgs.push(`testname='${testname}'`);
+          if (testtype) qtArgs.push(`testtype='${testtype}'`);
+          let args = [];
+          if (chunk) args.push(`chunk="${chunk}"`);
+          code += `level1.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${args.length ? ', ' + args.join(', ') : ''})))\n`;
+        }
+      } else if (type === 'ref') {
+        const refName = itemDiv.querySelector('.ref-name').value;
+        const skipPre = itemDiv.querySelector('.skip-pre').checked;
+        const skipPost = itemDiv.querySelector('.skip-post').checked;
+        let opts = [];
+        if (skipPre) opts.push('skip_preplistexec=True');
+        if (skipPost) opts.push('skip_postplistexec=True');
+        code += `level1.add(RefPlb("${refName}"${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+      } else if (type === 'preexecref') {
+        const name = itemDiv.querySelector('.preexecref-name').value;
+        if (name)
+          code += `level1.add(PreExecRefPList("${name}"))\n`;
+      } else if (type === 'postexecref') {
+        const name = itemDiv.querySelector('.postexecref-name').value;
+        if (name)
+          code += `level1.add(PostExecRefPList("${name}"))\n`;
+      } else if (type === 'comment') {
+        const content = itemDiv.querySelector('.comment-content').value;
+        if (content)
+          code += `level1.add(Comment('${content}'))\n`;
+      }
+    });
+    code += `\n`;
+  });
+
+  code += `if (__name__ == "__main__"):\n    pcar3.process()\n    print("Summary")\n    pcar3.report(detail=True)\n    print(pcar3.gen_plist_preview())\n`;
+  document.getElementById('codebox').textContent = code;
+}
+</script>
+</body>
+</html>
