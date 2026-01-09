@@ -289,7 +289,7 @@ function addPlb() {
   plbDiv.innerHTML = `
     <button class="delete-plb-btn" onclick="deletePlb('${plbDiv.id}')">Delete Plb</button>
     <div class="plb-header">
-      <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">Collapse</button>
+      <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">⌵</button>
       <label>Plb Name: <input type="text" class="plb-name" value="PList${String.fromCharCode(64+plbCount)}"></label>
     </div>
     <div class="plb-content">
@@ -335,7 +335,7 @@ function togglePlb(plbId, btn) {
   const plbDiv = document.getElementById(plbId);
   if (plbDiv) {
     plbDiv.classList.toggle('plb-collapsed');
-    btn.textContent = plbDiv.classList.contains('plb-collapsed') ? 'Expand' : 'Collapse';
+    btn.textContent = plbDiv.classList.contains('plb-collapsed') ? '>' : '⌵';
   }
 }
 
