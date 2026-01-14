@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Code 2.0</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .section { border: 1px solid #ddd; padding: 12px; margin-bottom: 14px; border-radius: 8px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    label { font-weight: 600; }
+    input[type="text"], textarea, select { padding: 6px; border: 1px solid #ccc; border-radius: 6px; }
+    textarea { width: 100%; min-height: 80px; }
+    .btn { padding: 7px 12px; border: 1px solid #999; border-radius: 8px; background: #f5f5f5; cursor: pointer; }
+    .btn.small { padding: 4px 8px; font-size: 12px; }
+    .btn.danger { border-color: #c33; color: #c33; }
+    .muted { color: #666; font-size: 12px; }
+    .group { margin-top: 10px; padding: 10px; border: 1px dashed #ccc; border-radius: 8px; }
+    .indent { margin-left: 14px; }
+    .hidden { display: none; }
+    pre { background: #0b1020; color: #e6e6e6; padding: 12px; border-radius: 10px; overflow: auto; }
+    .pill { display: inline-block; padding: 3px 8px; border-radius: 999px; background: #eef; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Core Code 2.0</h1>
+  <p class="muted">Based on Core Code1.0.HTML with additions: pre/post pattern modes and loop partition UI/templates.</p>
+
+  <div class="section">
+    <h2>Patterns</h2>
+
+    <div class="group">
+      <div class="row">
+        <label class="pill">Pats</label>
+        <label for="patsMode">Mode</label>
+        <select id="patsMode">
+          <option value="Tuple">Tuple</option>
+          <option value="Tids">Tids</option>
+          <option value="QueryTid">QueryTid</option>
+          <option value="Chunk">Chunk</option>
+        </select>
+        <input type="text" id="patsValue" placeholder="e.g. (0xE2, 0xE3) or 0xE2,0xE3 or tid" style="min-width: 420px;" />
+      </div>
+      <div class="muted">Matches the existing Pats selector including Chunk.</div>
+    </div>
+
+    <div class="group">
+      <div class="row">
+        <label class="pill">Prepattern</label>
+        <label for="prepatternMode">Mode</label>
+        <select id="prepatternMode">
+          <option value="Tuple">Tuple</option>
+          <option value="Tids">Tids</option>
+          <option value="QueryTid">QueryTid</option>
+        </select>
+        <input type="text" id="prepatternValue" placeholder="e.g. (0xA,0xB) or 0xA,0xB or tid" style="min-width: 420px;" />
+      </div>
+      <div class="muted">Like Pats mode selector but without Chunk.</div>
+    </div>
+
+    <div class="group">
+      <div class="row">
+        <label class="pill">Postpattern</label>
+        <label for="postpatternMode">Mode</label>
+        <select id="postpatternMode">
+          <option value="Tuple">Tuple</option>
+          <option value="Tids">Tids</option>
+          <option value="QueryTid">QueryTid</option>
+        </select>
+        <input type="text" id="postpatternValue" placeholder="e.g. (0xC,0xD) or 0xC,0xD or tid" style="min-width: 420px;" />
+      </div>
+      <div class="muted">Like Pats mode selector but without Chunk.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Loop partition</h2>
+    <div class="row">
+      <label for="loopPartitionToggle">Enable</label>
+      <input type="checkbox" id="loopPartitionToggle" />
+      <span class="muted">When enabled, generates <code>name_of_instance=[...]</code>, <code>decode_par(name)</code>, and loop templates under each Plb.</span>
+    </div>
+
+    <div id="loopPartitionConfig" class="group hidden">
+      <div class="row">
+        <label for="instanceNames">name_of_instance (comma-separated)</label>
+        <input type="text" id="instanceNames" placeholder="e.g. cpu0,cpu1,cpu2" style="min-width: 420px;" />
+      </div>
+      <div class="row">
+        <label>decode_par mapping</label>
+        <button class="btn small" id="addDecodeRow">Add mapping</button>
+      </div>
+      <div id="decodeRows"></div>
+      <div class="muted">Each mapping row generates an <code>if/elif</code> branch in <code>decode_par</code>: if name == "X": pcar3.tos_ver="tos4"; level0=PlistFile("...")</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>PLBs</h2>
+    <div class="row">
+      <button class="btn" id="addPlb">Add Plb</button>
+      <button class="btn" id="generateBtn">Generate Code</button>
+    </div>
+
+    <div id="plbContainer"></div>
+  </div>
+
+  <div class="section">
+    <h2>Generated Python</h2>
+    <pre id="output"></pre>
+  </div>
+
+<script>
+  // -------------------- Utilities --------------------
+  const el = (tag, attrs = {}, children = []) => {
+    const e = document.createElement(tag);
+    Object.entries(attrs).forEach(([k, v]) => {
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.substring(2), v);
+      else e.setAttribute(k, v);
+    });
+    children.forEach(c => e.appendChild(c));
+    return e;
+  };
+
+  const escapePy = (s) => s.replace(/\\/g, '\\\\').replace(/\"/g, '\\\"');
+
+  function parseCsvNames(s) {
+    return (s || '')
+      .split(',')
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
+
+  function renderPattern(mode, valueRaw) {
+    const value = (valueRaw || '').trim();
+    if (!value) return 'None';
+    if (mode === 'Tuple') {
+      // Expect user to type tuple literal; if not wrapped, wrap
+      if (value.startsWith('(') && value.endsWith(')')) return value;
+      return `(${value})`;
+    }
+    if (mode === 'Tids') {
+      // comma-separated -> [..]
+      const items = value.split(',').map(x => x.trim()).filter(Boolean);
+      return `[${items.join(', ')}]`;
+    }
+    if (mode === 'QueryTid') {
+      // treat as tid query variable or literal
+      return value;
+    }
+    if (mode === 'Chunk') {
+      // passthrough; Core Code 1.0 style placeholder
+      return value;
+    }
+    return value;
+  }
+
+  // -------------------- Loop Partition UI --------------------
+  const loopPartitionToggle = document.getElementById('loopPartitionToggle');
+  const loopPartitionConfig = document.getElementById('loopPartitionConfig');
+  const decodeRows = document.getElementById('decodeRows');
+  const addDecodeRowBtn = document.getElementById('addDecodeRow');
+
+  function addDecodeRow(name = '', plist = '') {
+    const row = el('div', { class: 'row', style: 'margin-top:6px;' }, [
+      el('label', { text: 'name' }),
+      el('input', { type: 'text', value: name, class: 'decodeName', placeholder: 'e.g. cpu0' }),
+      el('label', { text: 'plist path' }),
+      el('input', { type: 'text', value: plist, class: 'decodePlist', placeholder: 'e.g. /path/to/level0.plist', style: 'min-width:320px;' }),
+      el('button', { class: 'btn small danger', text: 'Remove', onclick: () => row.remove() })
+    ]);
+    decodeRows.appendChild(row);
+  }
+
+  addDecodeRowBtn.addEventListener('click', () => addDecodeRow());
+  loopPartitionToggle.addEventListener('change', () => {
+    loopPartitionConfig.classList.toggle('hidden', !loopPartitionToggle.checked);
+    document.querySelectorAll('.loopPartitionTemplate').forEach(n => n.classList.toggle('hidden', !loopPartitionToggle.checked));
+  });
+
+  // Seed one mapping row for convenience
+  addDecodeRow('cpu0', 'level0_cpu0.plist');
+
+  // -------------------- PLB + Item Blocks --------------------
+  const plbContainer = document.getElementById('plbContainer');
+
+  function makeItemRow(kind = 'Comment') {
+    // Kinds mirror existing concepts: Pats/Pre/Post/Ref/Comment (minimal scaffolding)
+    const row = el('div', { class: 'row itemRow', style: 'margin-top:6px;' });
+
+    const kindSel = el('select', { class: 'itemKind' }, [
+      el('option', { value: 'Comment', text: 'Comment' }),
+      el('option', { value: 'Pats', text: 'Pats' }),
+      el('option', { value: 'Pre', text: 'Pre' }),
+      el('option', { value: 'Post', text: 'Post' }),
+      el('option', { value: 'Ref', text: 'Ref' })
+    ]);
+    kindSel.value = kind;
+
+    const text = el('input', { type: 'text', class: 'itemValue', placeholder: 'value / note / ref', style: 'min-width:520px;' });
+
+    const remove = el('button', { class: 'btn small danger', text: 'Remove', onclick: () => row.remove() });
+
+    row.appendChild(el('label', { text: 'Item' }));
+    row.appendChild(kindSel);
+    row.appendChild(text);
+    row.appendChild(remove);
+
+    return row;
+  }
+
+  function makeConditionBlock() {
+    const block = el('div', { class: 'group conditionBlock' });
+
+    const header = el('div', { class: 'row' }, [
+      el('label', { text: 'Condition' }),
+      el('select', { class: 'condType' }, [
+        el('option', { value: 'if', text: 'if' }),
+        el('option', { value: 'elif', text: 'elif' }),
+        el('option', { value: 'else', text: 'else' })
+      ]),
+      el('input', { type: 'text', class: 'condExpr', placeholder: 'expression (ignored for else)', style: 'min-width:420px;' }),
+      el('button', { class: 'btn small', text: 'Add Plb def item', onclick: () => items.appendChild(makeItemRow('Comment')) }),
+      el('button', { class: 'btn small danger', text: 'Remove Condition', onclick: () => block.remove() })
+    ]);
+
+    const items = el('div', { class: 'indent condItems' }, []);
+    items.appendChild(makeItemRow('Comment'));
+
+    block.appendChild(header);
+    block.appendChild(items);
+    return block;
+  }
+
+  function makePlb() {
+    const outer = el('div', { class: 'section plb' });
+    const titleRow = el('div', { class: 'row' }, [
+      el('label', { text: 'Plb name' }),
+      el('input', { type: 'text', class: 'plbName', placeholder: 'e.g. plb0' }),
+      el('button', { class: 'btn small', text: 'Add item', onclick: () => items.appendChild(makeItemRow('Comment')) }),
+      el('button', { class: 'btn small danger', text: 'Remove Plb', onclick: () => outer.remove() })
+    ]);
+
+    const items = el('div', { class: 'group plbItems' });
+    items.appendChild(makeItemRow('Comment'));
+
+    // Loop partition template per PLB
+    const loopTpl = el('div', { class: 'group loopPartitionTemplate hidden' }, [
+      el('div', { class: 'row' }, [
+        el('label', { class: 'pill', text: 'Loop partition template' }),
+        el('span', { class: 'muted', text: 'Generates: for name in name_of_instance: partition = decode_par(name) ... with if/elif/else conditions' })
+      ]),
+      el('div', { class: 'row' }, [
+        el('button', { class: 'btn small', text: 'Add condition', onclick: () => condContainer.appendChild(makeConditionBlock()) }),
+      ]),
+    ]);
+
+    const condContainer = el('div', { class: 'indent condContainer' });
+    loopTpl.appendChild(condContainer);
+    // start with one if
+    condContainer.appendChild(makeConditionBlock());
+
+    outer.appendChild(titleRow);
+    outer.appendChild(items);
+    outer.appendChild(loopTpl);
+
+    // Visibility depends on global toggle
+    loopTpl.classList.toggle('hidden', !loopPartitionToggle.checked);
+
+    return outer;
+  }
+
+  document.getElementById('addPlb').addEventListener('click', () => {
+    plbContainer.appendChild(makePlb());
+  });
+
+  // Start with one PLB
+  plbContainer.appendChild(makePlb());
+
+  // -------------------- Code Generation --------------------
+  function genDecodePar() {
+    const rows = Array.from(decodeRows.querySelectorAll('.row'));
+    const mappings = rows
+      .map(r => ({
+        name: r.querySelector('.decodeName')?.value?.trim(),
+        plist: r.querySelector('.decodePlist')?.value?.trim()
+      }))
+      .filter(x => x.name && x.plist);
+
+    let s = '';
+    s += 'def decode_par(name):\n';
+    if (mappings.length === 0) {
+      s += '    raise ValueError("No decode_par mappings configured")\n\n';
+      return s;
+    }
+    mappings.forEach((m, i) => {
+      const head = i === 0 ? 'if' : 'elif';
+      s += `    ${head} name == "${escapePy(m.name)}":\n`;
+      s += '        pcar3.tos_ver = "tos4"\n';
+      s += `        level0 = PlistFile("${escapePy(m.plist)}")\n`;
+      s += '        return level0\n';
+    });
+    s += '    else:\n';
+    s += '        raise ValueError(f"Unknown instance name: {name}")\n\n';
+    return s;
+  }
+
+  function genPlb(plbEl) {
+    const plbName = plbEl.querySelector('.plbName').value.trim() || 'plb';
+    const items = Array.from(plbEl.querySelectorAll('.plbItems .itemRow'));
+
+    const lines = [];
+    lines.push(`# ---- ${plbName} ----`);
+
+    // Base PLB items
+    items.forEach(it => {
+      const k = it.querySelector('.itemKind').value;
+      const v = it.querySelector('.itemValue').value;
+      if (k === 'Comment') lines.push(`# ${v || ''}`.trimEnd());
+      if (k === 'Ref') lines.push(`# Ref: ${v || ''}`.trimEnd());
+      if (k === 'Pats') lines.push(`# Pats: ${v || ''}`.trimEnd());
+      if (k === 'Pre') lines.push(`# Pre: ${v || ''}`.trimEnd());
+      if (k === 'Post') lines.push(`# Post: ${v || ''}`.trimEnd());
+    });
+
+    // Loop partition template
+    if (loopPartitionToggle.checked) {
+      lines.push('for name in name_of_instance:');
+      lines.push('    partition = decode_par(name)');
+
+      const condBlocks = Array.from(plbEl.querySelectorAll('.condContainer .conditionBlock'));
+      condBlocks.forEach((cb, idx) => {
+        const t = cb.querySelector('.condType').value;
+        const expr = (cb.querySelector('.condExpr').value || '').trim();
+        let head = t;
+        if ((t === 'if' || t === 'elif') && !expr) head = t + ' True';
+        else if (t === 'else') head = 'else';
+        else head = `${t} ${expr}`;
+
+        if (t === 'else') lines.push(`    ${head}:`);
+        else lines.push(`    ${head}:`);
+
+        const condItems = Array.from(cb.querySelectorAll('.condItems .itemRow'));
+        if (condItems.length === 0) {
+          lines.push('        pass');
+        } else {
+          condItems.forEach(it => {
+            const k = it.querySelector('.itemKind').value;
+            const v = it.querySelector('.itemValue').value;
+            if (k === 'Comment') lines.push(`        # ${v || ''}`.trimEnd());
+            if (k === 'Ref') lines.push(`        # Ref: ${v || ''}`.trimEnd());
+            if (k === 'Pats') lines.push(`        # Pats: ${v || ''}`.trimEnd());
+            if (k === 'Pre') lines.push(`        # Pre: ${v || ''}`.trimEnd());
+            if (k === 'Post') lines.push(`        # Post: ${v || ''}`.trimEnd());
+          });
+        }
+      });
+
+      lines.push('');
+    } else {
+      lines.push('');
+    }
+
+    return lines.join('\n');
+  }
+
+  function generateCode() {
+    const pats = renderPattern(document.getElementById('patsMode').value, document.getElementById('patsValue').value);
+    const prepattern = renderPattern(document.getElementById('prepatternMode').value, document.getElementById('prepatternValue').value);
+    const postpattern = renderPattern(document.getElementById('postpatternMode').value, document.getElementById('postpatternValue').value);
+
+    const out = [];
+    out.push('# Auto-generated by Core Code2.0.HTML');
+    out.push('');
+    out.push(`# Pats = ${pats}`);
+    out.push(`# prepattern = ${prepattern}`);
+    out.push(`# postpattern = ${postpattern}`);
+    out.push('');
+
+    if (loopPartitionToggle.checked) {
+      const names = parseCsvNames(document.getElementById('instanceNames').value);
+      out.push(`name_of_instance = [${names.map(n => `"${escapePy(n)}"`).join(', ')}]`);
+      out.push('');
+      out.push(genDecodePar());
+    }
+
+    const plbs = Array.from(document.querySelectorAll('.plb'));
+    plbs.forEach(p => out.push(genPlb(p)));
+
+    document.getElementById('output').textContent = out.join('\n');
+  }
+
+  document.getElementById('generateBtn').addEventListener('click', generateCode);
+  // initial
+  generateCode();
+</script>
+</body>
+</html>
