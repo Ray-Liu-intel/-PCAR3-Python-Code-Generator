@@ -560,13 +560,19 @@ function toggleInlinePatternMode(sel, kind) {
 function toggleLoopPartitionUI() {
   const enabled = document.getElementById('loopPartitionEnabled').checked;
   document.getElementById('loopPartitionFields').style.display = enabled ? '' : 'none';
-  document.querySelectorAll('.plb-block').forEach(syncLoopPartitionVisibilityForPlb);
+
+  // Sync all existing PLBs
+  document.querySelectorAll('.plb-block').forEach(plbDiv => syncLoopPartitionVisibilityForPlb(plbDiv));
 }
 
 function syncLoopPartitionVisibilityForPlb(plbDiv) {
-  const enabled = document.getElementById('loopPartitionEnabled').checked;
+  const checkbox = document.getElementById('loopPartitionEnabled');
+  const enabled = checkbox ? checkbox.checked : false;
   const loopArea = plbDiv.querySelector('[data-role="loop-plb"]');
-  if (loopArea) loopArea.style.display = enabled ? '' : 'none';
+  if (!loopArea) return;
+
+  // IMPORTANT: explicitly set display value
+  loopArea.style.display = enabled ? 'block' : 'none';
 }
 
 function addDecodeParRow(name = '', partition = '') {
