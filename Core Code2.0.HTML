@@ -1176,209 +1176,221 @@ function generateCode() {
       }
     });
     
-    // Loop template
-    const loopTemplate = plbDiv.querySelector('.loop-template-section');
-    if (loopTemplate && loopTemplate.style.display !== 'none') {
-      const conditionBlocks = loopTemplate.querySelectorAll('.condition-block');
-      if (conditionBlocks.length > 0) {
+    
+    // Main loop items (no conditions)
+    const mainLoopSection = plbDiv.querySelector('.main-loop-section');
+    if (mainLoopSection && mainLoopSection.style.display !== 'none') {
+      const mainLoopItems = mainLoopSection.querySelectorAll('.main-loop-list .item-block');
+      if (mainLoopItems.length > 0) {
         code += '\nfor name in name_of_instance:\n';
         code += '    partition = decode_par(name)\n';
         
-        conditionBlocks.forEach((condBlock, idx) => {
-          const condType = condBlock.getAttribute('data-condition-type');
-          let condLine = '';
-          
-          if (condType === 'if') {
-            const expr = condBlock.querySelector('.condition-expr').value || 'True';
-            condLine = `    if ${expr}:\n`;
-          } else if (condType === 'elif') {
-            const expr = condBlock.querySelector('.condition-expr').value || 'True';
-            condLine = `    elif ${expr}:\n`;
-          } else if (condType === 'else') {
-            condLine = `    else:\n`;
-          }
-          
-          code += condLine;
-          
-          // Process loop items in this condition block
-          const loopItems = condBlock.querySelectorAll('.loop-item-list .item-block');
-          loopItems.forEach(itemDiv => {
-            const type = itemDiv.getAttribute('data-type');
-            
-            if (type === 'plb') {
-              const plbNameLoop = itemDiv.querySelector('.plb-name-loop').value;
-              if (plbNameLoop) {
-                if (plbNameLoop.includes('{name}') || plbNameLoop.includes('{partition}')) {
-                  code += `        level1.add(Plb("${plbNameLoop}".format(name=name, partition=partition)))\n`;
+        mainLoopItems.forEach(itemDiv => {
+          const type = itemDiv.getAttribute('data-type');
+          if (type === 'pats') {
+            const mode = itemDiv.querySelector('.pats-mode').value;
+            if (mode === 'default') {
+              const val = itemDiv.querySelector('.pats-value').value;
+              if (val) {
+                if (val.includes('{name}') || val.includes('{partition}')) {
+                  code += `    level1.add(Pats(['${val}'.format(name=name, partition=partition)]))\n`;
                 } else {
-                  code += `        level1.add(Plb("${plbNameLoop}"))\n`;
+                  code += `    level1.add(Pats(['${val}']))\n`;
                 }
               }
-            } else if (type === 'subplb') {
-              const subplbNameLoop = itemDiv.querySelector('.subplb-name-loop').value;
-              if (subplbNameLoop) {
-                if (subplbNameLoop.includes('{name}') || subplbNameLoop.includes('{partition}')) {
-                  code += `        level1 = level0.add(Plb("${subplbNameLoop}".format(name=name, partition=partition)))\n`;
-                } else {
-                  code += `        level1 = level0.add(Plb("${subplbNameLoop}"))\n`;
-                }
-              }
-            } else if (type === 'pats') {
-              const mode = itemDiv.querySelector('.pats-mode').value;
-              if (mode === 'default') {
-                const val = itemDiv.querySelector('.pats-value').value;
-                if (val) {
-                  if (val.includes('{name}') || val.includes('{partition}')) {
-                    code += `        level1.add(Pats(['${val}'.format(name=name, partition=partition)]))\n`;
-                  } else {
-                    code += `        level1.add(Pats(['${val}']))\n`;
-                  }
-                }
-              } else if (mode === 'tids') {
-                const tids = itemDiv.querySelector('.tids-value').value;
-                const chunk = itemDiv.querySelector('.tids-chunk').value;
-                if (tids) {
-                  let patsArgs = [];
-                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
-                  
-                  if (tids.includes('{name}') || tids.includes('{partition}')) {
-                    code += `        level1.add(Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
-                  } else {
-                    code += `        level1.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
-                  }
-                }
-              } else if (mode === 'querytid') {
-                const testname = itemDiv.querySelector('.querytid-testname').value;
-                const testtype = itemDiv.querySelector('.querytid-testtype').value;
-                const chunk = itemDiv.querySelector('.querytid-chunk').value;
-                let qtArgs = [];
-                let needsFormat = false;
-                
-                if (testname) {
-                  if (testname.includes('{name}') || testname.includes('{partition}')) {
-                    qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
-                    needsFormat = true;
-                  } else {
-                    qtArgs.push(`testname='${testname}'`);
-                  }
-                }
-                if (testtype) {
-                  if (testtype.includes('{name}') || testtype.includes('{partition}')) {
-                    qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
-                    needsFormat = true;
-                  } else {
-                    qtArgs.push(`testtype='${testtype}'`);
-                  }
-                }
-                
+            } else if (mode === 'tids') {
+              const tids = itemDiv.querySelector('.tids-value').value;
+              const chunk = itemDiv.querySelector('.tids-chunk').value;
+              if (tids) {
                 let patsArgs = [];
                 if (chunk) patsArgs.push(`chunk="${chunk}"`);
                 
-                if (qtArgs.length > 0) {
-                  code += `        level1.add(Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                if (tids.includes('{name}') || tids.includes('{partition}')) {
+                  code += `    level1.add(Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                } else {
+                  code += `    level1.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                 }
               }
-            } else if (type === 'pre' || type === 'post') {
-              const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
-              const mode = itemDiv.querySelector(`.${type}-mode`).value;
-              if (mode === 'default') {
-                const val = itemDiv.querySelector(`.${type}-value`).value;
-                if (val) {
-                  if (val.includes('{name}') || val.includes('{partition}')) {
-                    code += `        level1.add(${prefix}(pat=Pats(['${val}'.format(name=name, partition=partition)])))\n`;
-                  } else {
-                    code += `        level1.add(${prefix}(pat=Pats(['${val}'])))\n`;
-                  }
-                }
-              } else if (mode === 'tids') {
-                const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
-                const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
-                if (tids) {
-                  let patsArgs = [];
-                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
-                  
-                  if (tids.includes('{name}') || tids.includes('{partition}')) {
-                    code += `        level1.add(${prefix}(pat=Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
-                  } else {
-                    code += `        level1.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
-                  }
-                }
-              } else if (mode === 'querytid') {
-                const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
-                const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
-                const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
-                let qtArgs = [];
-                
-                if (testname) {
-                  if (testname.includes('{name}') || testname.includes('{partition}')) {
-                    qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
-                  } else {
-                    qtArgs.push(`testname='${testname}'`);
-                  }
-                }
-                if (testtype) {
-                  if (testtype.includes('{name}') || testtype.includes('{partition}')) {
-                    qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
-                  } else {
-                    qtArgs.push(`testtype='${testtype}'`);
-                  }
-                }
-                
-                let patsArgs = [];
-                if (chunk) patsArgs.push(`chunk="${chunk}"`);
-                
-                if (qtArgs.length > 0) {
-                  code += `        level1.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
-                }
-              }
-            } else if (type === 'ref') {
-              const refName = itemDiv.querySelector('.ref-name').value;
-              const skipPre = itemDiv.querySelector('.skip-pre').checked;
-              const skipPost = itemDiv.querySelector('.skip-post').checked;
-              let opts = [];
-              if (skipPre) opts.push('skip_preplistexec=True');
-              if (skipPost) opts.push('skip_postplistexec=True');
+            } else if (mode === 'querytid') {
+              const testname = itemDiv.querySelector('.querytid-testname').value;
+              const testtype = itemDiv.querySelector('.querytid-testtype').value;
+              const chunk = itemDiv.querySelector('.querytid-chunk').value;
+              let qtArgs = [];
               
-              if (refName) {
-                if (refName.includes('{name}') || refName.includes('{partition}')) {
-                  code += `        level1.add(RefPlb("${refName}".format(name=name, partition=partition)${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+              if (testname) {
+                if (testname.includes('{name}') || testname.includes('{partition}')) {
+                  qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
                 } else {
-                  code += `        level1.add(RefPlb("${refName}"${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+                  qtArgs.push(`testname='${testname}'`);
                 }
               }
-            } else if (type === 'preexecref') {
-              const name = itemDiv.querySelector('.preexecref-name').value;
-              if (name) {
-                if (name.includes('{name}') || name.includes('{partition}')) {
-                  code += `        level1.add(PreExecRefPList("${name}".format(name=name, partition=partition)))\n`;
+              if (testtype) {
+                if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                  qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
                 } else {
-                  code += `        level1.add(PreExecRefPList("${name}"))\n`;
+                  qtArgs.push(`testtype='${testtype}'`);
                 }
               }
-            } else if (type === 'postexecref') {
-              const name = itemDiv.querySelector('.postexecref-name').value;
-              if (name) {
-                if (name.includes('{name}') || name.includes('{partition}')) {
-                  code += `        level1.add(PostExecRefPList("${name}".format(name=name, partition=partition)))\n`;
-                } else {
-                  code += `        level1.add(PostExecRefPList("${name}"))\n`;
-                }
-              }
-            } else if (type === 'comment') {
-              const content = itemDiv.querySelector('.comment-content').value;
-              if (content) {
-                if (content.includes('{name}') || content.includes('{partition}')) {
-                  code += `        level1.add(Comment('${content}'.format(name=name, partition=partition)))\n`;
-                } else {
-                  code += `        level1.add(Comment('${content}'))\n`;
-                }
+              
+              let patsArgs = [];
+              if (chunk) patsArgs.push(`chunk="${chunk}"`);
+              
+              if (qtArgs.length > 0) {
+                code += `    level1.add(Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
               }
             }
-          });
+          } else if (type === 'ref') {
+            const refName = itemDiv.querySelector('.ref-name').value;
+            const skipPre = itemDiv.querySelector('.skip-pre').checked;
+            const skipPost = itemDiv.querySelector('.skip-post').checked;
+            let opts = [];
+            if (skipPre) opts.push('skip_preplistexec=True');
+            if (skipPost) opts.push('skip_postplistexec=True');
+            
+            if (refName) {
+              if (refName.includes('{name}') || refName.includes('{partition}')) {
+                code += `    level1.add(RefPlb('${refName}'.format(name=name, partition=partition)${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+              } else {
+                code += `    level1.add(RefPlb('${refName}'${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+              }
+            }
+          } else if (type === 'comment') {
+            const content = itemDiv.querySelector('.comment-content').value;
+            if (content) {
+              if (content.includes('{name}') || content.includes('{partition}')) {
+                code += `    level1.add(Comment('${content}'.format(name=name, partition=partition)))\n`;
+              } else {
+                code += `    level1.add(Comment('${content}'))\n`;
+              }
+            }
+          }
         });
       }
     }
     
+    // Sub-functions (for loops with if/elif/else)
+    const subFunctionsSection = plbDiv.querySelector('.sub-functions-section');
+    if (subFunctionsSection && subFunctionsSection.style.display !== 'none') {
+      const forLoopBlocks = subFunctionsSection.querySelectorAll('.for-loop-block');
+      
+      forLoopBlocks.forEach(forLoopBlock => {
+        const conditionBlocks = forLoopBlock.querySelectorAll('.condition-block');
+        if (conditionBlocks.length > 0) {
+          code += '\nfor name in name_of_instance:\n';
+          code += '    partition = decode_par(name)\n';
+          
+          conditionBlocks.forEach((condBlock, idx) => {
+            const condType = condBlock.getAttribute('data-condition-type');
+            let condLine = '';
+            
+            if (condType === 'if') {
+              const expr = condBlock.querySelector('.condition-expr').value || 'True';
+              condLine = `    if ${expr}:\n`;
+            } else if (condType === 'elif') {
+              const expr = condBlock.querySelector('.condition-expr').value || 'True';
+              condLine = `    elif ${expr}:\n`;
+            } else if (condType === 'else') {
+              condLine = `    else:\n`;
+            }
+            
+            code += condLine;
+            
+            // Process loop items in this condition block
+            const loopItems = condBlock.querySelectorAll('.loop-item-list .item-block');
+            loopItems.forEach(itemDiv => {
+              const type = itemDiv.getAttribute('data-type');
+              
+              if (type === 'subplb') {
+                const subplbNameLoop = itemDiv.querySelector('.subplb-name-loop').value;
+                if (subplbNameLoop) {
+                  if (subplbNameLoop.includes('{name}') || subplbNameLoop.includes('{partition}')) {
+                    code += `        level1 = level0.add(Plb("${subplbNameLoop}".format(name=name, partition=partition)))\n`;
+                  } else {
+                    code += `        level1 = level0.add(Plb("${subplbNameLoop}"))\n`;
+                  }
+                }
+              } else if (type === 'pats') {
+                const mode = itemDiv.querySelector('.pats-mode').value;
+                if (mode === 'default') {
+                  const val = itemDiv.querySelector('.pats-value').value;
+                  if (val) {
+                    if (val.includes('{name}') || val.includes('{partition}')) {
+                      code += `        level1.add(Pats(['${val}'.format(name=name, partition=partition)]))\n`;
+                    } else {
+                      code += `        level1.add(Pats(['${val}']))\n`;
+                    }
+                  }
+                } else if (mode === 'tids') {
+                  const tids = itemDiv.querySelector('.tids-value').value;
+                  const chunk = itemDiv.querySelector('.tids-chunk').value;
+                  if (tids) {
+                    let patsArgs = [];
+                    if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                    
+                    if (tids.includes('{name}') || tids.includes('{partition}')) {
+                      code += `        level1.add(Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                    } else {
+                      code += `        level1.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                    }
+                  }
+                } else if (mode === 'querytid') {
+                  const testname = itemDiv.querySelector('.querytid-testname').value;
+                  const testtype = itemDiv.querySelector('.querytid-testtype').value;
+                  const chunk = itemDiv.querySelector('.querytid-chunk').value;
+                  let qtArgs = [];
+                  
+                  if (testname) {
+                    if (testname.includes('{name}') || testname.includes('{partition}')) {
+                      qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
+                    } else {
+                      qtArgs.push(`testname='${testname}'`);
+                    }
+                  }
+                  if (testtype) {
+                    if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                      qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
+                    } else {
+                      qtArgs.push(`testtype='${testtype}'`);
+                    }
+                  }
+                  
+                  let patsArgs = [];
+                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                  
+                  if (qtArgs.length > 0) {
+                    code += `        level1.add(Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                  }
+                }
+              } else if (type === 'comment') {
+                const content = itemDiv.querySelector('.comment-content').value;
+                if (content) {
+                  if (content.includes('{name}') || content.includes('{partition}')) {
+                    code += `        level1.add(Comment('${content}'.format(name=name, partition=partition)))\n`;
+                  } else {
+                    code += `        level1.add(Comment('${content}'))\n`;
+                  }
+                }
+              } else if (type === 'ref') {
+                const refName = itemDiv.querySelector('.ref-name').value;
+                const skipPre = itemDiv.querySelector('.skip-pre').checked;
+                const skipPost = itemDiv.querySelector('.skip-post').checked;
+                let opts = [];
+                if (skipPre) opts.push('skip_preplistexec=True');
+                if (skipPost) opts.push('skip_postplistexec=True');
+                
+                if (refName) {
+                  if (refName.includes('{name}') || refName.includes('{partition}')) {
+                    code += `        level1.add(RefPlb('${refName}'.format(name=name, partition=partition)${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+                  } else {
+                    code += `        level1.add(RefPlb('${refName}'${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+                  }
+                }
+              }
+            });
+          });
+        }
+      });
+    }
     code += '\n';
   });
 
