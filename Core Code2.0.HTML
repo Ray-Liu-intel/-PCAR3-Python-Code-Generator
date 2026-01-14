@@ -1,15 +1,3 @@
-下面是**完整的 `Core Code2.0.HTML` 文件内容**（严格以 `Core Code1.0.HTML` 为基础做增量修改），已经包含你确认的全部规则：
-
-- prepattern/postpattern 增加 **Tuple / Tids / QueryTid** 选择（无 chunk）
-- Loop partition（A）：在输出中把 `name_of_instance = [...]` 和 `def decode_par(name):` 插到 `pcar3.tos_ver="tos4"` 与 `level0 = PlistFile(...)` 之间；`decode_par` 返回 partition 字符串
-- 每个 PLB 下新增 “Loop Partition Template”：生成 `for name in name_of_instance:`、`partition = decode_par(name)`、多分支 `if/elif/else`，分支内复用你现有的 addItem 类型并输出真实语句（Pats/Pre/Post/RefPlb/Comment/PreExecRefPList/PostExecRefPList）
-
-你把下面内容复制，去 GitHub 网页里编辑并覆盖保存到：
-`copilot/modify-toggle-button-styles-1.1` 分支的 `Core Code2.0.HTML` 文件即可。
-
-> 注意：这是完整文件，直接全选替换保存。
-
-```html name="Core Code2.0.HTML"
 <!DOCTYPE html>
 <html>
 <head>
