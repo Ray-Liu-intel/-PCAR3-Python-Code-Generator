@@ -339,7 +339,7 @@
       <label style="display: block; margin-bottom: 8px;">
         name_of_instance (one per line):
         <br>
-        <textarea id="nameOfInstance" rows="4" style="width: 90%; margin-top: 8px;"></textarea>
+        <textarea id="nameOfInstance" rows="4" style="width: 90%; margin-top: 8px;" placeholder="One per line, e.g.&#10;extemca&#10;intemca1&#10;intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
       </label>
       
       <h4>decode_par Mapping</h4>
@@ -394,6 +394,37 @@ function addDecodeParRow() {
   tbody.appendChild(row);
 }
 
+function syncNameOfInstanceToMapping() {
+  const instanceText = document.getElementById('nameOfInstance').value;
+  const instances = instanceText.split('\n').filter(s => s.trim());
+  const tbody = document.getElementById('decodeParTableBody');
+  
+  // Get existing mappings
+  const existingMappings = {};
+  tbody.querySelectorAll('tr').forEach(row => {
+    const nameInput = row.querySelector('.decode-par-name');
+    const partitionInput = row.querySelector('.decode-par-partition');
+    if (nameInput && partitionInput) {
+      existingMappings[nameInput.value] = partitionInput.value;
+    }
+  });
+  
+  // Clear table
+  tbody.innerHTML = '';
+  
+  // Add rows for all instances
+  instances.forEach(instance => {
+    const row = document.createElement('tr');
+    const partition = existingMappings[instance] || '';
+    row.innerHTML = `
+      <td><input type="text" class="decode-par-name" style="width: 150px;" value="${instance}" readonly></td>
+      <td><input type="text" class="decode-par-partition" style="width: 300px;" value="${partition}"></td>
+      <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
 function addPlb() {
   plbCount++;
   const plbDiv = document.createElement('div');
@@ -412,12 +443,11 @@ function addPlb() {
           <label>preplist:<input type="text" class="preplist"></label>
           <label>prepattern:</label>
           <select class="prepattern-mode" onchange="togglePlbPatternMode(this, 'prepattern')">
-            <option value="none">None</option>
             <option value="tuple">Tuple</option>
             <option value="tids">Tids</option>
             <option value="querytid">QueryTid</option>
           </select>
-          <span class="prepattern-tuple" style="display:none">
+          <span class="prepattern-tuple" style="">
             <input type="text" class="prepattern-value" value="">
           </span>
           <span class="prepattern-tids" style="display:none">
@@ -435,12 +465,11 @@ function addPlb() {
           <label>postplist:<input type="text" class="postplist"></label>
           <label>postpattern:</label>
           <select class="postpattern-mode" onchange="togglePlbPatternMode(this, 'postpattern')">
-            <option value="none">None</option>
             <option value="tuple">Tuple</option>
             <option value="tids">Tids</option>
             <option value="querytid">QueryTid</option>
           </select>
-          <span class="postpattern-tuple" style="display:none">
+          <span class="postpattern-tuple" style="">
             <input type="text" class="postpattern-value" value="">
           </span>
           <span class="postpattern-tids" style="display:none">
@@ -528,7 +557,7 @@ function addConditionBlock(plbId, condType) {
     </div>
     <div class="plb-row">
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
-      <button onclick="addLoopItem(this.closest('.condition-block'), 'plb')">Add Plb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')">Add subPlb</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
@@ -553,7 +582,17 @@ function addLoopItem(condBlock, type) {
     itemDiv.innerHTML = handle + `
       <div class="item-content">
         <b>Plb:</b>
-        <label>Name: <input type="text" class="plb-name-loop" value="" placeholder="Use {name} or {partition}"></label>
+        <label>Name: <input type="text" class="plb-name-loop" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'subplb') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>subPlb:</b>
+        <label>Name: <input type="text" class="subplb-name-loop" value=""></label>
       </div>
       <div class="item-actions">
         <button onclick="this.closest('.item-block').remove()">Delete</button>
@@ -569,14 +608,14 @@ function addLoopItem(condBlock, type) {
           <option value="querytid">QueryTid</option>
         </select>
         <span class="pats-default">
-          <input type="text" class="pats-value" value="" placeholder="Use {name} or {partition}">
+          <input type="text" class="pats-value" value="">
         </span>
         <span class="pats-tids" style="display:none">
-          <label>Tids: <input type="text" class="tids-value" value="" placeholder="Use {name} or {partition}"></label>
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
         </span>
         <span class="pats-querytid" style="display:none">
-          <label>testname: <input type="text" class="querytid-testname" value="" placeholder="Use {name} or {partition}"></label>
-          <label>testtype: <input type="text" class="querytid-testtype" value="" placeholder="Use {name} or {partition}"></label>
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
         </span>
       </div>
       <div class="item-actions">
@@ -594,14 +633,14 @@ function addLoopItem(condBlock, type) {
           <option value="querytid">QueryTid</option>
         </select>
         <span class="${type}-default">
-          <input type="text" class="${type}-value" value="" placeholder="Use {name} or {partition}">
+          <input type="text" class="${type}-value" value="">
         </span>
         <span class="${type}-tids" style="display:none">
-          <label>Tids: <input type="text" class="${type}-tids-value" value="" placeholder="Use {name} or {partition}"></label>
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
         </span>
         <span class="${type}-querytid" style="display:none">
-          <label>testname: <input type="text" class="${type}-querytid-testname" value="" placeholder="Use {name} or {partition}"></label>
-          <label>testtype: <input type="text" class="${type}-querytid-testtype" value="" placeholder="Use {name} or {partition}"></label>
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
         </span>
       </div>
       <div class="item-actions">
@@ -612,7 +651,7 @@ function addLoopItem(condBlock, type) {
     itemDiv.innerHTML = handle + `
       <div class="item-content">
         <b>RefPlb:</b>
-        <label>Name: <input type="text" class="ref-name" value="" placeholder="Use {name} or {partition}"></label>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
         <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
         <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
       </div>
@@ -624,7 +663,7 @@ function addLoopItem(condBlock, type) {
     itemDiv.innerHTML = handle + `
       <div class="item-content">
         <b>PreExecRefPList:</b>
-        <label>Name: <input type="text" class="preexecref-name" value="" placeholder="Use {name} or {partition}"></label>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
       </div>
       <div class="item-actions">
         <button onclick="this.closest('.item-block').remove()">Delete</button>
@@ -634,7 +673,7 @@ function addLoopItem(condBlock, type) {
     itemDiv.innerHTML = handle + `
       <div class="item-content">
         <b>PostExecRefPList:</b>
-        <label>Name: <input type="text" class="postexecref-name" value="" placeholder="Use {name} or {partition}"></label>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
       </div>
       <div class="item-actions">
         <button onclick="this.closest('.item-block').remove()">Delete</button>
@@ -644,7 +683,7 @@ function addLoopItem(condBlock, type) {
     itemDiv.innerHTML = handle + `
       <div class="item-content">
         <b>Comment:</b>
-        <label>Content: <input type="text" class="comment-content" value="" placeholder="Use {name} or {partition}"></label>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
       </div>
       <div class="item-actions">
         <button onclick="this.closest('.item-block').remove()">Delete</button>
@@ -984,6 +1023,15 @@ function generateCode() {
                   code += `        level1.add(Plb("${plbNameLoop}".format(name=name, partition=partition)))\n`;
                 } else {
                   code += `        level1.add(Plb("${plbNameLoop}"))\n`;
+                }
+              }
+            } else if (type === 'subplb') {
+              const subplbNameLoop = itemDiv.querySelector('.subplb-name-loop').value;
+              if (subplbNameLoop) {
+                if (subplbNameLoop.includes('{name}') || subplbNameLoop.includes('{partition}')) {
+                  code += `        level1 = level0.add(Plb("${subplbNameLoop}".format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1 = level0.add(Plb("${subplbNameLoop}"))\n`;
                 }
               }
             } else if (type === 'pats') {
