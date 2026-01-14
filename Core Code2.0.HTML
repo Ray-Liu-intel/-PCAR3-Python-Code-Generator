@@ -1070,11 +1070,13 @@ function generateCode() {
     const decodeParRows = document.querySelectorAll('#decodeParTableBody tr');
     if (decodeParRows.length > 0) {
       code += 'def decode_par(name):\n';
+      let firstCondition = true;
       decodeParRows.forEach((row, idx) => {
         const name = row.querySelector('.decode-par-name').value;
         const partition = row.querySelector('.decode-par-partition').value;
         if (name && partition) {
-          const condKeyword = idx === 0 ? 'if' : 'elif';
+          const condKeyword = firstCondition ? 'if' : 'elif';
+          firstCondition = false;
           code += `    ${condKeyword} name == '${name}':\n`;
           code += `        return '${partition}'\n`;
         }
