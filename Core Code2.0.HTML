@@ -374,12 +374,12 @@ function toggleLoopPartition() {
   loopEnabled = document.getElementById('loopPartitionToggle').checked;
   document.getElementById('loopConfigSection').style.display = loopEnabled ? 'block' : 'none';
   
-  // Update all PLB blocks to show/hide loop template
+  // Update all PLB blocks to show/hide loop sections
   document.querySelectorAll('.plb-block').forEach(plbDiv => {
-    const loopTemplate = plbDiv.querySelector('.loop-template-section');
-    if (loopTemplate) {
-      loopTemplate.style.display = loopEnabled ? 'block' : 'none';
-    }
+    const mainLoop = plbDiv.querySelector('.main-loop-section');
+    const subFunctions = plbDiv.querySelector('.sub-functions-section');
+    if (mainLoop) mainLoop.style.display = loopEnabled ? 'block' : 'none';
+    if (subFunctions) subFunctions.style.display = loopEnabled ? 'block' : 'none';
   });
 }
 
@@ -492,13 +492,26 @@ function addPlb() {
       </div>
       <div class="item-list"></div>
       
-      <!-- Loop Template Section -->
-      <div class="loop-template-section" style="display: ${loopEnabled ? 'block' : 'none'};">
-        <h4>Loop Template</h4>
-        <button onclick="addConditionBlock('${plbDiv.id}', 'if')">Add if</button>
-        <button onclick="addConditionBlock('${plbDiv.id}', 'elif')">Add elif</button>
-        <button onclick="addConditionBlock('${plbDiv.id}', 'else')">Add else</button>
-        <div class="condition-list"></div>
+      <!-- Main Loop Section (no if required) -->
+      <div class="main-loop-section" style="display: ${loopEnabled ? 'block' : 'none'};">
+        <h4>Main Loop Items (for name in name_of_instance)</h4>
+        <div class="plb-row">
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'pats')">Add Pats</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'preexecref')">Add PreExecRefPList</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'pre')">Add PreExecPat</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'ref')">Add RefPlb</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'postexecref')">Add PostExecRefPList</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'post')">Add PostExecPat</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'comment')">Add Comment</button>
+        </div>
+        <div class="main-loop-list"></div>
+      </div>
+      
+      <!-- Sub Functions Section (for loops with if/elif/else) -->
+      <div class="sub-functions-section" style="display: ${loopEnabled ? 'block' : 'none'};">
+        <h4>Sub-Functions</h4>
+        <button onclick="addForLoop('${plbDiv.id}')">Add For Loop</button>
+        <div class="for-loop-list"></div>
       </div>
     </div>
   `;
@@ -612,10 +625,12 @@ function addLoopItem(condBlock, type) {
         </span>
         <span class="pats-tids" style="display:none">
           <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
         </span>
         <span class="pats-querytid" style="display:none">
           <label>testname: <input type="text" class="querytid-testname" value=""></label>
           <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
         </span>
       </div>
       <div class="item-actions">
@@ -637,10 +652,12 @@ function addLoopItem(condBlock, type) {
         </span>
         <span class="${type}-tids" style="display:none">
           <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+          <label>chunk: <input type="text" class="${type}-tids-chunk" value=""></label>
         </span>
         <span class="${type}-querytid" style="display:none">
           <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
           <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="${type}-querytid-chunk" value=""></label>
         </span>
       </div>
       <div class="item-actions">
@@ -707,6 +724,178 @@ function toggleLoopPrePostMode(sel) {
   parent.querySelector(`.${type}-default`).style.display = sel.value === 'default' ? '' : 'none';
   parent.querySelector(`.${type}-tids`).style.display = sel.value === 'tids' ? '' : 'none';
   parent.querySelector(`.${type}-querytid`).style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+function addMainLoopItem(plbId, type) {
+  // Reuse addLoopItem but target main-loop-list
+  const plbDiv = document.getElementById(plbId);
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item-block';
+  itemDiv.setAttribute('data-type', type);
+  
+  let handle = '<span class="drag-handle">&#9776;</span>';
+  
+  // Use the same structure as addLoopItem
+  if (type === 'pats') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="toggleLoopPatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="display:none">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'pre' || type === 'post') {
+    const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>${prefix}:</b>
+        <select class="${type}-mode" onchange="toggleLoopPrePostMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="${type}-default">
+          <input type="text" class="${type}-value" value="">
+        </span>
+        <span class="${type}-tids" style="display:none">
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+          <label>chunk: <input type="text" class="${type}-tids-chunk" value=""></label>
+        </span>
+        <span class="${type}-querytid" style="display:none">
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="${type}-querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'ref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>RefPlb:</b>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
+        <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
+        <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'preexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PreExecRefPList:</b>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'postexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PostExecRefPList:</b>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'comment') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Comment:</b>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  }
+  
+  plbDiv.querySelector('.main-loop-list').appendChild(itemDiv);
+}
+
+function addForLoop(plbId) {
+  const plbDiv = document.getElementById(plbId);
+  const forLoopList = plbDiv.querySelector('.for-loop-list');
+  
+  const forLoopDiv = document.createElement('div');
+  forLoopDiv.className = 'for-loop-block';
+  forLoopDiv.style.border = '2px dashed #0071C5';
+  forLoopDiv.style.borderRadius = '8px';
+  forLoopDiv.style.padding = '16px';
+  forLoopDiv.style.margin = '10px 0';
+  forLoopDiv.style.background = '#fff';
+  
+  forLoopDiv.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h5 style="margin: 0;">For Loop (for name in name_of_instance)</h5>
+      <button onclick="this.closest('.for-loop-block').remove()" style="background: #fff; color: #0071C5; border: 1px solid #0071C5;">Delete For Loop</button>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <button onclick="addConditionBlockToForLoop(this.closest('.for-loop-block'), 'if')">Add if</button>
+      <button onclick="addConditionBlockToForLoop(this.closest('.for-loop-block'), 'elif')">Add elif</button>
+      <button onclick="addConditionBlockToForLoop(this.closest('.for-loop-block'), 'else')">Add else</button>
+    </div>
+    <div class="condition-list"></div>
+  `;
+  
+  forLoopList.appendChild(forLoopDiv);
+}
+
+function addConditionBlockToForLoop(forLoopBlock, condType) {
+  const conditionList = forLoopBlock.querySelector('.condition-list');
+  
+  const condDiv = document.createElement('div');
+  condDiv.className = 'condition-block';
+  condDiv.setAttribute('data-condition-type', condType);
+  
+  let conditionInputHtml = '';
+  if (condType === 'if' || condType === 'elif') {
+    conditionInputHtml = `<label>Condition: <input type="text" class="condition-expr" value="" placeholder="e.g., name == 'SOC_A'"></label>`;
+  }
+  
+  condDiv.innerHTML = `
+    <div class="condition-header">
+      <span class="condition-type">${condType}</span>
+      ${conditionInputHtml}
+      <button onclick="this.closest('.condition-block').remove()" style="margin-left: auto;">Delete</button>
+    </div>
+    <div class="plb-row">
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')">Add subPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'postexecref')">Add PostExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'post')">Add PostExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'comment')">Add Comment</button>
+    </div>
+    <div class="loop-item-list"></div>
+  `;
+  
+  conditionList.appendChild(condDiv);
 }
 
 function addItem(plbId, type) {
@@ -1047,16 +1236,21 @@ function generateCode() {
                 }
               } else if (mode === 'tids') {
                 const tids = itemDiv.querySelector('.tids-value').value;
+                const chunk = itemDiv.querySelector('.tids-chunk').value;
                 if (tids) {
+                  let patsArgs = [];
+                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                  
                   if (tids.includes('{name}') || tids.includes('{partition}')) {
-                    code += `        level1.add(Pats(Tids(['${tids}'.format(name=name, partition=partition)])))\n`;
+                    code += `        level1.add(Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                   } else {
-                    code += `        level1.add(Pats(Tids(['${tids}'])))\n`;
+                    code += `        level1.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                   }
                 }
               } else if (mode === 'querytid') {
                 const testname = itemDiv.querySelector('.querytid-testname').value;
                 const testtype = itemDiv.querySelector('.querytid-testtype').value;
+                const chunk = itemDiv.querySelector('.querytid-chunk').value;
                 let qtArgs = [];
                 let needsFormat = false;
                 
@@ -1077,8 +1271,11 @@ function generateCode() {
                   }
                 }
                 
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
                 if (qtArgs.length > 0) {
-                  code += `        level1.add(Pats(QueryTid(${qtArgs.join(', ')})))\n`;
+                  code += `        level1.add(Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                 }
               }
             } else if (type === 'pre' || type === 'post') {
@@ -1095,16 +1292,21 @@ function generateCode() {
                 }
               } else if (mode === 'tids') {
                 const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
+                const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
                 if (tids) {
+                  let patsArgs = [];
+                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                  
                   if (tids.includes('{name}') || tids.includes('{partition}')) {
-                    code += `        level1.add(${prefix}(pat=Pats(Tids(['${tids}'.format(name=name, partition=partition)]))))\n`;
+                    code += `        level1.add(${prefix}(pat=Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                   } else {
-                    code += `        level1.add(${prefix}(pat=Pats(Tids(['${tids}']))))\n`;
+                    code += `        level1.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                   }
                 }
               } else if (mode === 'querytid') {
                 const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
                 const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+                const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
                 let qtArgs = [];
                 
                 if (testname) {
@@ -1122,8 +1324,11 @@ function generateCode() {
                   }
                 }
                 
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
                 if (qtArgs.length > 0) {
-                  code += `        level1.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')}))))\n`;
+                  code += `        level1.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                 }
               }
             } else if (type === 'ref') {
