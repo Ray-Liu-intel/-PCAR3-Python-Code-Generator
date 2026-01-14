@@ -1,400 +1,1160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Core Code 2.0</title>
+  <meta charset="UTF-8">
+  <title>PCAR3 Python Code Generator - Company</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .section { border: 1px solid #ddd; padding: 12px; margin-bottom: 14px; border-radius: 8px; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    label { font-weight: 600; }
-    input[type="text"], textarea, select { padding: 6px; border: 1px solid #ccc; border-radius: 6px; }
-    textarea { width: 100%; min-height: 80px; }
-    .btn { padding: 7px 12px; border: 1px solid #999; border-radius: 8px; background: #f5f5f5; cursor: pointer; }
-    .btn.small { padding: 4px 8px; font-size: 12px; }
-    .btn.danger { border-color: #c33; color: #c33; }
-    .muted { color: #666; font-size: 12px; }
-    .group { margin-top: 10px; padding: 10px; border: 1px dashed #ccc; border-radius: 8px; }
-    .indent { margin-left: 14px; }
-    .hidden { display: none; }
-    pre { background: #0b1020; color: #e6e6e6; padding: 12px; border-radius: 10px; overflow: auto; }
-    .pill { display: inline-block; padding: 3px 8px; border-radius: 999px; background: #eef; font-size: 12px; }
+    body {
+      background: #f5f7fa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    .intel-header {
+      background: #0071C5;
+      color: #fff;
+      padding: 24px 0 16px 0;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      position: relative;
+    }
+    .intel-logo {
+      height: 48px;
+      vertical-align: middle;
+      margin-right: 16px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .container {
+      max-width: 1400px;
+      margin: 32px auto 24px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,113,197,0.08);
+      padding: 32px 32px 24px 32px;
+    }
+    .plb-block {
+      border: 1px solid #e0e6ed;
+      margin: 18px 0;
+      padding: 18px 12px 12px 12px;
+      position: relative;
+      border-radius: 8px;
+      background: #f8fafc;
+      box-shadow: 0 2px 8px rgba(0,113,197,0.03);
+    }
+    .plb-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .plb-toggle-btn {
+      background: transparent;
+      color: #666;
+      border: 1px solid #d0d7de;
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 12px;
+      transition: all 0.2s;
+      min-width: 50px;
+    }
+    .plb-toggle-btn:hover {
+      background: #f3f4f6;
+      border-color: #0071C5;
+      color: #0071C5;
+    }
+    .delete-plb-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #fff;
+      color: #0071C5;
+      border: 1px solid #0071C5;
+      border-radius: 6px;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .delete-plb-btn:hover {
+      background: #0071C5;
+      color: #fff;
+    }
+    .plb-content {
+      transition: all 0.3s ease;
+    }
+    .plb-collapsed .plb-content {
+      display: none;
+    }
+    .plb-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .param-group {
+      margin-right: 24px;
+      margin-bottom: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background: #f0f6fa;
+      border-radius: 6px;
+      border: 1px dashed #0071C5;
+      padding: 4px 12px;
+    }
+    .param-group label {
+      margin-right: 18px;
+      margin-bottom: 4px;
+    }
+    .item-block {
+      margin-left: 20px;
+      margin-bottom: 8px;
+      background: #fff;
+      border: 1px dashed #b3c6d9;
+      padding: 8px 8px 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: text;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,113,197,0.03);
+      flex-wrap: wrap;
+    }
+    .item-content {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
+    }
+    .item-actions {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .drag-handle {
+      cursor: grab;
+      user-select: none;
+      margin-right: 12px;
+      font-size: 20px;
+      color: #0071C5;
+      flex-shrink: 0;
+    }
+    input[type="text"], select, textarea {
+      font-size: 15px;
+      padding: 4px 8px;
+      margin: 0 12px 0 8px;
+      border: 1px solid #b3c6d9;
+      border-radius: 5px;
+      background: #fff;
+      transition: border 0.2s;
+    }
+    textarea {
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+      min-width: 520px;
+      min-height: 72px;
+      resize: vertical;
+      line-height: 1.35;
+    }
+    input[type="text"]:focus, select:focus, textarea:focus {
+      border: 1.5px solid #0071C5;
+      outline: none;
+    }
+    label {
+      margin-right: 16px;
+      margin-left: 8px;
+    }
+    .item-block > b,
+    .item-block > select {
+      margin-right: 16px;
+      margin-left: 8px;
+    }
+    .item-block button {
+      margin-left: 16px;
+      background: #fff;
+      color: #0071C5;
+      border: 1px solid #0071C5;
+      border-radius: 5px;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .item-block button:hover {
+      background: #0071C5;
+      color: #fff;
+    }
+    button {
+      background: #0071C5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 18px;
+      font-size: 15px;
+      margin: 8px 8px 8px 0;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(0,113,197,0.06);
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    h3 {
+      margin-top: 32px;
+      color: #0071C5;
+      font-weight: 400;
+    }
+    #codebox {
+      background: #f4f7fa;
+      border: 1px solid #e0e6ed;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+      font-size: 15px;
+      color: #222;
+      margin-top: 10px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .intel-footer {
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+      margin: 32px 0 12px 0;
+    }
+
+    /* QueryTid区域优化 */
+    .pats-querytid,
+    .pre-querytid,
+    .post-querytid {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      align-items: center;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+    .pats-querytid label,
+    .pre-querytid label,
+    .post-querytid label {
+      margin-right: 0;
+      min-width: 110px;
+    }
+    .pats-querytid input,
+    .pre-querytid input,
+    .post-querytid input {
+      min-width: 120px;
+    }
+
+    /* Loop partition UI */
+    .loop-partition-config {
+      margin-top: 12px;
+      background: #f0f6fa;
+      border-radius: 8px;
+      border: 1px dashed #0071C5;
+      padding: 10px 12px;
+    }
+    .loop-partition-config .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .lp-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e0e6ed;
+    }
+    .lp-table th, .lp-table td {
+      border-bottom: 1px solid #e0e6ed;
+      padding: 8px;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+    .lp-table th { background: #f8fafc; color: #333; }
+    .lp-table tr:last-child td { border-bottom: none; }
+    .lp-btn {
+      background: #fff;
+      color: #0071C5;
+      border: 1px solid #0071C5;
+      border-radius: 6px;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: none;
+      font-size: 13px;
+      margin: 0;
+    }
+    .lp-btn:hover { background:#0071C5; color:#fff; }
+
+    .lp-subtitle {
+      color: #555;
+      font-size: 13px;
+      margin: 4px 0 10px 0;
+    }
+
+    .cond-block {
+      margin-top: 10px;
+      padding: 10px 10px 8px 10px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e0e6ed;
+    }
+    .cond-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .cond-items {
+      margin-left: 18px;
+      padding-left: 8px;
+      border-left: 2px solid #e0e6ed;
+    }
+
+    @media (max-width: 700px) {
+      .container { padding: 12px 2vw; }
+      .plb-block { padding: 10px 4px 8px 4px; }
+      .item-block { padding: 6px 2px 6px 0; flex-direction: column; align-items: flex-start; }
+      .item-content { margin-bottom: 8px; }
+      .item-actions { margin-left: 0; }
+      #codebox { padding: 8px; }
+      .plb-row { flex-direction: column; align-items: flex-start; }
+      .param-group { margin-bottom: 10px; }
+      .pats-querytid,
+      .pre-querytid,
+      .post-querytid {
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+      }
+      textarea { min-width: 95vw; }
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body>
-  <h1>Core Code 2.0</h1>
-  <p class="muted">Based on Core Code1.0.HTML with additions: pre/post pattern modes and loop partition UI/templates.</p>
-
-  <div class="section">
-    <h2>Patterns</h2>
-
-    <div class="group">
-      <div class="row">
-        <label class="pill">Pats</label>
-        <label for="patsMode">Mode</label>
-        <select id="patsMode">
-          <option value="Tuple">Tuple</option>
-          <option value="Tids">Tids</option>
-          <option value="QueryTid">QueryTid</option>
-          <option value="Chunk">Chunk</option>
-        </select>
-        <input type="text" id="patsValue" placeholder="e.g. (0xE2, 0xE3) or 0xE2,0xE3 or tid" style="min-width: 420px;" />
-      </div>
-      <div class="muted">Matches the existing Pats selector including Chunk.</div>
-    </div>
-
-    <div class="group">
-      <div class="row">
-        <label class="pill">Prepattern</label>
-        <label for="prepatternMode">Mode</label>
-        <select id="prepatternMode">
-          <option value="Tuple">Tuple</option>
-          <option value="Tids">Tids</option>
-          <option value="QueryTid">QueryTid</option>
-        </select>
-        <input type="text" id="prepatternValue" placeholder="e.g. (0xA,0xB) or 0xA,0xB or tid" style="min-width: 420px;" />
-      </div>
-      <div class="muted">Like Pats mode selector but without Chunk.</div>
-    </div>
-
-    <div class="group">
-      <div class="row">
-        <label class="pill">Postpattern</label>
-        <label for="postpatternMode">Mode</label>
-        <select id="postpatternMode">
-          <option value="Tuple">Tuple</option>
-          <option value="Tids">Tids</option>
-          <option value="QueryTid">QueryTid</option>
-        </select>
-        <input type="text" id="postpatternValue" placeholder="e.g. (0xC,0xD) or 0xC,0xD or tid" style="min-width: 420px;" />
-      </div>
-      <div class="muted">Like Pats mode selector but without Chunk.</div>
-    </div>
+  <div class="intel-header">
+    <img class="intel-logo" src="https://images.socialchorus.com/image/fetch/c_fill,dpr_2.0,b_rgb:ffffff,q_75,f_auto/https%3A%2F%2Fassets.socialchorus.com%2Fproduction%2F12717%2Fimages%2F17b859bf-d7f7-4e10-a717-df4fef1ddc67.png" alt="Intel Logo">
+    <span style="font-size: 2rem; font-weight: 500;">PCAR3 Python Code Generator</span>
   </div>
 
-  <div class="section">
-    <h2>Loop partition</h2>
-    <div class="row">
-      <label for="loopPartitionToggle">Enable</label>
-      <input type="checkbox" id="loopPartitionToggle" />
-      <span class="muted">When enabled, generates <code>name_of_instance=[...]</code>, <code>decode_par(name)</code>, and loop templates under each Plb.</span>
-    </div>
+  <div class="container">
+    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist"></label>
+    <button onclick="addPlb()">Add Plb</button>
 
-    <div id="loopPartitionConfig" class="group hidden">
+    <!-- Loop partition global config -->
+    <div class="loop-partition-config">
       <div class="row">
-        <label for="instanceNames">name_of_instance (comma-separated)</label>
-        <input type="text" id="instanceNames" placeholder="e.g. cpu0,cpu1,cpu2" style="min-width: 420px;" />
+        <label style="margin-left:0;">
+          <input type="checkbox" id="loopPartitionEnabled" onchange="toggleLoopPartitionUI()"> Enable Loop Partition
+        </label>
+        <span style="color:#666;font-size:13px;">
+          (Generates <code>name_of_instance</code> and <code>decode_par(name)</code>, and enables per-PLB loop template.)
+        </span>
       </div>
-      <div class="row">
-        <label>decode_par mapping</label>
-        <button class="btn small" id="addDecodeRow">Add mapping</button>
-      </div>
-      <div id="decodeRows"></div>
-      <div class="muted">Each mapping row generates an <code>if/elif</code> branch in <code>decode_par</code>: if name == "X": pcar3.tos_ver="tos4"; level0=PlistFile("...")</div>
-    </div>
-  </div>
 
-  <div class="section">
-    <h2>PLBs</h2>
-    <div class="row">
-      <button class="btn" id="addPlb">Add Plb</button>
-      <button class="btn" id="generateBtn">Generate Code</button>
+      <div id="loopPartitionFields" style="display:none;">
+        <div class="row">
+          <label style="margin-left:0;">name_of_instance:</label>
+          <textarea id="nameOfInstance" placeholder="One per line, e.g.
+extemca
+intemca1
+intemca2"></textarea>
+        </div>
+
+        <div class="lp-subtitle">
+          decode_par mapping (name -> partition string). Example: <code>intemca27A</code> -> <code>INTCFG27A</code>
+        </div>
+
+        <table class="lp-table">
+          <thead>
+            <tr>
+              <th style="width: 35%;">name</th>
+              <th style="width: 45%;">partition (string)</th>
+              <th style="width: 20%;">actions</th>
+            </tr>
+          </thead>
+          <tbody id="decodeParTableBody"></tbody>
+        </table>
+
+        <div style="margin-top:10px;">
+          <button class="lp-btn" onclick="addDecodeParRow()">Add mapping row</button>
+        </div>
+      </div>
     </div>
 
     <div id="plbContainer"></div>
+
+    <button onclick="generateCode()">Generate Code</button>
+    <h3>Generated Result:</h3>
+    <pre id="codebox"></pre>
   </div>
 
-  <div class="section">
-    <h2>Generated Python</h2>
-    <pre id="output"></pre>
+  <div class="intel-footer">
+    &copy; 2024 Your Company Name. All rights reserved.
   </div>
 
 <script>
-  // -------------------- Utilities --------------------
-  const el = (tag, attrs = {}, children = []) => {
-    const e = document.createElement(tag);
-    Object.entries(attrs).forEach(([k, v]) => {
-      if (k === 'class') e.className = v;
-      else if (k === 'text') e.textContent = v;
-      else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.substring(2), v);
-      else e.setAttribute(k, v);
+let plbCount = 0;
+
+function addPlb() {
+  plbCount++;
+  const plbDiv = document.createElement('div');
+  plbDiv.className = 'plb-block';
+  plbDiv.id = `plb${plbCount}`;
+  plbDiv.innerHTML = `
+    <button class="delete-plb-btn" onclick="deletePlb('${plbDiv.id}')">Delete Plb</button>
+    <div class="plb-header">
+      <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">⌵</button>
+      <label>Plb Name: <input type="text" class="plb-name" value="PList${String.fromCharCode(64+plbCount)}"></label>
+    </div>
+
+    <div class="plb-content">
+      <div class="plb-row">
+        <span class="param-group">
+          <b>pre:</b>
+          <label>preplist:<input type="text" class="preplist"></label>
+
+          <!-- prepattern mode selector (NEW) -->
+          <label>prepattern:
+            <select class="prepattern-mode" onchange="toggleInlinePatternMode(this, 'prepattern')">
+              <option value="tuple">Tuple</option>
+              <option value="tids">Tids</option>
+              <option value="querytid">QueryTid</option>
+            </select>
+          </label>
+
+          <span class="prepattern-tuple">
+            <input type="text" class="prepattern-value" placeholder="e.g. 0000081">
+          </span>
+
+          <span class="prepattern-tids" style="display:none">
+            <label>Tids: <input type="text" class="prepattern-tids-value" placeholder="e.g. 0000081"></label>
+          </span>
+
+          <span class="prepattern-querytid" style="display:none">
+            <div class="pre-querytid">
+              <label>testname: <input type="text" class="prepattern-querytid-testname" value=""></label>
+              <label>testtype: <input type="text" class="prepattern-querytid-testtype" value=""></label>
+            </div>
+          </span>
+        </span>
+      </div>
+
+      <div class="plb-row">
+        <span class="param-group">
+          <b>post:</b>
+          <label>postplist:<input type="text" class="postplist"></label>
+
+          <!-- postpattern mode selector (NEW) -->
+          <label>postpattern:
+            <select class="postpattern-mode" onchange="toggleInlinePatternMode(this, 'postpattern')">
+              <option value="tuple">Tuple</option>
+              <option value="tids">Tids</option>
+              <option value="querytid">QueryTid</option>
+            </select>
+          </label>
+
+          <span class="postpattern-tuple">
+            <input type="text" class="postpattern-value" placeholder="e.g. 0000081">
+          </span>
+
+          <span class="postpattern-tids" style="display:none">
+            <label>Tids: <input type="text" class="postpattern-tids-value" placeholder="e.g. 0000081"></label>
+          </span>
+
+          <span class="postpattern-querytid" style="display:none">
+            <div class="post-querytid">
+              <label>testname: <input type="text" class="postpattern-querytid-testname" value=""></label>
+              <label>testtype: <input type="text" class="postpattern-querytid-testtype" value=""></label>
+            </div>
+          </span>
+        </span>
+      </div>
+
+      <div class="plb-row">
+        <button onclick="addItem('${plbDiv.id}', 'pats')">Add Pats</button>
+        <button onclick="addItem('${plbDiv.id}', 'preexecref')">Add PreExecRefPList</button>
+        <button onclick="addItem('${plbDiv.id}', 'pre')">Add PreExecPat</button>
+        <button onclick="addItem('${plbDiv.id}', 'ref')">Add RefPlb</button>
+        <button onclick="addItem('${plbDiv.id}', 'postexecref')">Add PostExecRefPList</button>
+        <button onclick="addItem('${plbDiv.id}', 'post')">Add PostExecPat</button>
+        <button onclick="addItem('${plbDiv.id}', 'comment')">Add Comment</button>
+      </div>
+
+      <div class="item-list"></div>
+
+      <!-- Loop partition per-PLB template (NEW) -->
+      <div class="loop-partition-plb" style="margin-top:14px; display:none;">
+        <div style="font-weight:600; color:#0071C5; margin: 8px 0;">Loop Partition Template</div>
+        <div style="color:#666; font-size:13px; margin-bottom:8px;">
+          Generates: <code>for name in name_of_instance:</code> <code>partition = decode_par(name)</code> and multi-branch conditions.
+        </div>
+        <button class="lp-btn" onclick="addLoopCond('${plbDiv.id}', 'if')">Add if</button>
+        <button class="lp-btn" onclick="addLoopCond('${plbDiv.id}', 'elif')">Add elif</button>
+        <button class="lp-btn" onclick="addLoopCond('${plbDiv.id}', 'else')">Add else</button>
+
+        <div class="loop-cond-container" style="margin-top:10px;"></div>
+      </div>
+
+    </div>
+  `;
+  document.getElementById('plbContainer').appendChild(plbDiv);
+
+  setTimeout(() => {
+    const itemList = plbDiv.querySelector('.item-list');
+    Sortable.create(itemList, {
+      animation: 150,
+      ghostClass: 'drag-over',
+      handle: '.drag-handle'
     });
-    children.forEach(c => e.appendChild(c));
-    return e;
-  };
+  }, 0);
 
-  const escapePy = (s) => s.replace(/\\/g, '\\\\').replace(/\"/g, '\\\"');
+  // show/hide loop partition area based on global toggle
+  syncLoopPartitionVisibilityForPlb(plbDiv);
+}
 
-  function parseCsvNames(s) {
-    return (s || '')
-      .split(',')
-      .map(x => x.trim())
-      .filter(Boolean);
+function togglePlb(plbId, btn) {
+  const plbDiv = document.getElementById(plbId);
+  if (plbDiv) {
+    plbDiv.classList.toggle('plb-collapsed');
+    btn.textContent = plbDiv.classList.contains('plb-collapsed') ? '>' : '⌵';
+  }
+}
+
+function deletePlb(plbId) {
+  const plbDiv = document.getElementById(plbId);
+  if (plbDiv) plbDiv.remove();
+}
+
+/**
+ * Inline pattern mode toggle for prepattern/postpattern at plb-level.
+ */
+function toggleInlinePatternMode(sel, kind) {
+  const wrapper = sel.closest('.param-group');
+  const mode = sel.value; // tuple/tids/querytid
+
+  const tupleEl = wrapper.querySelector(`.${kind}-tuple`);
+  const tidsEl = wrapper.querySelector(`.${kind}-tids`);
+  const qtEl = wrapper.querySelector(`.${kind}-querytid`);
+
+  if (tupleEl) tupleEl.style.display = mode === 'tuple' ? '' : 'none';
+  if (tidsEl) tidsEl.style.display = mode === 'tids' ? '' : 'none';
+  if (qtEl) qtEl.style.display = mode === 'querytid' ? '' : 'none';
+}
+
+/**
+ * Loop partition global UI
+ */
+function toggleLoopPartitionUI() {
+  const enabled = document.getElementById('loopPartitionEnabled').checked;
+  document.getElementById('loopPartitionFields').style.display = enabled ? '' : 'none';
+
+  // show/hide on each PLB
+  document.querySelectorAll('.plb-block').forEach(plbDiv => syncLoopPartitionVisibilityForPlb(plbDiv));
+}
+
+function syncLoopPartitionVisibilityForPlb(plbDiv) {
+  const enabled = document.getElementById('loopPartitionEnabled').checked;
+  const area = plbDiv.querySelector('.loop-partition-plb');
+  if (area) area.style.display = enabled ? '' : 'none';
+}
+
+function addDecodeParRow(name = '', partition = '') {
+  const tbody = document.getElementById('decodeParTableBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" class="decode-name" value="${escapeHtml(name)}" placeholder="e.g. intemca27A" style="width: 95%;"></td>
+    <td><input type="text" class="decode-partition" value="${escapeHtml(partition)}" placeholder="e.g. INTCFG27A" style="width: 95%;"></td>
+    <td>
+      <button class="lp-btn" onclick="this.closest('tr').remove()">Remove</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+// Basic HTML escape for preset values
+function escapeHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+/**
+ * Loop partition per-PLB: conditions
+ */
+function addLoopCond(plbId, condType) {
+  const plbDiv = document.getElementById(plbId);
+  const container = plbDiv.querySelector('.loop-cond-container');
+
+  const block = document.createElement('div');
+  block.className = 'cond-block';
+  block.setAttribute('data-cond-type', condType);
+
+  const exprDisabled = condType === 'else';
+  block.innerHTML = `
+    <div class="cond-header">
+      <b style="min-width:60px;">${condType}</b>
+      <label>expr:
+        <input type="text" class="cond-expr" ${exprDisabled ? 'disabled' : ''} placeholder="${exprDisabled ? '(none)' : 'e.g. (name == \\'intemca27A\\' or name == \\'intemca27B\\')'}" style="min-width:520px;">
+      </label>
+      <button class="lp-btn" onclick="addLoopCondItem('${plbId}', this.closest('.cond-block'))">Add Item</button>
+      <button class="lp-btn" onclick="this.closest('.cond-block').remove()">Remove</button>
+    </div>
+    <div class="cond-items"></div>
+  `;
+
+  container.appendChild(block);
+
+  // make its item list sortable (optional)
+  setTimeout(() => {
+    const list = block.querySelector('.cond-items');
+    Sortable.create(list, {
+      animation: 150,
+      ghostClass: 'drag-over',
+      handle: '.drag-handle'
+    });
+  }, 0);
+
+  // add one default item for convenience
+  addLoopCondItem(plbId, block);
+}
+
+function addLoopCondItem(plbId, condBlock) {
+  const list = condBlock.querySelector('.cond-items');
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item-block';
+  itemDiv.setAttribute('data-type', 'comment'); // default
+  // We reuse the SAME item UI as addItem(), but scoped to condition blocks.
+  itemDiv.innerHTML = `
+    <span class="drag-handle">&#9776;</span>
+    <div class="item-content">
+      <b>Comment:</b>
+      <label>Content: <input type="text" class="comment-content" value=""></label>
+    </div>
+    <div class="item-actions">
+      <button onclick="this.closest('.item-block').remove()">Delete</button>
+      <select class="cond-item-type" onchange="switchCondItemType(this)">
+        <option value="comment" selected>Comment</option>
+        <option value="pats">Pats</option>
+        <option value="pre">PreExecPat</option>
+        <option value="post">PostExecPat</option>
+        <option value="ref">RefPlb</option>
+        <option value="preexecref">PreExecRefPList</option>
+        <option value="postexecref">PostExecRefPList</option>
+      </select>
+    </div>
+  `;
+  list.appendChild(itemDiv);
+}
+
+function switchCondItemType(sel) {
+  const itemDiv = sel.closest('.item-block');
+  const type = sel.value;
+  itemDiv.setAttribute('data-type', type);
+
+  // Rebuild itemDiv inner UI (keeping drag handle & actions select)
+  const handle = `<span class="drag-handle">&#9776;</span>`;
+  const actions = `
+    <div class="item-actions">
+      <button onclick="this.closest('.item-block').remove()">Delete</button>
+      <select class="cond-item-type" onchange="switchCondItemType(this)">
+        <option value="comment" ${type==='comment'?'selected':''}>Comment</option>
+        <option value="pats" ${type==='pats'?'selected':''}>Pats</option>
+        <option value="pre" ${type==='pre'?'selected':''}>PreExecPat</option>
+        <option value="post" ${type==='post'?'selected':''}>PostExecPat</option>
+        <option value="ref" ${type==='ref'?'selected':''}>RefPlb</option>
+        <option value="preexecref" ${type==='preexecref'?'selected':''}>PreExecRefPList</option>
+        <option value="postexecref" ${type==='postexecref'?'selected':''}>PostExecRefPList</option>
+      </select>
+    </div>
+  `;
+
+  let content = '';
+  if (type === 'pats') {
+    content = `
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="togglePatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="display:none">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+        </span>
+      </div>
+    `;
+  } else if (type === 'pre' || type === 'post') {
+    const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+    content = `
+      <div class="item-content">
+        <b>${prefix}:</b>
+        <select class="${type}-mode" onchange="togglePrePostMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="${type}-default">
+          <input type="text" class="${type}-value" value="">
+        </span>
+        <span class="${type}-tids" style="display:none">
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+        </span>
+        <span class="${type}-querytid" style="display:none">
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+        </span>
+      </div>
+    `;
+  } else if (type === 'ref') {
+    content = `
+      <div class="item-content">
+        <b>RefPlb:</b>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
+        <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
+        <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
+      </div>
+    `;
+  } else if (type === 'preexecref') {
+    content = `
+      <div class="item-content">
+        <b>PreExecRefPList:</b>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
+      </div>
+    `;
+  } else if (type === 'postexecref') {
+    content = `
+      <div class="item-content">
+        <b>PostExecRefPList:</b>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
+      </div>
+    `;
+  } else { // comment
+    content = `
+      <div class="item-content">
+        <b>Comment:</b>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
+      </div>
+    `;
   }
 
-  function renderPattern(mode, valueRaw) {
-    const value = (valueRaw || '').trim();
-    if (!value) return 'None';
-    if (mode === 'Tuple') {
-      // Expect user to type tuple literal; if not wrapped, wrap
-      if (value.startsWith('(') && value.endsWith(')')) return value;
-      return `(${value})`;
-    }
-    if (mode === 'Tids') {
-      // comma-separated -> [..]
-      const items = value.split(',').map(x => x.trim()).filter(Boolean);
-      return `[${items.join(', ')}]`;
-    }
-    if (mode === 'QueryTid') {
-      // treat as tid query variable or literal
-      return value;
-    }
-    if (mode === 'Chunk') {
-      // passthrough; Core Code 1.0 style placeholder
-      return value;
-    }
-    return value;
+  itemDiv.innerHTML = handle + content + actions;
+}
+
+/**
+ * Original addItem for main item-list (kept)
+ */
+function addItem(plbId, type) {
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item-block';
+  itemDiv.setAttribute('data-type', type);
+
+  let handle = `<span class="drag-handle">&#9776;</span>`;
+
+  if (type === 'pats') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="togglePatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="display:none">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'pre' || type === 'post') {
+    const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>${prefix}:</b>
+        <select class="${type}-mode" onchange="togglePrePostMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="${type}-default">
+          <input type="text" class="${type}-value" value="">
+        </span>
+        <span class="${type}-tids" style="display:none">
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+          <label>chunk: <input type="text" class="${type}-tids-chunk" value=""></label>
+        </span>
+        <span class="${type}-querytid" style="display:none">
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="${type}-querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'ref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>RefPlb:</b>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
+        <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
+        <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'preexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PreExecRefPList:</b>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'postexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PostExecRefPList:</b>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'comment') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Comment:</b>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  }
+  document.querySelector(`#${plbId} .item-list`).appendChild(itemDiv);
+}
+
+function togglePatsMode(sel) {
+  const parent = sel.closest('.item-content');
+  parent.querySelector('.pats-default').style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector('.pats-tids').style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector('.pats-querytid').style.display = sel.value === 'querytid' ? '' : 'none';
+
+  // NOTE: In loop-condition Pats, chunk is not shown by design (we removed those inputs in switchCondItemType()).
+  // For main Pats items, chunk inputs still exist.
+}
+
+function togglePrePostMode(sel) {
+  const type = sel.className.split('-')[0]; // pre or post
+  const parent = sel.closest('.item-content');
+  parent.querySelector(`.${type}-default`).style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector(`.${type}-tids`).style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector(`.${type}-querytid`).style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+/**
+ * Code generation helpers
+ */
+function pyEscapeSingle(s) {
+  return (s || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+
+function parseNameListFromTextarea(txt) {
+  return (txt || '')
+    .split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function buildDecodeParFunction() {
+  const rows = Array.from(document.querySelectorAll('#decodeParTableBody tr'));
+  const pairs = rows.map(tr => {
+    const name = tr.querySelector('.decode-name')?.value?.trim() || '';
+    const part = tr.querySelector('.decode-partition')?.value?.trim() || '';
+    return { name, part };
+  }).filter(x => x.name && x.part);
+
+  let code = '';
+  code += '# subroutine\n';
+  code += 'def decode_par(name):\n';
+  if (pairs.length === 0) {
+    code += '    return str("NOMATCH")\n\n';
+    return code;
+  }
+  pairs.forEach((p, idx) => {
+    const head = idx === 0 ? 'if' : 'elif';
+    code += `    ${head} name == "${pyEscapeSingle(p.name)}":\n`;
+    code += `        par = str("${pyEscapeSingle(p.part)}")\n`;
+  });
+  code += '    else:\n';
+  code += '        par = str("NOMATCH")\n';
+  code += '    return par\n\n';
+  return code;
+}
+
+function buildInlinePatternExpr(wrapper, kind /* prepattern|postpattern */) {
+  const mode = wrapper.querySelector(`.${kind}-mode`)?.value || 'tuple';
+
+  if (mode === 'tuple') {
+    const v = wrapper.querySelector(`.${kind}-value`)?.value?.trim();
+    if (!v) return '';
+    // rule from user: Tuple => Pats(['xxx'])
+    return `Pats(['${pyEscapeSingle(v)}'])`;
   }
 
-  // -------------------- Loop Partition UI --------------------
-  const loopPartitionToggle = document.getElementById('loopPartitionToggle');
-  const loopPartitionConfig = document.getElementById('loopPartitionConfig');
-  const decodeRows = document.getElementById('decodeRows');
-  const addDecodeRowBtn = document.getElementById('addDecodeRow');
-
-  function addDecodeRow(name = '', plist = '') {
-    const row = el('div', { class: 'row', style: 'margin-top:6px;' }, [
-      el('label', { text: 'name' }),
-      el('input', { type: 'text', value: name, class: 'decodeName', placeholder: 'e.g. cpu0' }),
-      el('label', { text: 'plist path' }),
-      el('input', { type: 'text', value: plist, class: 'decodePlist', placeholder: 'e.g. /path/to/level0.plist', style: 'min-width:320px;' }),
-      el('button', { class: 'btn small danger', text: 'Remove', onclick: () => row.remove() })
-    ]);
-    decodeRows.appendChild(row);
+  if (mode === 'tids') {
+    const v = wrapper.querySelector(`.${kind}-tids-value`)?.value?.trim();
+    if (!v) return '';
+    // rule: Pats(Tids(['...']))
+    return `Pats(Tids(['${pyEscapeSingle(v)}']))`;
   }
 
-  addDecodeRowBtn.addEventListener('click', () => addDecodeRow());
-  loopPartitionToggle.addEventListener('change', () => {
-    loopPartitionConfig.classList.toggle('hidden', !loopPartitionToggle.checked);
-    document.querySelectorAll('.loopPartitionTemplate').forEach(n => n.classList.toggle('hidden', !loopPartitionToggle.checked));
+  if (mode === 'querytid') {
+    const testname = wrapper.querySelector(`.${kind}-querytid-testname`)?.value?.trim() || '';
+    const testtype = wrapper.querySelector(`.${kind}-querytid-testtype`)?.value?.trim() || '';
+    if (!testname && !testtype) return '';
+    const args = [];
+    if (testname) args.push(`testname='${pyEscapeSingle(testname)}'`);
+    if (testtype) args.push(`testtype='${pyEscapeSingle(testtype)}'`);
+    return `Pats(QueryTid(${args.join(', ')}))`;
+  }
+
+  return '';
+}
+
+function buildPatsExprFromItem(itemDiv, allowChunk) {
+  const mode = itemDiv.querySelector('.pats-mode')?.value || 'default';
+  if (mode === 'default') {
+    const val = itemDiv.querySelector('.pats-value')?.value?.trim();
+    if (!val) return '';
+    return `Pats(['${pyEscapeSingle(val)}'])`;
+  } else if (mode === 'tids') {
+    const tids = itemDiv.querySelector('.tids-value')?.value?.trim();
+    if (!tids) return '';
+    const chunk = allowChunk ? (itemDiv.querySelector('.tids-chunk')?.value?.trim() || '') : '';
+    const patsArgs = [];
+    if (chunk) patsArgs.push(`chunk="${pyEscapeSingle(chunk)}"`);
+    return `Pats(Tids(['${pyEscapeSingle(tids)}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})`;
+  } else if (mode === 'querytid') {
+    const testname = itemDiv.querySelector('.querytid-testname')?.value?.trim() || '';
+    const testtype = itemDiv.querySelector('.querytid-testtype')?.value?.trim() || '';
+    if (!testname && !testtype) return '';
+    const qtArgs = [];
+    if (testname) qtArgs.push(`testname='${pyEscapeSingle(testname)}'`);
+    if (testtype) qtArgs.push(`testtype='${pyEscapeSingle(testtype)}'`);
+    const chunk = allowChunk ? (itemDiv.querySelector('.querytid-chunk')?.value?.trim() || '') : '';
+    const extra = [];
+    if (chunk) extra.push(`chunk="${pyEscapeSingle(chunk)}"`);
+    // Core Code 1.0 used: Pats(QueryTid(... ) + chunk separately). Keep same style:
+    return `Pats(QueryTid(${qtArgs.join(', ')})${extra.length ? ', ' + extra.join(', ') : ''})`;
+  }
+  return '';
+}
+
+function buildPrePostExprFromItem(itemDiv, type /* pre|post */, allowChunk) {
+  const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+  const mode = itemDiv.querySelector(`.${type}-mode`)?.value || 'default';
+
+  if (mode === 'default') {
+    const val = itemDiv.querySelector(`.${type}-value`)?.value?.trim();
+    if (!val) return '';
+    return `${prefix}(pat=Pats(['${pyEscapeSingle(val)}']))`;
+  } else if (mode === 'tids') {
+    const tids = itemDiv.querySelector(`.${type}-tids-value`)?.value?.trim();
+    if (!tids) return '';
+    const chunk = allowChunk ? (itemDiv.querySelector(`.${type}-tids-chunk`)?.value?.trim() || '') : '';
+    const patsArgs = [];
+    if (chunk) patsArgs.push(`chunk="${pyEscapeSingle(chunk)}"`);
+    return `${prefix}(pat=Pats(Tids(['${pyEscapeSingle(tids)}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))`;
+  } else if (mode === 'querytid') {
+    const testname = itemDiv.querySelector(`.${type}-querytid-testname`)?.value?.trim() || '';
+    const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`)?.value?.trim() || '';
+    if (!testname && !testtype) return '';
+    const qtArgs = [];
+    if (testname) qtArgs.push(`testname='${pyEscapeSingle(testname)}'`);
+    if (testtype) qtArgs.push(`testtype='${pyEscapeSingle(testtype)}'`);
+    const chunk = allowChunk ? (itemDiv.querySelector(`.${type}-querytid-chunk`)?.value?.trim() || '') : '';
+    const extra = [];
+    if (chunk) extra.push(`chunk="${pyEscapeSingle(chunk)}"`);
+    return `${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${extra.length ? ', ' + extra.join(', ') : ''}))`;
+  }
+  return '';
+}
+
+function generateCode() {
+  const plistfile = document.getElementById('plistfile').value;
+
+  let code = `from veplib.plist_builder_pcar3 import PlistFile, Plb, Pats, Tids, QueryTid, pcar3, Amble, Comment, RefPlb, NameFilter, PreExecPat, PostExecPat, PreExecRefPList, PostExecRefPList\n`;
+  code += `pcar3.tos_ver = "tos4"\n\n`;
+
+  // Loop partition insertion between tos_ver and level0
+  const loopEnabled = document.getElementById('loopPartitionEnabled').checked;
+  if (loopEnabled) {
+    const names = parseNameListFromTextarea(document.getElementById('nameOfInstance').value);
+    code += `name_of_instance = [${names.map(n => `'${pyEscapeSingle(n)}'`).join(', ')}]\n`;
+    code += `\n`;
+    code += buildDecodeParFunction();
+  }
+
+  code += `level0 = PlistFile('${pyEscapeSingle(plistfile)}')\n`;
+
+  const plbDivs = Array.from(document.querySelectorAll('.plb-block'));
+  plbDivs.forEach((plbDiv) => {
+    const plbName = plbDiv.querySelector('.plb-name').value;
+    let plbParams = [];
+
+    const preplist = plbDiv.querySelector('.preplist').value;
+    if (preplist) plbParams.push(`preplist="${pyEscapeSingle(preplist)}"`);
+
+    const postplist = plbDiv.querySelector('.postplist').value;
+    if (postplist) plbParams.push(`postplist="${pyEscapeSingle(postplist)}"`);
+
+    // NEW prepattern/postpattern based on mode
+    const prepatternExpr = buildInlinePatternExpr(plbDiv, 'prepattern');
+    if (prepatternExpr) plbParams.push(`prepattern=${prepatternExpr}`);
+
+    const postpatternExpr = buildInlinePatternExpr(plbDiv, 'postpattern');
+    if (postpatternExpr) plbParams.push(`postpattern=${postpatternExpr}`);
+
+    code += `level1 = level0.add(Plb("${pyEscapeSingle(plbName)}"${plbParams.length ? ', ' + plbParams.join(', ') : ''}))\n`;
+
+    // Main item-list generation (original)
+    plbDiv.querySelectorAll('.item-list .item-block').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+
+      if (type === 'pats') {
+        const expr = buildPatsExprFromItem(itemDiv, true /* allowChunk */);
+        if (expr) code += `level1.add(${expr})\n`;
+      } else if (type === 'pre' || type === 'post') {
+        const expr = buildPrePostExprFromItem(itemDiv, type, true /* allowChunk */);
+        if (expr) code += `level1.add(${expr})\n`;
+      } else if (type === 'ref') {
+        const refName = itemDiv.querySelector('.ref-name').value;
+        const skipPre = itemDiv.querySelector('.skip-pre').checked;
+        const skipPost = itemDiv.querySelector('.skip-post').checked;
+        let opts = [];
+        if (skipPre) opts.push('skip_preplistexec=True');
+        if (skipPost) opts.push('skip_postplistexec=True');
+        code += `level1.add(RefPlb("${pyEscapeSingle(refName)}"${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+      } else if (type === 'preexecref') {
+        const name = itemDiv.querySelector('.preexecref-name').value;
+        if (name) code += `level1.add(PreExecRefPList("${pyEscapeSingle(name)}"))\n`;
+      } else if (type === 'postexecref') {
+        const name = itemDiv.querySelector('.postexecref-name').value;
+        if (name) code += `level1.add(PostExecRefPList("${pyEscapeSingle(name)}"))\n`;
+      } else if (type === 'comment') {
+        const content = itemDiv.querySelector('.comment-content').value;
+        if (content) code += `level1.add(Comment('${pyEscapeSingle(content)}'))\n`;
+      }
+    });
+
+    // Loop partition per-PLB generation (NEW)
+    if (loopEnabled) {
+      const condContainer = plbDiv.querySelector('.loop-cond-container');
+      const condBlocks = Array.from(condContainer.querySelectorAll('.cond-block'));
+
+      if (condBlocks.length > 0) {
+        code += `\nfor name in name_of_instance:\n`;
+        code += `    partition = decode_par(name)\n`;
+
+        condBlocks.forEach((cb, idx) => {
+          const condType = cb.getAttribute('data-cond-type');
+          const expr = cb.querySelector('.cond-expr')?.value?.trim() || '';
+          let head = '';
+          if (condType === 'if') {
+            head = `if ${expr || 'True'}`;
+          } else if (condType === 'elif') {
+            head = `elif ${expr || 'True'}`;
+          } else {
+            head = `else`;
+          }
+          code += `    ${head}:\n`;
+
+          const items = Array.from(cb.querySelectorAll('.cond-items .item-block'));
+          if (items.length === 0) {
+            code += `        pass\n`;
+          } else {
+            items.forEach(itemDiv => {
+              const type = itemDiv.getAttribute('data-type');
+
+              if (type === 'pats') {
+                // For loop-condition Pats: NO chunk
+                const expr = buildPatsExprFromItem(itemDiv, false /* allowChunk */);
+                if (expr) code += `        level1.add(${expr})\n`;
+              } else if (type === 'pre' || type === 'post') {
+                // For loop-condition Pre/Post: NO chunk
+                const expr2 = buildPrePostExprFromItem(itemDiv, type, false /* allowChunk */);
+                if (expr2) code += `        level1.add(${expr2})\n`;
+              } else if (type === 'ref') {
+                const refName = itemDiv.querySelector('.ref-name')?.value || '';
+                const skipPre = itemDiv.querySelector('.skip-pre')?.checked || false;
+                const skipPost = itemDiv.querySelector('.skip-post')?.checked || false;
+                let opts = [];
+                if (skipPre) opts.push('skip_preplistexec=True');
+                if (skipPost) opts.push('skip_postplistexec=True');
+                code += `        level1.add(RefPlb("${pyEscapeSingle(refName)}"${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+              } else if (type === 'preexecref') {
+                const name = itemDiv.querySelector('.preexecref-name')?.value || '';
+                if (name) code += `        level1.add(PreExecRefPList("${pyEscapeSingle(name)}"))\n`;
+              } else if (type === 'postexecref') {
+                const name = itemDiv.querySelector('.postexecref-name')?.value || '';
+                if (name) code += `        level1.add(PostExecRefPList("${pyEscapeSingle(name)}"))\n`;
+              } else { // comment
+                const content = itemDiv.querySelector('.comment-content')?.value || '';
+                if (content) code += `        level1.add(Comment('${pyEscapeSingle(content)}'))\n`;
+              }
+            });
+          }
+        });
+      }
+    }
+
+    code += `\n`;
   });
 
-  // Seed one mapping row for convenience
-  addDecodeRow('cpu0', 'level0_cpu0.plist');
+  code += `if (__name__ == "__main__"):\n    pcar3.process()\n    print("Summary")\n    pcar3.report(detail=True)\n    print(pcar3.gen_plist_preview())\n`;
+  document.getElementById('codebox').textContent = code;
+}
 
-  // -------------------- PLB + Item Blocks --------------------
-  const plbContainer = document.getElementById('plbContainer');
-
-  function makeItemRow(kind = 'Comment') {
-    // Kinds mirror existing concepts: Pats/Pre/Post/Ref/Comment (minimal scaffolding)
-    const row = el('div', { class: 'row itemRow', style: 'margin-top:6px;' });
-
-    const kindSel = el('select', { class: 'itemKind' }, [
-      el('option', { value: 'Comment', text: 'Comment' }),
-      el('option', { value: 'Pats', text: 'Pats' }),
-      el('option', { value: 'Pre', text: 'Pre' }),
-      el('option', { value: 'Post', text: 'Post' }),
-      el('option', { value: 'Ref', text: 'Ref' })
-    ]);
-    kindSel.value = kind;
-
-    const text = el('input', { type: 'text', class: 'itemValue', placeholder: 'value / note / ref', style: 'min-width:520px;' });
-
-    const remove = el('button', { class: 'btn small danger', text: 'Remove', onclick: () => row.remove() });
-
-    row.appendChild(el('label', { text: 'Item' }));
-    row.appendChild(kindSel);
-    row.appendChild(text);
-    row.appendChild(remove);
-
-    return row;
-  }
-
-  function makeConditionBlock() {
-    const block = el('div', { class: 'group conditionBlock' });
-
-    const header = el('div', { class: 'row' }, [
-      el('label', { text: 'Condition' }),
-      el('select', { class: 'condType' }, [
-        el('option', { value: 'if', text: 'if' }),
-        el('option', { value: 'elif', text: 'elif' }),
-        el('option', { value: 'else', text: 'else' })
-      ]),
-      el('input', { type: 'text', class: 'condExpr', placeholder: 'expression (ignored for else)', style: 'min-width:420px;' }),
-      el('button', { class: 'btn small', text: 'Add Plb def item', onclick: () => items.appendChild(makeItemRow('Comment')) }),
-      el('button', { class: 'btn small danger', text: 'Remove Condition', onclick: () => block.remove() })
-    ]);
-
-    const items = el('div', { class: 'indent condItems' }, []);
-    items.appendChild(makeItemRow('Comment'));
-
-    block.appendChild(header);
-    block.appendChild(items);
-    return block;
-  }
-
-  function makePlb() {
-    const outer = el('div', { class: 'section plb' });
-    const titleRow = el('div', { class: 'row' }, [
-      el('label', { text: 'Plb name' }),
-      el('input', { type: 'text', class: 'plbName', placeholder: 'e.g. plb0' }),
-      el('button', { class: 'btn small', text: 'Add item', onclick: () => items.appendChild(makeItemRow('Comment')) }),
-      el('button', { class: 'btn small danger', text: 'Remove Plb', onclick: () => outer.remove() })
-    ]);
-
-    const items = el('div', { class: 'group plbItems' });
-    items.appendChild(makeItemRow('Comment'));
-
-    // Loop partition template per PLB
-    const loopTpl = el('div', { class: 'group loopPartitionTemplate hidden' }, [
-      el('div', { class: 'row' }, [
-        el('label', { class: 'pill', text: 'Loop partition template' }),
-        el('span', { class: 'muted', text: 'Generates: for name in name_of_instance: partition = decode_par(name) ... with if/elif/else conditions' })
-      ]),
-      el('div', { class: 'row' }, [
-        el('button', { class: 'btn small', text: 'Add condition', onclick: () => condContainer.appendChild(makeConditionBlock()) }),
-      ]),
-    ]);
-
-    const condContainer = el('div', { class: 'indent condContainer' });
-    loopTpl.appendChild(condContainer);
-    // start with one if
-    condContainer.appendChild(makeConditionBlock());
-
-    outer.appendChild(titleRow);
-    outer.appendChild(items);
-    outer.appendChild(loopTpl);
-
-    // Visibility depends on global toggle
-    loopTpl.classList.toggle('hidden', !loopPartitionToggle.checked);
-
-    return outer;
-  }
-
-  document.getElementById('addPlb').addEventListener('click', () => {
-    plbContainer.appendChild(makePlb());
-  });
-
-  // Start with one PLB
-  plbContainer.appendChild(makePlb());
-
-  // -------------------- Code Generation --------------------
-  function genDecodePar() {
-    const rows = Array.from(decodeRows.querySelectorAll('.row'));
-    const mappings = rows
-      .map(r => ({
-        name: r.querySelector('.decodeName')?.value?.trim(),
-        plist: r.querySelector('.decodePlist')?.value?.trim()
-      }))
-      .filter(x => x.name && x.plist);
-
-    let s = '';
-    s += 'def decode_par(name):\n';
-    if (mappings.length === 0) {
-      s += '    raise ValueError("No decode_par mappings configured")\n\n';
-      return s;
-    }
-    mappings.forEach((m, i) => {
-      const head = i === 0 ? 'if' : 'elif';
-      s += `    ${head} name == "${escapePy(m.name)}":\n`;
-      s += '        pcar3.tos_ver = "tos4"\n';
-      s += `        level0 = PlistFile("${escapePy(m.plist)}")\n`;
-      s += '        return level0\n';
-    });
-    s += '    else:\n';
-    s += '        raise ValueError(f"Unknown instance name: {name}")\n\n';
-    return s;
-  }
-
-  function genPlb(plbEl) {
-    const plbName = plbEl.querySelector('.plbName').value.trim() || 'plb';
-    const items = Array.from(plbEl.querySelectorAll('.plbItems .itemRow'));
-
-    const lines = [];
-    lines.push(`# ---- ${plbName} ----`);
-
-    // Base PLB items
-    items.forEach(it => {
-      const k = it.querySelector('.itemKind').value;
-      const v = it.querySelector('.itemValue').value;
-      if (k === 'Comment') lines.push(`# ${v || ''}`.trimEnd());
-      if (k === 'Ref') lines.push(`# Ref: ${v || ''}`.trimEnd());
-      if (k === 'Pats') lines.push(`# Pats: ${v || ''}`.trimEnd());
-      if (k === 'Pre') lines.push(`# Pre: ${v || ''}`.trimEnd());
-      if (k === 'Post') lines.push(`# Post: ${v || ''}`.trimEnd());
-    });
-
-    // Loop partition template
-    if (loopPartitionToggle.checked) {
-      lines.push('for name in name_of_instance:');
-      lines.push('    partition = decode_par(name)');
-
-      const condBlocks = Array.from(plbEl.querySelectorAll('.condContainer .conditionBlock'));
-      condBlocks.forEach((cb, idx) => {
-        const t = cb.querySelector('.condType').value;
-        const expr = (cb.querySelector('.condExpr').value || '').trim();
-        let head = t;
-        if ((t === 'if' || t === 'elif') && !expr) head = t + ' True';
-        else if (t === 'else') head = 'else';
-        else head = `${t} ${expr}`;
-
-        if (t === 'else') lines.push(`    ${head}:`);
-        else lines.push(`    ${head}:`);
-
-        const condItems = Array.from(cb.querySelectorAll('.condItems .itemRow'));
-        if (condItems.length === 0) {
-          lines.push('        pass');
-        } else {
-          condItems.forEach(it => {
-            const k = it.querySelector('.itemKind').value;
-            const v = it.querySelector('.itemValue').value;
-            if (k === 'Comment') lines.push(`        # ${v || ''}`.trimEnd());
-            if (k === 'Ref') lines.push(`        # Ref: ${v || ''}`.trimEnd());
-            if (k === 'Pats') lines.push(`        # Pats: ${v || ''}`.trimEnd());
-            if (k === 'Pre') lines.push(`        # Pre: ${v || ''}`.trimEnd());
-            if (k === 'Post') lines.push(`        # Post: ${v || ''}`.trimEnd());
-          });
-        }
-      });
-
-      lines.push('');
-    } else {
-      lines.push('');
-    }
-
-    return lines.join('\n');
-  }
-
-  function generateCode() {
-    const pats = renderPattern(document.getElementById('patsMode').value, document.getElementById('patsValue').value);
-    const prepattern = renderPattern(document.getElementById('prepatternMode').value, document.getElementById('prepatternValue').value);
-    const postpattern = renderPattern(document.getElementById('postpatternMode').value, document.getElementById('postpatternValue').value);
-
-    const out = [];
-    out.push('# Auto-generated by Core Code2.0.HTML');
-    out.push('');
-    out.push(`# Pats = ${pats}`);
-    out.push(`# prepattern = ${prepattern}`);
-    out.push(`# postpattern = ${postpattern}`);
-    out.push('');
-
-    if (loopPartitionToggle.checked) {
-      const names = parseCsvNames(document.getElementById('instanceNames').value);
-      out.push(`name_of_instance = [${names.map(n => `"${escapePy(n)}"`).join(', ')}]`);
-      out.push('');
-      out.push(genDecodePar());
-    }
-
-    const plbs = Array.from(document.querySelectorAll('.plb'));
-    plbs.forEach(p => out.push(genPlb(p)));
-
-    document.getElementById('output').textContent = out.join('\n');
-  }
-
-  document.getElementById('generateBtn').addEventListener('click', generateCode);
-  // initial
-  generateCode();
+// Seed: add one decode row for convenience
+addDecodeParRow('extemca', 'EXTEST');
 </script>
 </body>
 </html>
