@@ -299,6 +299,9 @@
     .hide-subplb {
       display: none !important;
     }
+    .hide-main-loop-prepost {
+      display: none !important;
+    }
     
     @media (max-width: 700px) {
       .container { padding: 12px 2vw; }
@@ -499,11 +502,11 @@ function addPlb() {
         <h4>Loop Items (for name in name_of_instance)</h4>
         <div class="plb-row">
           <button onclick="addMainLoopItem('${plbDiv.id}', 'pats')">Add Pats</button>
-          <button onclick="addMainLoopItem('${plbDiv.id}', 'preexecref')">Add PreExecRefPList</button>
-          <button onclick="addMainLoopItem('${plbDiv.id}', 'pre')">Add PreExecPat</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'preexecref')" class="hide-main-loop-prepost">Add PreExecRefPList</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'pre')" class="hide-main-loop-prepost">Add PreExecPat</button>
           <button onclick="addMainLoopItem('${plbDiv.id}', 'ref')">Add RefPlb</button>
-          <button onclick="addMainLoopItem('${plbDiv.id}', 'postexecref')">Add PostExecRefPList</button>
-          <button onclick="addMainLoopItem('${plbDiv.id}', 'post')">Add PostExecPat</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'postexecref')" class="hide-main-loop-prepost">Add PostExecRefPList</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'post')" class="hide-main-loop-prepost">Add PostExecPat</button>
           <button onclick="addMainLoopItem('${plbDiv.id}', 'comment')">Add Comment</button>
         </div>
         <div class="main-loop-list"></div>
