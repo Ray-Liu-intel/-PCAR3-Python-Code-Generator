@@ -436,4 +436,4 @@ For issues, questions, or feature requests, please open an issue on the GitHub r
 
 ---
 
-© 2026 Your Company Name. All rights reserved.
+© 2026 INTEL PDE CHINA. All rights reserved.
