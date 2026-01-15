@@ -1,4 +1,4 @@
-# PCAR3 Python Code Generator 2.0
+![Screenshot_15-1-2026_145932_](https://github.com/user-attachments/assets/ffa16fa3-6fb8-4a84-8289-9d999df930c7)# PCAR3 Python Code Generator 2.0
 
 A powerful, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any server infrastructure.
 
@@ -164,6 +164,9 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
 ## 💡 Usage Examples
 
 ### Example 1: Simple PLB without Loop
+
+![Screenshot_15-1-2026_145932_](https://github.com/user-attachments/assets/f6977ef3-f739-472d-9bd6-ee5b0ae30922)
+
 
 ```html
 <!-- Configuration -->
