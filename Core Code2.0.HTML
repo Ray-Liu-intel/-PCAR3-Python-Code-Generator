@@ -296,6 +296,9 @@
       color: #0071C5;
       margin-right: 12px;
     }
+    .hide-subplb {
+      display: none !important;
+    }
     
     @media (max-width: 700px) {
       .container { padding: 12px 2vw; }
@@ -525,6 +528,16 @@ function addPlb() {
         handle: '.drag-handle'
       });
     }
+    
+    // Also initialize Sortable for main-loop-list
+    const mainLoopList = plbDiv.querySelector('.main-loop-list');
+    if (mainLoopList && typeof Sortable !== 'undefined') {
+      Sortable.create(mainLoopList, {
+        animation: 150,
+        ghostClass: 'drag-over',
+        handle: '.drag-handle'
+      });
+    }
   }, 0);
 }
 
@@ -569,7 +582,7 @@ function addConditionBlock(plbId, condType) {
     </div>
     <div class="plb-row">
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
-      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')">Add subPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')" class="hide-subplb">Add subPlb</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
@@ -884,7 +897,7 @@ function addConditionBlock(plbId, condType) {
     </div>
     <div class="plb-row">
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
-      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')">Add subPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')" class="hide-subplb">Add subPlb</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
@@ -896,6 +909,18 @@ function addConditionBlock(plbId, condType) {
   `;
   
   conditionList.appendChild(condDiv);
+  
+  // Initialize Sortable for the loop-item-list
+  setTimeout(() => {
+    const loopItemList = condDiv.querySelector('.loop-item-list');
+    if (loopItemList && typeof Sortable !== 'undefined') {
+      Sortable.create(loopItemList, {
+        animation: 150,
+        ghostClass: 'drag-over',
+        handle: '.drag-handle'
+      });
+    }
+  }, 0);
 }
 
 function addConditionBlockToForLoop(forLoopBlock, condType) {
@@ -918,7 +943,7 @@ function addConditionBlockToForLoop(forLoopBlock, condType) {
     </div>
     <div class="plb-row">
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
-      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')">Add subPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')" class="hide-subplb">Add subPlb</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
       <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
@@ -930,6 +955,18 @@ function addConditionBlockToForLoop(forLoopBlock, condType) {
   `;
   
   conditionList.appendChild(condDiv);
+  
+  // Initialize Sortable for the loop-item-list
+  setTimeout(() => {
+    const loopItemList = condDiv.querySelector('.loop-item-list');
+    if (loopItemList && typeof Sortable !== 'undefined') {
+      Sortable.create(loopItemList, {
+        animation: 150,
+        ghostClass: 'drag-over',
+        handle: '.drag-handle'
+      });
+    }
+  }, 0);
 }
 
 function addItem(plbId, type) {
@@ -1313,6 +1350,77 @@ function generateCode() {
                 code += `    level1.add(Comment('${content}'))\n`;
               }
             }
+          } else if (type === 'pre' || type === 'post') {
+            const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+            const mode = itemDiv.querySelector(`.${type}-mode`).value;
+            if (mode === 'default') {
+              const val = itemDiv.querySelector(`.${type}-value`).value;
+              if (val) {
+                if (val.includes('{name}') || val.includes('{partition}')) {
+                  code += `    level1.add(${prefix}(pat=Pats(['${val}'.format(name=name, partition=partition)])))\n`;
+                } else {
+                  code += `    level1.add(${prefix}(pat=Pats(['${val}'])))\n`;
+                }
+              }
+            } else if (mode === 'tids') {
+              const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
+              const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+              if (tids) {
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
+                if (tids.includes('{name}') || tids.includes('{partition}')) {
+                  code += `    level1.add(${prefix}(pat=Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                } else {
+                  code += `    level1.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                }
+              }
+            } else if (mode === 'querytid') {
+              const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+              const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+              const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+              let qtArgs = [];
+              
+              if (testname) {
+                if (testname.includes('{name}') || testname.includes('{partition}')) {
+                  qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
+                } else {
+                  qtArgs.push(`testname='${testname}'`);
+                }
+              }
+              if (testtype) {
+                if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                  qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
+                } else {
+                  qtArgs.push(`testtype='${testtype}'`);
+                }
+              }
+              
+              let patsArgs = [];
+              if (chunk) patsArgs.push(`chunk="${chunk}"`);
+              
+              if (qtArgs.length > 0) {
+                code += `    level1.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+              }
+            }
+          } else if (type === 'preexecref') {
+            const name = itemDiv.querySelector('.preexecref-name').value;
+            if (name) {
+              if (name.includes('{name}') || name.includes('{partition}')) {
+                code += `    level1.add(PreExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+              } else {
+                code += `    level1.add(PreExecRefPList('${name}'))\n`;
+              }
+            }
+          } else if (type === 'postexecref') {
+            const name = itemDiv.querySelector('.postexecref-name').value;
+            if (name) {
+              if (name.includes('{name}') || name.includes('{partition}')) {
+                code += `    level1.add(PostExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+              } else {
+                code += `    level1.add(PostExecRefPList('${name}'))\n`;
+              }
+            }
           }
         });
         
@@ -1332,6 +1440,20 @@ function generateCode() {
           }
           
           code += condLine;
+          
+          // Auto-generate level1_sub for each RefPlb in main loop items
+          mainLoopItems.forEach(mainItem => {
+            if (mainItem.getAttribute('data-type') === 'ref') {
+              const refName = mainItem.querySelector('.ref-name').value;
+              if (refName) {
+                if (refName.includes('{name}') || refName.includes('{partition}')) {
+                  code += `        level1_sub = level0.add(Plb('${refName}'.format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub = level0.add(Plb('${refName}'))\n`;
+                }
+              }
+            }
+          });
           
           // Process loop items in this condition block - use level1_sub
           const loopItems = condBlock.querySelectorAll('.loop-item-list .item-block');
@@ -1421,6 +1543,77 @@ function generateCode() {
                   code += `        level1_sub.add(RefPlb('${refName}'.format(name=name, partition=partition)${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
                 } else {
                   code += `        level1_sub.add(RefPlb('${refName}'${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+                }
+              }
+            } else if (type === 'pre' || type === 'post') {
+              const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+              const mode = itemDiv.querySelector(`.${type}-mode`).value;
+              if (mode === 'default') {
+                const val = itemDiv.querySelector(`.${type}-value`).value;
+                if (val) {
+                  if (val.includes('{name}') || val.includes('{partition}')) {
+                    code += `        level1_sub.add(${prefix}(pat=Pats(['${val}'.format(name=name, partition=partition)])))\n`;
+                  } else {
+                    code += `        level1_sub.add(${prefix}(pat=Pats(['${val}'])))\n`;
+                  }
+                }
+              } else if (mode === 'tids') {
+                const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
+                const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+                if (tids) {
+                  let patsArgs = [];
+                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                  
+                  if (tids.includes('{name}') || tids.includes('{partition}')) {
+                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                  } else {
+                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                  }
+                }
+              } else if (mode === 'querytid') {
+                const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+                const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+                const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+                let qtArgs = [];
+                
+                if (testname) {
+                  if (testname.includes('{name}') || testname.includes('{partition}')) {
+                    qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
+                  } else {
+                    qtArgs.push(`testname='${testname}'`);
+                  }
+                }
+                if (testtype) {
+                  if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                    qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
+                  } else {
+                    qtArgs.push(`testtype='${testtype}'`);
+                  }
+                }
+                
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
+                if (qtArgs.length > 0) {
+                  code += `        level1_sub.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                }
+              }
+            } else if (type === 'preexecref') {
+              const name = itemDiv.querySelector('.preexecref-name').value;
+              if (name) {
+                if (name.includes('{name}') || name.includes('{partition}')) {
+                  code += `        level1_sub.add(PreExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub.add(PreExecRefPList('${name}'))\n`;
+                }
+              }
+            } else if (type === 'postexecref') {
+              const name = itemDiv.querySelector('.postexecref-name').value;
+              if (name) {
+                if (name.includes('{name}') || name.includes('{partition}')) {
+                  code += `        level1_sub.add(PostExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub.add(PostExecRefPList('${name}'))\n`;
                 }
               }
             }
