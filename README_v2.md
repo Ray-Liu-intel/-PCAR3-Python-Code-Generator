@@ -1,4 +1,4 @@
-![Screenshot_15-1-2026_145932_](https://github.com/user-attachments/assets/ffa16fa3-6fb8-4a84-8289-9d999df930c7)# PCAR3 Python Code Generator 2.0
+<img width="621" height="23" alt="image" src="https://github.com/user-attachments/assets/4fe20c28-69f3-49df-aa75-5bfb3b371718" /># PCAR3 Python Code Generator 2.0
 
 A powerful, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any server infrastructure.
 
@@ -51,8 +51,6 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
     level1_sub = level0.add(Plb('corresponding_plb_name'.format(name=name)))
     ```
   - Items in condition blocks use `level1_sub.add(...)`
-  - Main loop items use `level1.add(...)`
-
 - **Placeholder Support**:
   - Use `{name}` and `{partition}` in any string field
   - Automatically replaced with `.format(name=name, partition=partition)`
@@ -80,20 +78,35 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
    - Or drag the file into an open browser window
 
 2. **Configure Your PlistFile**:
+![Screenshot_15-1-2026_145932_](https://github.com/user-attachments/assets/0564b5d1-4fe9-46ff-85b7-b8859ed386f4)
    ```
    - Enter PlistFile name (e.g., "sample2.plist")
    - Click "Add Plb" to create a new Pattern List Block
    ```
 
-3. **Configure PLB**:
+4. **Configure PLB**:
+<img width="1039" height="341" alt="image" src="https://github.com/user-attachments/assets/076130bb-2abf-4053-b42b-1e01b85729d7" />
+<img width="1551" height="953" alt="image" src="https://github.com/user-attachments/assets/c15c79f1-2944-4d8f-9a5a-d2beb8caaec2" />
+
    ```
    - Enter PLB Name
-   - (Optional) Enter PLB Header text
-   - Configure prepattern/postpattern using mode selectors
+   - (Optional) Enter PLB Header text which is the PLB annotation before code
+   - Configure prepattern/postpattern using mode selectors （!Pay attention：Only one of the four 'preplist' 'prepattern' 'postplist' 'postpattern' can be used!）
    - Add items using the "Add Pats", "Add RefPlb", "Add Comment" buttons
+   --For detailed parameter rules, refer to the  Rules on Structures and Usage table
    ```
+| Attribute | Description |
+|---------|---------------|
+| Version | Plist file should start with  should exist on the beginning of the file (was Version 5.0 for TOS3*). <br>File can be empty as long as it has the version statement.Version 6.0 |
+| PList | The  keyword specifies the beginning of the Pattern List Block.<br>Pattern Lists can include other Pattern Lists in a nested structure using the  keyword. However, Pattern Lists at a lower level cannot include a Pattern List from a higher level, as that would constitute an infinite loop on Pattern Lists (recursive). Such scenarios are checked at load time and will result in a load time failure.PListRefPList` |
+| PreExecRefPList | The  keyword is used to reference a previously defined RefPList which is to be executed in the beginning of the PList. If used, this **element must precede** any Pat or RefPList elements. Can be used along with PreExecPat elements and multiple PreExecRefPList elements may be used.PreExecRefPList |
+| PreExecPat | The  keyword is used to reference a previously defined Pat which is to be executed in the beginning of the PList. If used, this **element must precede** any Pat or RefPList elements. Can be used along with PreExecRefPList elements and multiple PreExecPat elements may be used.PreExecPat |
+| Pat | The  keyword specifies a Pattern to be executed. A user can specify as many Pats as needed.Pat<br>In this project, we can use the string or list of **Tuples** and **Tids** to directly search for patterns in Trace Central, or indirectly search by test name (also known as pattern name) using **Querytid**.|
+| RefPList | The  keyword specifies a referential link to another existing PList defined previously in the current .plist file, or a previously defined .plist file. A user can specify as many RefPLists as needed, within a PList.RefPList |
+| PostExecRefPList | The  keyword indicates a previously defined RefPList which is to be executed prior to the end of the current PList.<br>In the case of all passing elements, this is obvious. But, in the case where the PList is executed using a "non-stop" capture mode and a failing element occurs, the PListName referenced by the PostExecRefPList will be executed after the failing element, prior to the PList finishing its execution.<br>**No Pat or RefPList elements are allowed after** the PostExecRefPList/PostExecPat elements. Can be used along with the PostExecPat elements and multiple PostExecRefPList elements may be used.PostExecRefPList |
+| PostExecPat | The  keyword indicates a pattern which is to be executed prior to the end of the current PList.<br>In the case of all passing elements, this is obvious. But, in the case where the PList is executed using a "non-stop" capture mode and a failing element occurs, the Pattern referenced by the PostExecPat will be executed after the failing element, prior to the PList finishing its execution.<br>**No Pat or RefPList elements are allowed after** the PostExecPat elements. Can be used along with the PostExecRefPList elements and multiple PostExecPat elements may be used.PostExecPat |
 
-4. **Generate Code**:
+6. **Generate Code**:
    ```
    - Click "Generate Code" button
    - Review the generated Python code in the text area
@@ -165,7 +178,6 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
 
 ### Example 1: Simple PLB without Loop
 
-![](PCAR3-Python-Code-Generator/Image/Screenshot_15-1-2026_145932_.jpeg)
 
 
 ```html
@@ -175,7 +187,7 @@ PLB Name: my_plb
 prepattern: Tuple mode → ['pre_pattern']
 postpattern: None
 
-Add Pats (Tuple mode): ['0000123', '0000456']
+Add Pats (Tuple mode): 0000123,0000456
 Add Comment: This is a test
 ```
 
@@ -187,7 +199,7 @@ pcar3.tos_ver = 'tos4'
 level0 = PlistFile('test.plist')
 
 level1 = level0.add(Plb("my_plb", prepattern=Pats(['pre_pattern'])))
-level1.add(Pats(['0000123', '0000456']))
+level1.add(Pats(['0000123','0000456']))
 level1.add(Comment('This is a test'))
 
 if (__name__ == "__main__"):
