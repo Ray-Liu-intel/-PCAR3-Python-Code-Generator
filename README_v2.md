@@ -165,7 +165,7 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
 
 ### Example 1: Simple PLB without Loop
 
-![Screenshot_15-1-2026_145932_](https://github.com/user-attachments/assets/f6977ef3-f739-472d-9bd6-ee5b0ae30922)
+![](PCAR3-Python-Code-Generator/Image/Screenshot_15-1-2026_145932_.jpeg)
 
 
 ```html
