@@ -1100,6 +1100,14 @@ function togglePrePostMode(sel) {
   parent.querySelector(`.${type}-querytid`).style.display = sel.value === 'querytid' ? '' : 'none';
 }
 
+// Helper function to split comma-separated values and format as array
+function formatArrayValues(input) {
+  if (!input) return "''";
+  // Split by comma, trim whitespace, filter empty, and wrap each in quotes
+  const values = input.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`);
+  return values.length > 0 ? values.join(',') : "''";
+}
+
 function generateCode() {
   const plistfile = document.getElementById('plistfile').value;
   let code = 'from veplib.plist_builder_pcar3 import PlistFile, Plb, Pats, Tids, QueryTid, pcar3, Amble, Comment, RefPlb, NameFilter, PreExecPat, PostExecPat, PreExecRefPList, PostExecRefPList\n';
@@ -1150,10 +1158,10 @@ function generateCode() {
     const prepatternMode = plbDiv.querySelector('.prepattern-mode').value;
     if (prepatternMode === 'tuple') {
       const val = plbDiv.querySelector('.prepattern-value').value;
-      if (val) plbParams.push(`prepattern=Pats(['${val}'])`);
+      if (val) plbParams.push(`prepattern=Pats([${formatArrayValues(val)}])`);
     } else if (prepatternMode === 'tids') {
       const val = plbDiv.querySelector('.prepattern-tids-value').value;
-      if (val) plbParams.push(`prepattern=Pats(Tids(['${val}']))`);
+      if (val) plbParams.push(`prepattern=Pats(Tids([${formatArrayValues(val)}]))`);
     } else if (prepatternMode === 'querytid') {
       const testname = plbDiv.querySelector('.prepattern-querytid-testname').value;
       const testtype = plbDiv.querySelector('.prepattern-querytid-testtype').value;
@@ -1169,10 +1177,10 @@ function generateCode() {
     const postpatternMode = plbDiv.querySelector('.postpattern-mode').value;
     if (postpatternMode === 'tuple') {
       const val = plbDiv.querySelector('.postpattern-value').value;
-      if (val) plbParams.push(`postpattern=Pats(['${val}'])`);
+      if (val) plbParams.push(`postpattern=Pats([${formatArrayValues(val)}])`);
     } else if (postpatternMode === 'tids') {
       const val = plbDiv.querySelector('.postpattern-tids-value').value;
-      if (val) plbParams.push(`postpattern=Pats(Tids(['${val}']))`);
+      if (val) plbParams.push(`postpattern=Pats(Tids([${formatArrayValues(val)}]))`);
     } else if (postpatternMode === 'querytid') {
       const testname = plbDiv.querySelector('.postpattern-querytid-testname').value;
       const testtype = plbDiv.querySelector('.postpattern-querytid-testtype').value;
@@ -1204,13 +1212,13 @@ function generateCode() {
         if (mode === 'default') {
           const val = itemDiv.querySelector('.pats-value').value;
           if (val)
-            code += `level1.add(Pats(['${val}']))\n`;
+            code += `level1.add(Pats([${formatArrayValues(val)}]))\n`;
         } else if (mode === 'tids') {
           const tids = itemDiv.querySelector('.tids-value').value;
           const chunk = itemDiv.querySelector('.tids-chunk').value;
           let patsArgs = [];
           if (chunk) patsArgs.push(`chunk="${chunk}"`);
-          code += `level1.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+          code += `level1.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
         } else if (mode === 'querytid') {
           const testname = itemDiv.querySelector('.querytid-testname').value;
           const testtype = itemDiv.querySelector('.querytid-testtype').value;
@@ -1228,13 +1236,13 @@ function generateCode() {
         if (mode === 'default') {
           const val = itemDiv.querySelector(`.${type}-value`).value;
           if (val)
-            code += `level1.add(${prefix}(pat=Pats(['${val}'])))\n`;
+            code += `level1.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
         } else if (mode === 'tids') {
           const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
           const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
           let patsArgs = [];
           if (chunk) patsArgs.push(`chunk="${chunk}"`);
-          code += `level1.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+          code += `level1.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
         } else if (mode === 'querytid') {
           const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
           const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
@@ -1290,9 +1298,11 @@ function generateCode() {
               const val = itemDiv.querySelector('.pats-value').value;
               if (val) {
                 if (val.includes('{name}') || val.includes('{partition}')) {
-                  code += `    level1.add(Pats(['${val}'.format(name=name, partition=partition)]))\n`;
+                  // Format array but keep placeholders for .format()
+                  const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(Pats([${formattedVals}.format(name=name, partition=partition)]))\n`;
                 } else {
-                  code += `    level1.add(Pats(['${val}']))\n`;
+                  code += `    level1.add(Pats([${formatArrayValues(val)}]))\n`;
                 }
               }
             } else if (mode === 'tids') {
@@ -1303,9 +1313,11 @@ function generateCode() {
                 if (chunk) patsArgs.push(`chunk="${chunk}"`);
                 
                 if (tids.includes('{name}') || tids.includes('{partition}')) {
-                  code += `    level1.add(Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                  // Format array but keep placeholders for .format()
+                  const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                 } else {
-                  code += `    level1.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                  code += `    level1.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                 }
               }
             } else if (mode === 'querytid') {
@@ -1367,9 +1379,11 @@ function generateCode() {
               const val = itemDiv.querySelector(`.${type}-value`).value;
               if (val) {
                 if (val.includes('{name}') || val.includes('{partition}')) {
-                  code += `    level1.add(${prefix}(pat=Pats(['${val}'.format(name=name, partition=partition)])))\n`;
+                  // Format array but keep placeholders for .format()
+                  const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(${prefix}(pat=Pats([${formattedVals}.format(name=name, partition=partition)])))\n`;
                 } else {
-                  code += `    level1.add(${prefix}(pat=Pats(['${val}'])))\n`;
+                  code += `    level1.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
                 }
               }
             } else if (mode === 'tids') {
@@ -1380,9 +1394,11 @@ function generateCode() {
                 if (chunk) patsArgs.push(`chunk="${chunk}"`);
                 
                 if (tids.includes('{name}') || tids.includes('{partition}')) {
-                  code += `    level1.add(${prefix}(pat=Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                  // Format array but keep placeholders for .format()
+                  const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(${prefix}(pat=Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                 } else {
-                  code += `    level1.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                  code += `    level1.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                 }
               }
             } else if (mode === 'querytid') {
@@ -1485,9 +1501,11 @@ function generateCode() {
                 const val = itemDiv.querySelector('.pats-value').value;
                 if (val) {
                   if (val.includes('{name}') || val.includes('{partition}')) {
-                    code += `        level1_sub.add(Pats(['${val}'.format(name=name, partition=partition)]))\n`;
+                    // Format array but keep placeholders for .format()
+                    const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(Pats([${formattedVals}.format(name=name, partition=partition)]))\n`;
                   } else {
-                    code += `        level1_sub.add(Pats(['${val}']))\n`;
+                    code += `        level1_sub.add(Pats([${formatArrayValues(val)}]))\n`;
                   }
                 }
               } else if (mode === 'tids') {
@@ -1498,9 +1516,11 @@ function generateCode() {
                   if (chunk) patsArgs.push(`chunk="${chunk}"`);
                   
                   if (tids.includes('{name}') || tids.includes('{partition}')) {
-                    code += `        level1_sub.add(Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                    // Format array but keep placeholders for .format()
+                    const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                   } else {
-                    code += `        level1_sub.add(Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                    code += `        level1_sub.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                   }
                 }
               } else if (mode === 'querytid') {
@@ -1562,9 +1582,11 @@ function generateCode() {
                 const val = itemDiv.querySelector(`.${type}-value`).value;
                 if (val) {
                   if (val.includes('{name}') || val.includes('{partition}')) {
-                    code += `        level1_sub.add(${prefix}(pat=Pats(['${val}'.format(name=name, partition=partition)])))\n`;
+                    // Format array but keep placeholders for .format()
+                    const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(${prefix}(pat=Pats([${formattedVals}.format(name=name, partition=partition)])))\n`;
                   } else {
-                    code += `        level1_sub.add(${prefix}(pat=Pats(['${val}'])))\n`;
+                    code += `        level1_sub.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
                   }
                 }
               } else if (mode === 'tids') {
@@ -1575,9 +1597,11 @@ function generateCode() {
                   if (chunk) patsArgs.push(`chunk="${chunk}"`);
                   
                   if (tids.includes('{name}') || tids.includes('{partition}')) {
-                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids(['${tids}'.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                    // Format array but keep placeholders for .format()
+                    const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                   } else {
-                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids(['${tids}'])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                   }
                 }
               } else if (mode === 'querytid') {
