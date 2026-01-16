@@ -1,6 +1,41 @@
-<img width="621" height="23" alt="image" src="https://github.com/user-attachments/assets/4fe20c28-69f3-49df-aa75-5bfb3b371718" /># PCAR3 Python Code Generator 2.0
+# PCAR3 Python Code Generator 2.0
 
 A powerful, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any server infrastructure.
+## ☀️PCAR3 Differences between the ToS3 and ToS4 versions
+Due to the change from tos3 to tos4, the syntax of our Plistfile also has undergone some modifications.Previously in TOS3 PLists the many options we had (PreBurst, PostBurst, PrePattern, etc.) were written in a more compressed view in bracket blocks after the PList name. Now, in TOS4 PDE's will be able to see a more explicit view of what content will execute in what order and any form of ambiguity should not be an issue. Because this is more flattened than previously done users may need to develop or adapt to the new changes as not all previous functions in pcar will naturally convert to a TOS4 compatible plist.The tos4 plist structure was designed as a "what you see is what you get" and we must follow the syntax order of the following images.Using the layout as above will indeed make the pcar/plists longer but it will be created exactly as it is written without compressing the view/functionality. 
+<img width="1099" height="419" alt="image" src="https://github.com/user-attachments/assets/ff50c801-8975-4b9d-a4a2-f58ecba5f288" />
+
+### PList Flatternd View
+| Attribute | Description |
+|---------|---------------|
+| Version | Plist file should start with  should exist on the beginning of the file (was Version 5.0 for TOS3*). <br>File can be empty as long as it has the version statement.Version 6.0 |
+| PList | The  keyword specifies the beginning of the Pattern List Block.<br>Pattern Lists can include other Pattern Lists in a nested structure using the  keyword. However, Pattern Lists at a lower level cannot include a Pattern List from a higher level, as that would constitute an infinite loop on Pattern Lists (recursive). Such scenarios are checked at load time and will result in a load time failure.PListRefPList` |
+| PreExecRefPList | The  keyword is used to reference a previously defined RefPList which is to be executed in the beginning of the PList. If used, this **element must precede** any Pat or RefPList elements. Can be used along with PreExecPat elements and multiple PreExecRefPList elements may be used.PreExecRefPList |
+| PreExecPat | The  keyword is used to reference a previously defined Pat which is to be executed in the beginning of the PList. If used, this **element must precede** any Pat or RefPList elements. Can be used along with PreExecRefPList elements and multiple PreExecPat elements may be used.PreExecPat |
+| Pat | The  keyword specifies a Pattern to be executed. A user can specify as many Pats as needed.Pat<br>In this project, we can use the string or list of **Tuples** and **Tids** to directly search for patterns in Trace Central, or indirectly search by test name (also known as pattern name) using **Querytid**.|
+| RefPList | The  keyword specifies a referential link to another existing PList defined previously in the current .plist file, or a previously defined .plist file. A user can specify as many RefPLists as needed, within a PList.RefPList |
+| PostExecRefPList | The  keyword indicates a previously defined RefPList which is to be executed prior to the end of the current PList.<br>In the case of all passing elements, this is obvious. But, in the case where the PList is executed using a "non-stop" capture mode and a failing element occurs, the PListName referenced by the PostExecRefPList will be executed after the failing element, prior to the PList finishing its execution.<br>**No Pat or RefPList elements are allowed after** the PostExecRefPList/PostExecPat elements. Can be used along with the PostExecPat elements and multiple PostExecRefPList elements may be used.PostExecRefPList |
+| PostExecPat | The  keyword indicates a pattern which is to be executed prior to the end of the current PList.<br>In the case of all passing elements, this is obvious. But, in the case where the PList is executed using a "non-stop" capture mode and a failing element occurs, the Pattern referenced by the PostExecPat will be executed after the failing element, prior to the PList finishing its execution.<br>**No Pat or RefPList elements are allowed after** the PostExecPat elements. Can be used along with the PostExecRefPList elements and multiple PostExecPat elements may be used.PostExecPat |
+
+### Parameter Variation
+| TOS3 | TOS4 |
+|---------|---------------|
+| GlobalPlist​ | Plist​ |
+| Plist​ | RefPlist​ |
+| PreBurst/PreBurstPlist​ | PreExecPat/PreExecRefPList​ |
+| PostBurst/PostburstPlist​ | PostExecPat/PostExecRefPList ​ |
+| PrePattern/PostPattern​​ | PrePattern/PostPattern​​(add for each main pattern) |
+| PrePList/PostPList​ | PrePList/PostPList(add for each main pattern)​ |
+| Mask -> Plist | DefaultPListPinMask ​ |
+| Mask -> Pattern | PatPinMask​ |
+| <img width="1106" height="820" alt="image" src="https://github.com/user-attachments/assets/ddbe2b78-31f7-43da-b492-447506262e4f" /> | <img width="774" height="459" alt="image" src="https://github.com/user-attachments/assets/90151416-bef2-4d29-b807-2c9b5975e5e1" /> |
+
+### Important Links
+[DMR Tos4 PCAR3 notes for PDE's](https://wiki.ith.intel.com/spaces/TVPV/pages/3785317182/DMR+Tos4+PCAR3+notes+for+PDE+s#DMRTos4PCAR3notesforPDE's-TOS4PList_BuilderCommandLineRequirements)<br>
+[Plist syntax differences for TOS3 and TOS4](https://wiki.ith.intel.com/spaces/HTD/pages/4045277291/Plist+syntax+differences+for+TOS3+and+TOS4)<br>
+[PCAR3 full reference](https://wiki.ith.intel.com/spaces/TVPV/pages/1207039914/PCAR3+full+reference#PCAR3fullreference-Tids())<br>
+[PCAR3 Examples](https://wiki.ith.intel.com/spaces/TVPV/pages/1404112654/PCAR3+Examples)Only focus on Tos4 at bottom of the link
+
 
 ## 🎯 Features
 
@@ -95,16 +130,7 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
    - Add items using the "Add Pats", "Add RefPlb", "Add Comment" buttons
    --For detailed parameter rules, refer to the  Rules on Structures and Usage table
    ```
-| Attribute | Description |
-|---------|---------------|
-| Version | Plist file should start with  should exist on the beginning of the file (was Version 5.0 for TOS3*). <br>File can be empty as long as it has the version statement.Version 6.0 |
-| PList | The  keyword specifies the beginning of the Pattern List Block.<br>Pattern Lists can include other Pattern Lists in a nested structure using the  keyword. However, Pattern Lists at a lower level cannot include a Pattern List from a higher level, as that would constitute an infinite loop on Pattern Lists (recursive). Such scenarios are checked at load time and will result in a load time failure.PListRefPList` |
-| PreExecRefPList | The  keyword is used to reference a previously defined RefPList which is to be executed in the beginning of the PList. If used, this **element must precede** any Pat or RefPList elements. Can be used along with PreExecPat elements and multiple PreExecRefPList elements may be used.PreExecRefPList |
-| PreExecPat | The  keyword is used to reference a previously defined Pat which is to be executed in the beginning of the PList. If used, this **element must precede** any Pat or RefPList elements. Can be used along with PreExecRefPList elements and multiple PreExecPat elements may be used.PreExecPat |
-| Pat | The  keyword specifies a Pattern to be executed. A user can specify as many Pats as needed.Pat<br>In this project, we can use the string or list of **Tuples** and **Tids** to directly search for patterns in Trace Central, or indirectly search by test name (also known as pattern name) using **Querytid**.|
-| RefPList | The  keyword specifies a referential link to another existing PList defined previously in the current .plist file, or a previously defined .plist file. A user can specify as many RefPLists as needed, within a PList.RefPList |
-| PostExecRefPList | The  keyword indicates a previously defined RefPList which is to be executed prior to the end of the current PList.<br>In the case of all passing elements, this is obvious. But, in the case where the PList is executed using a "non-stop" capture mode and a failing element occurs, the PListName referenced by the PostExecRefPList will be executed after the failing element, prior to the PList finishing its execution.<br>**No Pat or RefPList elements are allowed after** the PostExecRefPList/PostExecPat elements. Can be used along with the PostExecPat elements and multiple PostExecRefPList elements may be used.PostExecRefPList |
-| PostExecPat | The  keyword indicates a pattern which is to be executed prior to the end of the current PList.<br>In the case of all passing elements, this is obvious. But, in the case where the PList is executed using a "non-stop" capture mode and a failing element occurs, the Pattern referenced by the PostExecPat will be executed after the failing element, prior to the PList finishing its execution.<br>**No Pat or RefPList elements are allowed after** the PostExecPat elements. Can be used along with the PostExecRefPList elements and multiple PostExecPat elements may be used.PostExecPat |
+
 
 6. **Generate Code**:
    ```
@@ -113,7 +139,7 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
    - Click "Copy Code" to copy to clipboard
    ```
 
-### Using Loop Partition
+### Advanced Using Loop Partition
 
 1. **Enable Loop Partition**:
    ```
@@ -173,6 +199,26 @@ A powerful, browser-based web UI tool for generating PCAR3 Python code with adva
      * if/elif/else blocks with level1_sub.add(...) for condition items
      * Proper indentation and .format() calls
    ```
+   
+### Transfer pcar3 code to Flash
+1. **Submi PCAR3 Config file**:
+   ```
+   - Left bar > Job Submission > Trace Conversion
+   - Create a. pcar file in UNIX and copy the generated code into it
+   - Select PCAR Config and fill in the UNIX path of the PCAR3 config file
+   - Tick on Plist Builder refresh
+   - Fill in the rest of the form based on your test requirement (similar to trace conversion WebUI form)
+   ```
+   <img width="1327" height="727" alt="image" src="https://github.com/user-attachments/assets/f2ef0d78-50cd-4695-8675-dd64bf1e4c69" />
+   <img width="550" height="547" alt="image" src="https://github.com/user-attachments/assets/368462b1-147f-4c1c-8cbd-20b6ca9cedd3" />
+
+   
+3. **Check the PList result**:
+   ```
+   - Left bar > Job Submission > Results
+   - Plist file > Copy Path to Clipboard (Directory of Plist Builder Results) and gvim in the UNIX.
+   ```
+   <img width="2121" height="132" alt="image" src="https://github.com/user-attachments/assets/a7b27f60-28d9-464b-b10d-9e9cece68572" />
 
 ## 💡 Usage Examples
 
@@ -279,25 +325,6 @@ if (__name__ == "__main__"):
     print("Summary")
     pcar3.report(detail=True)
     print(pcar3.gen_plist_preview())
-```
-
-### Example 3: Advanced Pattern Modes
-
-```html
-<!-- PLB with multiple pattern types -->
-PLB Name: advanced_plb
-
-Loop Items:
-  - Pats (QueryTid): testname='test.*', testtype='scan', chunk="2"
-  - PreExecPat (Tids mode): ['TID123', 'TID456'], chunk="1"
-  - PostExecRefPList: post_execution_list
-  - RefPlb: reference_plb_{name}
-  - Comment: Advanced pattern configuration
-
-if: partition == 'P27A'
-  - PreExecRefPList: pre_list_{partition}
-  - Pats (Tuple): ['pattern_{name}']
-  - PostExecPat (QueryTid): testname='post_{name}', testtype='functional', chunk="3"
 ```
 
 ## 🎨 UI Components
