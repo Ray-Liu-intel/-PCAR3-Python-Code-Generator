@@ -447,6 +447,7 @@ function addPlb() {
       <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">⌵</button>
       <label>Plb Name: <input type="text" class="plb-name" value="PList${String.fromCharCode(64+plbCount)}"></label>
       <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
+      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def"></label>
     </div>
     <div class="plb-content">
       <div class="plb-row">
@@ -1200,6 +1201,12 @@ function generateCode() {
       code += `level1 = level0.add(    Comment('        ${plbHeaderText}        '))\n`;
       code += `level1 = level0.add(    Comment('---------------------------'))\n`;
       code += `level1 = level0.add(    Comment(' '))\n`;
+    }
+
+    // Add mask parameter if specified
+    const plbMask = plbDiv.querySelector('.plb-mask').value;
+    if (plbMask) {
+      plbParams.push(`mask="${plbMask}"`);
     }
 
     code += `level1 = level0.add(Plb("${plbName}"${plbParams.length ? ', ' + plbParams.join(', ') : ''}))\n`;
