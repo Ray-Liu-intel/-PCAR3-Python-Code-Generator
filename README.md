@@ -28,7 +28,7 @@ Due to the change from tos3 to tos4, the syntax of our Plistfile also has underg
 | PrePList/PostPList​ | PrePList/PostPList(add for each main pattern)​ |
 | Mask -> Plist | DefaultPListPinMask ​ |
 | Mask -> Pattern | PatPinMask​ |
-| <img width="1106" height="820" alt="image" src="https://github.com/user-attachments/assets/ddbe2b78-31f7-43da-b492-447506262e4f" /> | <img width="774" height="459" alt="image" src="https://github.com/user-attachments/assets/90151416-bef2-4d29-b807-2c9b5975e5e1" /> |
+| <img width="1356" height="758" alt="image" src="https://github.com/user-attachments/assets/d640d08d-326d-4e17-a037-5f0b972ee133" /> | <img width="774" height="459" alt="image" src="https://github.com/user-attachments/assets/90151416-bef2-4d29-b807-2c9b5975e5e1" /> |
 
 ### Important Links
 [DMR Tos4 PCAR3 notes for PDE's](https://wiki.ith.intel.com/spaces/TVPV/pages/3785317182/DMR+Tos4+PCAR3+notes+for+PDE+s#DMRTos4PCAR3notesforPDE's-TOS4PList_BuilderCommandLineRequirements)<br>
