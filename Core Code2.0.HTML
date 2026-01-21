@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PCAR3 Python Code Generator 2.0 - Company</title>
+  <style>
+    body {
+      background: #f5f7fa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    .intel-header {
+      background: #0071C5;
+      color: #fff;
+      padding: 24px 0 16px 0;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      position: relative;
+    }
+    .intel-logo {
+      height: 48px;
+      vertical-align: middle;
+      margin-right: 16px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .container {
+      max-width: 1400px;
+      margin: 32px auto 24px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,113,197,0.08);
+      padding: 32px 32px 24px 32px;
+    }
+    .plb-block {
+      border: 1px solid #e0e6ed;
+      margin: 18px 0;
+      padding: 18px 12px 12px 12px;
+      position: relative;
+      border-radius: 8px;
+      background: #f8fafc;
+      box-shadow: 0 2px 8px rgba(0,113,197,0.03);
+    }
+    .plb-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .plb-toggle-btn {
+      background: #0071C5;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 12px;
+      transition: background 0.2s;
+      min-width: 80px;
+    }
+    .plb-toggle-btn:hover {
+      background: #005fa3;
+    }
+    .delete-plb-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #fff;
+      color: #0071C5;
+      border: 1px solid #0071C5;
+      border-radius: 6px;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .delete-plb-btn:hover {
+      background: #0071C5;
+      color: #fff;
+    }
+    .plb-content {
+      transition: all 0.3s ease;
+    }
+    .plb-collapsed .plb-content {
+      display: none;
+    }
+    .plb-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .param-group {
+      margin-right: 24px;
+      margin-bottom: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background: #f0f6fa;
+      border-radius: 6px;
+      border: 1px dashed #0071C5;
+      padding: 4px 12px;
+    }
+    .param-group label {
+      margin-right: 18px;
+      margin-bottom: 4px;
+    }
+    .item-block {
+      margin-left: 20px;
+      margin-bottom: 8px;
+      background: #fff;
+      border: 1px dashed #b3c6d9;
+      padding: 8px 8px 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: text;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,113,197,0.03);
+      flex-wrap: wrap;
+    }
+    .item-content {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
+    }
+    .item-actions {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .drag-handle {
+      cursor: grab;
+      user-select: none;
+      margin-right: 12px;
+      font-size: 20px;
+      color: #0071C5;
+      flex-shrink: 0;
+    }
+    input[type="text"], select, textarea {
+      font-size: 15px;
+      padding: 4px 8px;
+      margin: 0 12px 0 8px;
+      border: 1px solid #b3c6d9;
+      border-radius: 5px;
+      background: #fff;
+      transition: border 0.2s;
+    }
+    input[type="text"]:focus, select:focus, textarea:focus {
+      border: 1.5px solid #0071C5;
+      outline: none;
+    }
+    label {
+      margin-right: 16px;
+      margin-left: 8px;
+    }
+    .item-block > b,
+    .item-block > select {
+      margin-right: 16px;
+      margin-left: 8px;
+    }
+    .item-block button {
+      margin-left: 16px;
+      background: #fff;
+      color: #0071C5;
+      border: 1px solid #0071C5;
+      border-radius: 5px;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .item-block button:hover {
+      background: #0071C5;
+      color: #fff;
+    }
+    button {
+      background: #0071C5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 18px;
+      font-size: 15px;
+      margin: 8px 8px 8px 0;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(0,113,197,0.06);
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    h3 {
+      margin-top: 32px;
+      color: #0071C5;
+      font-weight: 400;
+    }
+    #codebox {
+      background: #f4f7fa;
+      border: 1px solid #e0e6ed;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+      font-size: 15px;
+      color: #222;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+    .intel-footer {
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+      margin: 32px 0 12px 0;
+    }
+    .pats-querytid,
+    .pre-querytid,
+    .post-querytid {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      align-items: center;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+    .pats-querytid label,
+    .pre-querytid label,
+    .post-querytid label {
+      margin-right: 0;
+      min-width: 110px;
+    }
+    .pats-querytid input,
+    .pre-querytid input,
+    .post-querytid input {
+      min-width: 120px;
+    }
+    
+    /* Loop Partition styles */
+    .loop-config-section {
+      border: 2px solid #0071C5;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      background: #f0f6fa;
+    }
+    .loop-toggle-section {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #fff;
+      border-radius: 6px;
+    }
+    .decode-par-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .decode-par-table th,
+    .decode-par-table td {
+      border: 1px solid #b3c6d9;
+      padding: 8px;
+      text-align: left;
+    }
+    .decode-par-table th {
+      background: #0071C5;
+      color: #fff;
+    }
+    .loop-template-section {
+      border: 2px dashed #0071C5;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      background: #fff;
+      display: block;
+    }
+    .loop-section {
+      border: 2px dashed #0071C5;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      background: #fff;
+    }
+    .condition-block {
+      border: 1px solid #e0e6ed;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 10px 0;
+      background: #f8fafc;
+    }
+    .condition-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .condition-type {
+      font-weight: bold;
+      color: #0071C5;
+      margin-right: 12px;
+    }
+    .hide-subplb {
+      display: none !important;
+    }
+    .hide-main-loop-prepost {
+      display: none !important;
+    }
+    
+    @media (max-width: 700px) {
+      .container { padding: 12px 2vw; }
+      .plb-block { padding: 10px 4px 8px 4px; }
+      .item-block { padding: 6px 2px 6px 0; flex-direction: column; align-items: flex-start; }
+      .item-content { margin-bottom: 8px; }
+      .item-actions { margin-left: 0; }
+      #codebox { padding: 8px; }
+      .plb-row { flex-direction: column; align-items: flex-start; }
+      .param-group { margin-bottom: 10px; }
+      .pats-querytid,
+      .pre-querytid,
+      .post-querytid {
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <div class="intel-header">
+    <img class="intel-logo" src="https://images.socialchorus.com/image/fetch/c_fill,dpr_2.0,b_rgb:ffffff,q_75,f_auto/https%3A%2F%2Fassets.socialchorus.com%2Fproduction%2F12717%2Fimages%2F17b859bf-87aa-4456-8836-da0d82fb5e6a.jpeg" alt="Company Logo">
+    <span style="font-size: 2rem; font-weight: 500;">PCAR3 Python Code Generator 2.0</span>
+  </div>
+  <div class="container">
+    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist"></label>
+    
+    <!-- Loop Partition Toggle -->
+    <div class="loop-toggle-section">
+      <label>
+        <input type="checkbox" id="loopPartitionToggle" onchange="toggleLoopPartition()">
+        Enable Loop Partition
+      </label>
+    </div>
+    
+    <!-- Loop Configuration Section -->
+    <div id="loopConfigSection" class="loop-config-section" style="display: none;">
+      <h3 style="margin-top: 0;">Loop Configuration</h3>
+      <label style="display: block; margin-bottom: 8px;">
+        name_of_instance (one per line):
+        <br>
+        <textarea id="nameOfInstance" rows="4" style="width: 90%; margin-top: 8px;" placeholder="One per line, e.g.&#10;extemca&#10;intemca1&#10;intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
+      </label>
+      
+      <h4>decode_par Mapping</h4>
+      <button onclick="addDecodeParRow()">Add Mapping</button>
+      <table class="decode-par-table" id="decodeParTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Partition String</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="decodeParTableBody">
+        </tbody>
+      </table>
+    </div>
+    
+    <button onclick="addPlb()">Add Plb</button>
+    <div id="plbContainer"></div>
+    <button onclick="generateCode()">Generate Code</button>
+    <h3>Generated Result:</h3>
+    <pre id="codebox"></pre>
+  </div>
+  <div class="intel-footer">
+    &copy; 2026 INTEL PDG CHINA. All rights reserved.
+  </div>
+<script>
+let plbCount = 0;
+let loopEnabled = false;
+
+function toggleLoopPartition() {
+  loopEnabled = document.getElementById('loopPartitionToggle').checked;
+  document.getElementById('loopConfigSection').style.display = loopEnabled ? 'block' : 'none';
+  
+  // Update all PLB blocks to show/hide loop section
+  document.querySelectorAll('.plb-block').forEach(plbDiv => {
+    const loopSection = plbDiv.querySelector('.loop-section');
+    if (loopSection) loopSection.style.display = loopEnabled ? 'block' : 'none';
+  });
+}
+
+function addDecodeParRow() {
+  const tbody = document.getElementById('decodeParTableBody');
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td><input type="text" class="decode-par-name" style="width: 150px;" value=""></td>
+    <td><input type="text" class="decode-par-partition" style="width: 300px;" value=""></td>
+    <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+  `;
+  tbody.appendChild(row);
+}
+
+function syncNameOfInstanceToMapping() {
+  const instanceText = document.getElementById('nameOfInstance').value;
+  const instances = instanceText.split('\n').filter(s => s.trim());
+  const tbody = document.getElementById('decodeParTableBody');
+  
+  // Get existing mappings
+  const existingMappings = {};
+  tbody.querySelectorAll('tr').forEach(row => {
+    const nameInput = row.querySelector('.decode-par-name');
+    const partitionInput = row.querySelector('.decode-par-partition');
+    if (nameInput && partitionInput) {
+      existingMappings[nameInput.value] = partitionInput.value;
+    }
+  });
+  
+  // Clear table
+  tbody.innerHTML = '';
+  
+  // Add rows for all instances
+  instances.forEach(instance => {
+    const row = document.createElement('tr');
+    const partition = existingMappings[instance] || '';
+    row.innerHTML = `
+      <td><input type="text" class="decode-par-name" style="width: 150px;" value="${instance}" readonly></td>
+      <td><input type="text" class="decode-par-partition" style="width: 300px;" value="${partition}"></td>
+      <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function addPlb() {
+  plbCount++;
+  const plbDiv = document.createElement('div');
+  plbDiv.className = 'plb-block';
+  plbDiv.id = `plb${plbCount}`;
+  plbDiv.innerHTML = `
+    <button class="delete-plb-btn" onclick="deletePlb('${plbDiv.id}')">Delete Plb</button>
+    <div class="plb-header">
+      <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">⌵</button>
+      <label>Plb Name: <input type="text" class="plb-name" value="PList${String.fromCharCode(64+plbCount)}"></label>
+      <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
+      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def"></label>
+    </div>
+    <div class="plb-content">
+      <div class="plb-row">
+        <span class="param-group">
+          <b>pre:</b>
+          <label>preplist:<input type="text" class="preplist"></label>
+          <label>prepattern:</label>
+          <select class="prepattern-mode" onchange="togglePlbPatternMode(this, 'prepattern')">
+            <option value="tuple">Tuple</option>
+            <option value="tids">Tids</option>
+            <option value="querytid">QueryTid</option>
+          </select>
+          <span class="prepattern-tuple" style="">
+            <input type="text" class="prepattern-value" value="">
+          </span>
+          <span class="prepattern-tids" style="display:none">
+            <label>Tids: <input type="text" class="prepattern-tids-value" value=""></label>
+          </span>
+          <span class="prepattern-querytid" style="display:none">
+            <label>testname: <input type="text" class="prepattern-querytid-testname" value=""></label>
+            <label>testtype: <input type="text" class="prepattern-querytid-testtype" value=""></label>
+          </span>
+        </span>
+      </div>
+      <div class="plb-row">
+        <span class="param-group">
+          <b>post:</b>
+          <label>postplist:<input type="text" class="postplist"></label>
+          <label>postpattern:</label>
+          <select class="postpattern-mode" onchange="togglePlbPatternMode(this, 'postpattern')">
+            <option value="tuple">Tuple</option>
+            <option value="tids">Tids</option>
+            <option value="querytid">QueryTid</option>
+          </select>
+          <span class="postpattern-tuple" style="">
+            <input type="text" class="postpattern-value" value="">
+          </span>
+          <span class="postpattern-tids" style="display:none">
+            <label>Tids: <input type="text" class="postpattern-tids-value" value=""></label>
+          </span>
+          <span class="postpattern-querytid" style="display:none">
+            <label>testname: <input type="text" class="postpattern-querytid-testname" value=""></label>
+            <label>testtype: <input type="text" class="postpattern-querytid-testtype" value=""></label>
+          </span>
+        </span>
+      </div>
+      <div class="plb-row">
+        <button onclick="addItem('${plbDiv.id}', 'pats')">Add Pats</button>
+        <button onclick="addItem('${plbDiv.id}', 'preexecref')">Add PreExecRefPList</button>
+        <button onclick="addItem('${plbDiv.id}', 'pre')">Add PreExecPat</button>
+        <button onclick="addItem('${plbDiv.id}', 'ref')">Add RefPlb</button>
+        <button onclick="addItem('${plbDiv.id}', 'postexecref')">Add PostExecRefPList</button>
+        <button onclick="addItem('${plbDiv.id}', 'post')">Add PostExecPat</button>
+        <button onclick="addItem('${plbDiv.id}', 'comment')">Add Comment</button>
+      </div>
+      <div class="item-list"></div>
+      
+      <!-- Loop Section with if/elif/else -->
+      <div class="loop-section" style="display: ${loopEnabled ? 'block' : 'none'};">
+        <h4>Loop Items (for name in name_of_instance)</h4>
+        <div class="plb-row">
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'pats')">Add Pats</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'preexecref')" class="hide-main-loop-prepost">Add PreExecRefPList</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'pre')" class="hide-main-loop-prepost">Add PreExecPat</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'ref')">Add RefPlb</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'postexecref')" class="hide-main-loop-prepost">Add PostExecRefPList</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'post')" class="hide-main-loop-prepost">Add PostExecPat</button>
+          <button onclick="addMainLoopItem('${plbDiv.id}', 'comment')">Add Comment</button>
+        </div>
+        <div class="main-loop-list"></div>
+        
+        <div style="margin-top: 16px;">
+          <button onclick="addConditionBlock('${plbDiv.id}', 'if')">Add if</button>
+          <button onclick="addConditionBlock('${plbDiv.id}', 'elif')">Add elif</button>
+          <button onclick="addConditionBlock('${plbDiv.id}', 'else')">Add else</button>
+        </div>
+        <div class="condition-list"></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('plbContainer').appendChild(plbDiv);
+
+  setTimeout(() => {
+    const itemList = plbDiv.querySelector('.item-list');
+    if (typeof Sortable !== 'undefined') {
+      Sortable.create(itemList, {
+        animation: 150,
+        ghostClass: 'drag-over',
+        handle: '.drag-handle'
+      });
+    }
+    
+    // Also initialize Sortable for main-loop-list
+    const mainLoopList = plbDiv.querySelector('.main-loop-list');
+    if (mainLoopList && typeof Sortable !== 'undefined') {
+      Sortable.create(mainLoopList, {
+        animation: 150,
+        ghostClass: 'drag-over',
+        handle: '.drag-handle'
+      });
+    }
+  }, 0);
+}
+
+function togglePlbPatternMode(sel, prefix) {
+  const parent = sel.closest('.param-group');
+  parent.querySelector(`.${prefix}-tuple`).style.display = sel.value === 'tuple' ? '' : 'none';
+  parent.querySelector(`.${prefix}-tids`).style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector(`.${prefix}-querytid`).style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+function togglePlb(plbId, btn) {
+  const plbDiv = document.getElementById(plbId);
+  if (plbDiv) {
+    plbDiv.classList.toggle('plb-collapsed');
+    btn.textContent = plbDiv.classList.contains('plb-collapsed') ? '>' : '⌵';
+  }
+}
+
+function deletePlb(plbId) {
+  const plbDiv = document.getElementById(plbId);
+  if (plbDiv) plbDiv.remove();
+}
+
+function addConditionBlock(plbId, condType) {
+  const plbDiv = document.getElementById(plbId);
+  const conditionList = plbDiv.querySelector('.condition-list');
+  
+  const condDiv = document.createElement('div');
+  condDiv.className = 'condition-block';
+  condDiv.setAttribute('data-condition-type', condType);
+  
+  let conditionInputHtml = '';
+  if (condType === 'if' || condType === 'elif') {
+    conditionInputHtml = `<label>Condition: <input type="text" class="condition-expr" value="" placeholder="e.g., name == 'SOC_A'"></label>`;
+  }
+  
+  condDiv.innerHTML = `
+    <div class="condition-header">
+      <span class="condition-type">${condType}</span>
+      ${conditionInputHtml}
+      <button onclick="this.closest('.condition-block').remove()" style="margin-left: auto;">Delete</button>
+    </div>
+    <div class="plb-row">
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')" class="hide-subplb">Add subPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'postexecref')">Add PostExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'post')">Add PostExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'comment')">Add Comment</button>
+    </div>
+    <div class="loop-item-list"></div>
+  `;
+  
+  conditionList.appendChild(condDiv);
+}
+
+function addLoopItem(condBlock, type) {
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item-block';
+  itemDiv.setAttribute('data-type', type);
+  
+  let handle = '<span class="drag-handle">&#9776;</span>';
+  
+  if (type === 'plb') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Plb:</b>
+        <label>Name: <input type="text" class="plb-name-loop" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'subplb') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>subPlb:</b>
+        <label>Name: <input type="text" class="subplb-name-loop" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'pats') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="toggleLoopPatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="display:none">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'pre' || type === 'post') {
+    const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>${prefix}:</b>
+        <select class="${type}-mode" onchange="toggleLoopPrePostMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="${type}-default">
+          <input type="text" class="${type}-value" value="">
+        </span>
+        <span class="${type}-tids" style="display:none">
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+          <label>chunk: <input type="text" class="${type}-tids-chunk" value=""></label>
+        </span>
+        <span class="${type}-querytid" style="display:none">
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="${type}-querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'ref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>RefPlb:</b>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
+        <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
+        <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'preexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PreExecRefPList:</b>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'postexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PostExecRefPList:</b>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'comment') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Comment:</b>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  }
+  
+  condBlock.querySelector('.loop-item-list').appendChild(itemDiv);
+}
+
+function toggleLoopPatsMode(sel) {
+  const parent = sel.closest('.item-content');
+  parent.querySelector('.pats-default').style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector('.pats-tids').style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector('.pats-querytid').style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+function toggleLoopPrePostMode(sel) {
+  const type = sel.className.split('-')[0];
+  const parent = sel.closest('.item-content');
+  parent.querySelector(`.${type}-default`).style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector(`.${type}-tids`).style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector(`.${type}-querytid`).style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+function addMainLoopItem(plbId, type) {
+  // Reuse addLoopItem but target main-loop-list
+  const plbDiv = document.getElementById(plbId);
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item-block';
+  itemDiv.setAttribute('data-type', type);
+  
+  let handle = '<span class="drag-handle">&#9776;</span>';
+  
+  // Use the same structure as addLoopItem
+  if (type === 'pats') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="toggleLoopPatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="display:none">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'pre' || type === 'post') {
+    const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>${prefix}:</b>
+        <select class="${type}-mode" onchange="toggleLoopPrePostMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="${type}-default">
+          <input type="text" class="${type}-value" value="">
+        </span>
+        <span class="${type}-tids" style="display:none">
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+          <label>chunk: <input type="text" class="${type}-tids-chunk" value=""></label>
+        </span>
+        <span class="${type}-querytid" style="display:none">
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="${type}-querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'ref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>RefPlb:</b>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
+        <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
+        <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'preexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PreExecRefPList:</b>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'postexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PostExecRefPList:</b>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'comment') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Comment:</b>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  }
+  
+  plbDiv.querySelector('.main-loop-list').appendChild(itemDiv);
+}
+
+function addForLoop(plbId) {
+  const plbDiv = document.getElementById(plbId);
+  const forLoopList = plbDiv.querySelector('.for-loop-list');
+  
+  const forLoopDiv = document.createElement('div');
+  forLoopDiv.className = 'for-loop-block';
+  forLoopDiv.style.border = '2px dashed #0071C5';
+  forLoopDiv.style.borderRadius = '8px';
+  forLoopDiv.style.padding = '16px';
+  forLoopDiv.style.margin = '10px 0';
+  forLoopDiv.style.background = '#fff';
+  
+  forLoopDiv.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h5 style="margin: 0;">For Loop (for name in name_of_instance)</h5>
+      <button onclick="this.closest('.for-loop-block').remove()" style="background: #fff; color: #0071C5; border: 1px solid #0071C5;">Delete For Loop</button>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <button onclick="addConditionBlockToForLoop(this.closest('.for-loop-block'), 'if')">Add if</button>
+      <button onclick="addConditionBlockToForLoop(this.closest('.for-loop-block'), 'elif')">Add elif</button>
+      <button onclick="addConditionBlockToForLoop(this.closest('.for-loop-block'), 'else')">Add else</button>
+    </div>
+    <div class="condition-list"></div>
+  `;
+  
+  forLoopList.appendChild(forLoopDiv);
+}
+
+function addConditionBlock(plbId, condType) {
+  const plbDiv = document.getElementById(plbId);
+  const conditionList = plbDiv.querySelector('.condition-list');
+  
+  const condDiv = document.createElement('div');
+  condDiv.className = 'condition-block';
+  condDiv.setAttribute('data-condition-type', condType);
+  
+  let conditionInputHtml = '';
+  if (condType === 'if' || condType === 'elif') {
+    conditionInputHtml = `<label>Condition: <input type="text" class="condition-expr" value="" placeholder="e.g., name == 'intemca27A' or name == 'intemca27B'"></label>`;
+  }
+  
+  condDiv.innerHTML = `
+    <div class="condition-header">
+      <span class="condition-type">${condType}</span>
+      ${conditionInputHtml}
+      <button onclick="this.closest('.condition-block').remove()" style="margin-left: auto;">Delete</button>
+    </div>
+    <div class="plb-row">
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')" class="hide-subplb">Add subPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'postexecref')">Add PostExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'post')">Add PostExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'comment')">Add Comment</button>
+    </div>
+    <div class="loop-item-list"></div>
+  `;
+  
+  conditionList.appendChild(condDiv);
+  
+  // Initialize Sortable for the loop-item-list
+  setTimeout(() => {
+    const loopItemList = condDiv.querySelector('.loop-item-list');
+    if (loopItemList && typeof Sortable !== 'undefined') {
+      Sortable.create(loopItemList, {
+        animation: 150,
+        ghostClass: 'drag-over',
+        handle: '.drag-handle'
+      });
+    }
+  }, 0);
+}
+
+function addConditionBlockToForLoop(forLoopBlock, condType) {
+  const conditionList = forLoopBlock.querySelector('.condition-list');
+  
+  const condDiv = document.createElement('div');
+  condDiv.className = 'condition-block';
+  condDiv.setAttribute('data-condition-type', condType);
+  
+  let conditionInputHtml = '';
+  if (condType === 'if' || condType === 'elif') {
+    conditionInputHtml = `<label>Condition: <input type="text" class="condition-expr" value="" placeholder="e.g., name == 'SOC_A'"></label>`;
+  }
+  
+  condDiv.innerHTML = `
+    <div class="condition-header">
+      <span class="condition-type">${condType}</span>
+      ${conditionInputHtml}
+      <button onclick="this.closest('.condition-block').remove()" style="margin-left: auto;">Delete</button>
+    </div>
+    <div class="plb-row">
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pats')">Add Pats</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'subplb')" class="hide-subplb">Add subPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'preexecref')">Add PreExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'pre')">Add PreExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'ref')">Add RefPlb</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'postexecref')">Add PostExecRefPList</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'post')">Add PostExecPat</button>
+      <button onclick="addLoopItem(this.closest('.condition-block'), 'comment')">Add Comment</button>
+    </div>
+    <div class="loop-item-list"></div>
+  `;
+  
+  conditionList.appendChild(condDiv);
+  
+  // Initialize Sortable for the loop-item-list
+  setTimeout(() => {
+    const loopItemList = condDiv.querySelector('.loop-item-list');
+    if (loopItemList && typeof Sortable !== 'undefined') {
+      Sortable.create(loopItemList, {
+        animation: 150,
+        ghostClass: 'drag-over',
+        handle: '.drag-handle'
+      });
+    }
+  }, 0);
+}
+
+function addItem(plbId, type) {
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item-block';
+  itemDiv.setAttribute('data-type', type);
+
+  let handle = '<span class="drag-handle">&#9776;</span>';
+
+  if (type === 'pats') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="togglePatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="display:none">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'pre' || type === 'post') {
+    const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>${prefix}:</b>
+        <select class="${type}-mode" onchange="togglePrePostMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="${type}-default">
+          <input type="text" class="${type}-value" value="">
+        </span>
+        <span class="${type}-tids" style="display:none">
+          <label>Tids: <input type="text" class="${type}-tids-value" value=""></label>
+          <label>chunk: <input type="text" class="${type}-tids-chunk" value=""></label>
+        </span>
+        <span class="${type}-querytid" style="display:none">
+          <label>testname: <input type="text" class="${type}-querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="${type}-querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="${type}-querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'ref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>RefPlb:</b>
+        <label>Name: <input type="text" class="ref-name" value=""></label>
+        <label>skip_preplistexec: <input type="checkbox" class="skip-pre"></label>
+        <label>skip_postplistexec: <input type="checkbox" class="skip-post"></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'preexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PreExecRefPList:</b>
+        <label>Name: <input type="text" class="preexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'postexecref') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>PostExecRefPList:</b>
+        <label>Name: <input type="text" class="postexecref-name" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  } else if (type === 'comment') {
+    itemDiv.innerHTML = handle + `
+      <div class="item-content">
+        <b>Comment:</b>
+        <label>Content: <input type="text" class="comment-content" value=""></label>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    `;
+  }
+  document.querySelector(`#${plbId} .item-list`).appendChild(itemDiv);
+}
+
+function togglePatsMode(sel) {
+  const parent = sel.closest('.item-content');
+  parent.querySelector('.pats-default').style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector('.pats-tids').style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector('.pats-querytid').style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+function togglePrePostMode(sel) {
+  const type = sel.className.split('-')[0];
+  const parent = sel.closest('.item-content');
+  parent.querySelector(`.${type}-default`).style.display = sel.value === 'default' ? '' : 'none';
+  parent.querySelector(`.${type}-tids`).style.display = sel.value === 'tids' ? '' : 'none';
+  parent.querySelector(`.${type}-querytid`).style.display = sel.value === 'querytid' ? '' : 'none';
+}
+
+// Helper function to split comma-separated values and format as array
+function formatArrayValues(input) {
+  if (!input) return "''";
+  // Split by comma, trim whitespace, filter empty, and wrap each in quotes
+  const values = input.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`);
+  return values.length > 0 ? values.join(',') : "''";
+}
+
+function generateCode() {
+  const plistfile = document.getElementById('plistfile').value;
+  let code = 'from veplib.plist_builder_pcar3 import PlistFile, Plb, Pats, Tids, QueryTid, pcar3, Amble, Comment, RefPlb, NameFilter, PreExecPat, PostExecPat, PreExecRefPList, PostExecRefPList\n';
+  code += 'pcar3.tos_ver = "tos4"\n\n';
+  
+  // Generate name_of_instance and decode_par if loop enabled
+  if (loopEnabled) {
+    const instanceText = document.getElementById('nameOfInstance').value;
+    const instances = instanceText.split('\n').filter(s => s.trim()).map(s => `'${s.trim()}'`);
+    if (instances.length > 0) {
+      code += `name_of_instance = [${instances.join(', ')}]\n\n`;
+    }
+    
+    // Generate decode_par function
+    const decodeParRows = document.querySelectorAll('#decodeParTableBody tr');
+    if (decodeParRows.length > 0) {
+      code += 'def decode_par(name):\n';
+      let firstCondition = true;
+      decodeParRows.forEach((row, idx) => {
+        const name = row.querySelector('.decode-par-name').value;
+        const partition = row.querySelector('.decode-par-partition').value;
+        if (name && partition) {
+          const condKeyword = firstCondition ? 'if' : 'elif';
+          firstCondition = false;
+          code += `    ${condKeyword} name == '${name}':\n`;
+          code += `        return '${partition}'\n`;
+        }
+      });
+      code += `    else:\n`;
+      code += `        return 'NOMATCH'\n\n`;
+    }
+  }
+  
+  code += `level0 = PlistFile('${plistfile}')\n`;
+
+  const plbDivs = Array.from(document.querySelectorAll('.plb-block'));
+  plbDivs.forEach((plbDiv) => {
+    const plbName = plbDiv.querySelector('.plb-name').value;
+    let plbParams = [];
+    
+    const preplist = plbDiv.querySelector('.preplist').value;
+    if (preplist) plbParams.push(`preplist="${preplist}"`);
+    
+    const postplist = plbDiv.querySelector('.postplist').value;
+    if (postplist) plbParams.push(`postplist="${postplist}"`);
+    
+    // Handle prepattern with mode
+    const prepatternMode = plbDiv.querySelector('.prepattern-mode').value;
+    if (prepatternMode === 'tuple') {
+      const val = plbDiv.querySelector('.prepattern-value').value;
+      if (val) plbParams.push(`prepattern=Pats([${formatArrayValues(val)}])`);
+    } else if (prepatternMode === 'tids') {
+      const val = plbDiv.querySelector('.prepattern-tids-value').value;
+      if (val) plbParams.push(`prepattern=Pats(Tids([${formatArrayValues(val)}]))`);
+    } else if (prepatternMode === 'querytid') {
+      const testname = plbDiv.querySelector('.prepattern-querytid-testname').value;
+      const testtype = plbDiv.querySelector('.prepattern-querytid-testtype').value;
+      let qtArgs = [];
+      if (testname) qtArgs.push(`testname='${testname}'`);
+      if (testtype) qtArgs.push(`testtype='${testtype}'`);
+      if (qtArgs.length > 0) {
+        plbParams.push(`prepattern=Pats(QueryTid(${qtArgs.join(', ')}))`);
+      }
+    }
+    
+    // Handle postpattern with mode
+    const postpatternMode = plbDiv.querySelector('.postpattern-mode').value;
+    if (postpatternMode === 'tuple') {
+      const val = plbDiv.querySelector('.postpattern-value').value;
+      if (val) plbParams.push(`postpattern=Pats([${formatArrayValues(val)}])`);
+    } else if (postpatternMode === 'tids') {
+      const val = plbDiv.querySelector('.postpattern-tids-value').value;
+      if (val) plbParams.push(`postpattern=Pats(Tids([${formatArrayValues(val)}]))`);
+    } else if (postpatternMode === 'querytid') {
+      const testname = plbDiv.querySelector('.postpattern-querytid-testname').value;
+      const testtype = plbDiv.querySelector('.postpattern-querytid-testtype').value;
+      let qtArgs = [];
+      if (testname) qtArgs.push(`testname='${testname}'`);
+      if (testtype) qtArgs.push(`testtype='${testtype}'`);
+      if (qtArgs.length > 0) {
+        plbParams.push(`postpattern=Pats(QueryTid(${qtArgs.join(', ')}))`);
+      }
+    }
+
+    // Add PLB header comments if specified
+    const plbHeaderText = plbDiv.querySelector('.plb-header-text').value;
+    if (plbHeaderText) {
+      code += `level1 = level0.add(    Comment(' '))\n`;
+      code += `level1 = level0.add(    Comment('---------------------------'))\n`;
+      code += `level1 = level0.add(    Comment('        ${plbHeaderText}        '))\n`;
+      code += `level1 = level0.add(    Comment('---------------------------'))\n`;
+      code += `level1 = level0.add(    Comment(' '))\n`;
+    }
+
+    // Add mask parameter if specified
+    const plbMask = plbDiv.querySelector('.plb-mask').value;
+    if (plbMask) {
+      plbParams.push(`mask="${plbMask}"`);
+    }
+
+    code += `level1 = level0.add(Plb("${plbName}"${plbParams.length ? ', ' + plbParams.join(', ') : ''}))\n`;
+
+    // Regular items
+    plbDiv.querySelectorAll('.item-list .item-block').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      if (type === 'pats') {
+        const mode = itemDiv.querySelector('.pats-mode').value;
+        if (mode === 'default') {
+          const val = itemDiv.querySelector('.pats-value').value;
+          if (val)
+            code += `level1.add(Pats([${formatArrayValues(val)}]))\n`;
+        } else if (mode === 'tids') {
+          const tids = itemDiv.querySelector('.tids-value').value;
+          const chunk = itemDiv.querySelector('.tids-chunk').value;
+          let patsArgs = [];
+          if (chunk) patsArgs.push(`chunk="${chunk}"`);
+          code += `level1.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+        } else if (mode === 'querytid') {
+          const testname = itemDiv.querySelector('.querytid-testname').value;
+          const testtype = itemDiv.querySelector('.querytid-testtype').value;
+          const chunk = itemDiv.querySelector('.querytid-chunk').value;
+          let qtArgs = [];
+          if (testname) qtArgs.push(`testname='${testname}'`);
+          if (testtype) qtArgs.push(`testtype='${testtype}'`);
+          let args = [];
+          if (chunk) args.push(`chunk="${chunk}"`);
+          code += `level1.add(Pats(QueryTid(${qtArgs.join(', ')})${args.length ? ', ' + args.join(', ') : ''}))\n`;
+        }
+      } else if (type === 'pre' || type === 'post') {
+        const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+        const mode = itemDiv.querySelector(`.${type}-mode`).value;
+        if (mode === 'default') {
+          const val = itemDiv.querySelector(`.${type}-value`).value;
+          if (val)
+            code += `level1.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
+        } else if (mode === 'tids') {
+          const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
+          const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+          let patsArgs = [];
+          if (chunk) patsArgs.push(`chunk="${chunk}"`);
+          code += `level1.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+        } else if (mode === 'querytid') {
+          const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+          const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+          const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+          let qtArgs = [];
+          if (testname) qtArgs.push(`testname='${testname}'`);
+          if (testtype) qtArgs.push(`testtype='${testtype}'`);
+          let args = [];
+          if (chunk) args.push(`chunk="${chunk}"`);
+          code += `level1.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${args.length ? ', ' + args.join(', ') : ''})))\n`;
+        }
+      } else if (type === 'ref') {
+        const refName = itemDiv.querySelector('.ref-name').value;
+        const skipPre = itemDiv.querySelector('.skip-pre').checked;
+        const skipPost = itemDiv.querySelector('.skip-post').checked;
+        let opts = [];
+        if (skipPre) opts.push('skip_preplistexec=True');
+        if (skipPost) opts.push('skip_postplistexec=True');
+        code += `level1.add(RefPlb("${refName}"${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+      } else if (type === 'preexecref') {
+        const name = itemDiv.querySelector('.preexecref-name').value;
+        if (name)
+          code += `level1.add(PreExecRefPList("${name}"))\n`;
+      } else if (type === 'postexecref') {
+        const name = itemDiv.querySelector('.postexecref-name').value;
+        if (name)
+          code += `level1.add(PostExecRefPList("${name}"))\n`;
+      } else if (type === 'comment') {
+        const content = itemDiv.querySelector('.comment-content').value;
+        if (content)
+          code += `level1.add(Comment('${content}'))\n`;
+      }
+    });
+    
+    
+    
+    // Unified loop section
+    const loopSection = plbDiv.querySelector('.loop-section');
+    if (loopSection && loopSection.style.display !== 'none') {
+      const mainLoopItems = loopSection.querySelectorAll('.main-loop-list .item-block');
+      const conditionBlocks = loopSection.querySelectorAll('.condition-list .condition-block');
+      
+      if (mainLoopItems.length > 0 || conditionBlocks.length > 0) {
+        code += '\nfor name in name_of_instance:\n';
+        code += '    partition = decode_par(name)\n';
+        
+        // Process main loop items (direct execution without conditions)
+        mainLoopItems.forEach(itemDiv => {
+          const type = itemDiv.getAttribute('data-type');
+          if (type === 'pats') {
+            const mode = itemDiv.querySelector('.pats-mode').value;
+            if (mode === 'default') {
+              const val = itemDiv.querySelector('.pats-value').value;
+              if (val) {
+                if (val.includes('{name}') || val.includes('{partition}')) {
+                  // Format array but keep placeholders for .format()
+                  const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(Pats([${formattedVals}.format(name=name, partition=partition)]))\n`;
+                } else {
+                  code += `    level1.add(Pats([${formatArrayValues(val)}]))\n`;
+                }
+              }
+            } else if (mode === 'tids') {
+              const tids = itemDiv.querySelector('.tids-value').value;
+              const chunk = itemDiv.querySelector('.tids-chunk').value;
+              if (tids) {
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
+                if (tids.includes('{name}') || tids.includes('{partition}')) {
+                  // Format array but keep placeholders for .format()
+                  const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                } else {
+                  code += `    level1.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                }
+              }
+            } else if (mode === 'querytid') {
+              const testname = itemDiv.querySelector('.querytid-testname').value;
+              const testtype = itemDiv.querySelector('.querytid-testtype').value;
+              const chunk = itemDiv.querySelector('.querytid-chunk').value;
+              let qtArgs = [];
+              
+              if (testname) {
+                if (testname.includes('{name}') || testname.includes('{partition}')) {
+                  qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
+                } else {
+                  qtArgs.push(`testname='${testname}'`);
+                }
+              }
+              if (testtype) {
+                if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                  qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
+                } else {
+                  qtArgs.push(`testtype='${testtype}'`);
+                }
+              }
+              
+              let patsArgs = [];
+              if (chunk) patsArgs.push(`chunk="${chunk}"`);
+              
+              if (qtArgs.length > 0) {
+                code += `    level1.add(Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+              }
+            }
+          } else if (type === 'ref') {
+            const refName = itemDiv.querySelector('.ref-name').value;
+            const skipPre = itemDiv.querySelector('.skip-pre').checked;
+            const skipPost = itemDiv.querySelector('.skip-post').checked;
+            let opts = [];
+            if (skipPre) opts.push('skip_preplistexec=True');
+            if (skipPost) opts.push('skip_postplistexec=True');
+            
+            if (refName) {
+              if (refName.includes('{name}') || refName.includes('{partition}')) {
+                code += `    level1.add(RefPlb('${refName}'.format(name=name, partition=partition)${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+              } else {
+                code += `    level1.add(RefPlb('${refName}'${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+              }
+            }
+          } else if (type === 'comment') {
+            const content = itemDiv.querySelector('.comment-content').value;
+            if (content) {
+              if (content.includes('{name}') || content.includes('{partition}')) {
+                code += `    level1.add(Comment('${content}'.format(name=name, partition=partition)))\n`;
+              } else {
+                code += `    level1.add(Comment('${content}'))\n`;
+              }
+            }
+          } else if (type === 'pre' || type === 'post') {
+            const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+            const mode = itemDiv.querySelector(`.${type}-mode`).value;
+            if (mode === 'default') {
+              const val = itemDiv.querySelector(`.${type}-value`).value;
+              if (val) {
+                if (val.includes('{name}') || val.includes('{partition}')) {
+                  // Format array but keep placeholders for .format()
+                  const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(${prefix}(pat=Pats([${formattedVals}.format(name=name, partition=partition)])))\n`;
+                } else {
+                  code += `    level1.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
+                }
+              }
+            } else if (mode === 'tids') {
+              const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
+              const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+              if (tids) {
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
+                if (tids.includes('{name}') || tids.includes('{partition}')) {
+                  // Format array but keep placeholders for .format()
+                  const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  code += `    level1.add(${prefix}(pat=Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                } else {
+                  code += `    level1.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                }
+              }
+            } else if (mode === 'querytid') {
+              const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+              const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+              const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+              let qtArgs = [];
+              
+              if (testname) {
+                if (testname.includes('{name}') || testname.includes('{partition}')) {
+                  qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
+                } else {
+                  qtArgs.push(`testname='${testname}'`);
+                }
+              }
+              if (testtype) {
+                if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                  qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
+                } else {
+                  qtArgs.push(`testtype='${testtype}'`);
+                }
+              }
+              
+              let patsArgs = [];
+              if (chunk) patsArgs.push(`chunk="${chunk}"`);
+              
+              if (qtArgs.length > 0) {
+                code += `    level1.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+              }
+            }
+          } else if (type === 'preexecref') {
+            const name = itemDiv.querySelector('.preexecref-name').value;
+            if (name) {
+              if (name.includes('{name}') || name.includes('{partition}')) {
+                code += `    level1.add(PreExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+              } else {
+                code += `    level1.add(PreExecRefPList('${name}'))\n`;
+              }
+            }
+          } else if (type === 'postexecref') {
+            const name = itemDiv.querySelector('.postexecref-name').value;
+            if (name) {
+              if (name.includes('{name}') || name.includes('{partition}')) {
+                code += `    level1.add(PostExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+              } else {
+                code += `    level1.add(PostExecRefPList('${name}'))\n`;
+              }
+            }
+          }
+        });
+        
+        // Process condition blocks (if/elif/else)
+        conditionBlocks.forEach((condBlock, idx) => {
+          const condType = condBlock.getAttribute('data-condition-type');
+          let condLine = '';
+          
+          if (condType === 'if') {
+            const expr = condBlock.querySelector('.condition-expr').value || 'True';
+            condLine = `    if ${expr}:\n`;
+          } else if (condType === 'elif') {
+            const expr = condBlock.querySelector('.condition-expr').value || 'True';
+            condLine = `    elif ${expr}:\n`;
+          } else if (condType === 'else') {
+            condLine = `    else:\n`;
+          }
+          
+          code += condLine;
+          
+          // Auto-generate level1_sub for each RefPlb in main loop items
+          mainLoopItems.forEach(mainItem => {
+            if (mainItem.getAttribute('data-type') === 'ref') {
+              const refName = mainItem.querySelector('.ref-name').value;
+              if (refName) {
+                if (refName.includes('{name}') || refName.includes('{partition}')) {
+                  code += `        level1_sub = level0.add(Plb('${refName}'.format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub = level0.add(Plb('${refName}'))\n`;
+                }
+              }
+            }
+          });
+          
+          // Process loop items in this condition block - use level1_sub
+          const loopItems = condBlock.querySelectorAll('.loop-item-list .item-block');
+          loopItems.forEach(itemDiv => {
+            const type = itemDiv.getAttribute('data-type');
+            
+            if (type === 'subplb') {
+              const subplbNameLoop = itemDiv.querySelector('.subplb-name-loop').value;
+              if (subplbNameLoop) {
+                if (subplbNameLoop.includes('{name}') || subplbNameLoop.includes('{partition}')) {
+                  code += `        level1_sub = level0.add(Plb("${subplbNameLoop}".format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub = level0.add(Plb("${subplbNameLoop}"))\n`;
+                }
+              }
+            } else if (type === 'pats') {
+              const mode = itemDiv.querySelector('.pats-mode').value;
+              if (mode === 'default') {
+                const val = itemDiv.querySelector('.pats-value').value;
+                if (val) {
+                  if (val.includes('{name}') || val.includes('{partition}')) {
+                    // Format array but keep placeholders for .format()
+                    const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(Pats([${formattedVals}.format(name=name, partition=partition)]))\n`;
+                  } else {
+                    code += `        level1_sub.add(Pats([${formatArrayValues(val)}]))\n`;
+                  }
+                }
+              } else if (mode === 'tids') {
+                const tids = itemDiv.querySelector('.tids-value').value;
+                const chunk = itemDiv.querySelector('.tids-chunk').value;
+                if (tids) {
+                  let patsArgs = [];
+                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                  
+                  if (tids.includes('{name}') || tids.includes('{partition}')) {
+                    // Format array but keep placeholders for .format()
+                    const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                  } else {
+                    code += `        level1_sub.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                  }
+                }
+              } else if (mode === 'querytid') {
+                const testname = itemDiv.querySelector('.querytid-testname').value;
+                const testtype = itemDiv.querySelector('.querytid-testtype').value;
+                const chunk = itemDiv.querySelector('.querytid-chunk').value;
+                let qtArgs = [];
+                
+                if (testname) {
+                  if (testname.includes('{name}') || testname.includes('{partition}')) {
+                    qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
+                  } else {
+                    qtArgs.push(`testname='${testname}'`);
+                  }
+                }
+                if (testtype) {
+                  if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                    qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
+                  } else {
+                    qtArgs.push(`testtype='${testtype}'`);
+                  }
+                }
+                
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
+                if (qtArgs.length > 0) {
+                  code += `        level1_sub.add(Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
+                }
+              }
+            } else if (type === 'comment') {
+              const content = itemDiv.querySelector('.comment-content').value;
+              if (content) {
+                if (content.includes('{name}') || content.includes('{partition}')) {
+                  code += `        level1_sub.add(Comment('${content}'.format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub.add(Comment('${content}'))\n`;
+                }
+              }
+            } else if (type === 'ref') {
+              const refName = itemDiv.querySelector('.ref-name').value;
+              const skipPre = itemDiv.querySelector('.skip-pre').checked;
+              const skipPost = itemDiv.querySelector('.skip-post').checked;
+              let opts = [];
+              if (skipPre) opts.push('skip_preplistexec=True');
+              if (skipPost) opts.push('skip_postplistexec=True');
+              
+              if (refName) {
+                if (refName.includes('{name}') || refName.includes('{partition}')) {
+                  code += `        level1_sub.add(RefPlb('${refName}'.format(name=name, partition=partition)${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+                } else {
+                  code += `        level1_sub.add(RefPlb('${refName}'${opts.length ? ', ' + opts.join(', ') : ''}))\n`;
+                }
+              }
+            } else if (type === 'pre' || type === 'post') {
+              const prefix = type === 'pre' ? 'PreExecPat' : 'PostExecPat';
+              const mode = itemDiv.querySelector(`.${type}-mode`).value;
+              if (mode === 'default') {
+                const val = itemDiv.querySelector(`.${type}-value`).value;
+                if (val) {
+                  if (val.includes('{name}') || val.includes('{partition}')) {
+                    // Format array but keep placeholders for .format()
+                    const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(${prefix}(pat=Pats([${formattedVals}.format(name=name, partition=partition)])))\n`;
+                  } else {
+                    code += `        level1_sub.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
+                  }
+                }
+              } else if (mode === 'tids') {
+                const tids = itemDiv.querySelector(`.${type}-tids-value`).value;
+                const chunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+                if (tids) {
+                  let patsArgs = [];
+                  if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                  
+                  if (tids.includes('{name}') || tids.includes('{partition}')) {
+                    // Format array but keep placeholders for .format()
+                    const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                  } else {
+                    code += `        level1_sub.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                  }
+                }
+              } else if (mode === 'querytid') {
+                const testname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+                const testtype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+                const chunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+                let qtArgs = [];
+                
+                if (testname) {
+                  if (testname.includes('{name}') || testname.includes('{partition}')) {
+                    qtArgs.push(`testname='${testname}'.format(name=name, partition=partition)`);
+                  } else {
+                    qtArgs.push(`testname='${testname}'`);
+                  }
+                }
+                if (testtype) {
+                  if (testtype.includes('{name}') || testtype.includes('{partition}')) {
+                    qtArgs.push(`testtype='${testtype}'.format(name=name, partition=partition)`);
+                  } else {
+                    qtArgs.push(`testtype='${testtype}'`);
+                  }
+                }
+                
+                let patsArgs = [];
+                if (chunk) patsArgs.push(`chunk="${chunk}"`);
+                
+                if (qtArgs.length > 0) {
+                  code += `        level1_sub.add(${prefix}(pat=Pats(QueryTid(${qtArgs.join(', ')})${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
+                }
+              }
+            } else if (type === 'preexecref') {
+              const name = itemDiv.querySelector('.preexecref-name').value;
+              if (name) {
+                if (name.includes('{name}') || name.includes('{partition}')) {
+                  code += `        level1_sub.add(PreExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub.add(PreExecRefPList('${name}'))\n`;
+                }
+              }
+            } else if (type === 'postexecref') {
+              const name = itemDiv.querySelector('.postexecref-name').value;
+              if (name) {
+                if (name.includes('{name}') || name.includes('{partition}')) {
+                  code += `        level1_sub.add(PostExecRefPList('${name}'.format(name=name, partition=partition)))\n`;
+                } else {
+                  code += `        level1_sub.add(PostExecRefPList('${name}'))\n`;
+                }
+              }
+            }
+          });
+        });
+      }
+    }
+    code += '\n';
+  });
+
+  code += 'if (__name__ == "__main__"):\n    pcar3.process()\n    print("Summary")\n    pcar3.report(detail=True)\n    print(pcar3.gen_plist_preview())\n';
+  document.getElementById('codebox').textContent = code;
+}
+</script>
+</body>
+</html>
