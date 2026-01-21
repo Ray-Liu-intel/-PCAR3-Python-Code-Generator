@@ -1,7 +1,7 @@
 # PCAR3 Python Code Generator 2.0
 
-A powerful, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any server infrastructure.
-## ☀️PCAR3 Differences between the ToS3 and ToS4 versions
+A basical, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any pcar3 syntax and just need to fill in key parameters which you need.
+## ☀️PLIST Differences between the ToS3 and ToS4 versions
 Due to the change from tos3 to tos4, the syntax of our Plistfile also has undergone some modifications.Previously in TOS3 PLists the many options we had (PreBurst, PostBurst, PrePattern, etc.) were written in a more compressed view in bracket blocks after the PList name. Now, in TOS4 PDE's will be able to see a more explicit view of what content will execute in what order and any form of ambiguity should not be an issue. Because this is more flattened than previously done users may need to develop or adapt to the new changes as not all previous functions in pcar will naturally convert to a TOS4 compatible plist.The tos4 plist structure was designed as a "what you see is what you get" and we must follow the syntax order of the following images.Using the layout as above will indeed make the pcar/plists longer but it will be created exactly as it is written without compressing the view/functionality. 
 <img width="1099" height="419" alt="image" src="https://github.com/user-attachments/assets/ff50c801-8975-4b9d-a4a2-f58ecba5f288" />
 
