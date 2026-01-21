@@ -476,7 +476,7 @@ This is a single-file HTML application. To contribute:
 
 ## 📧 Support
 
-For issues, questions, or feature requests, please open an issue on the GitHub repository.
+For issues, questions, or feature requests, please open an issue on the GitHub repository or ping me (Liu.Ray) anytime.
 
 ---
 
