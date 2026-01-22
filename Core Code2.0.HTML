@@ -1731,7 +1731,7 @@ function captureState() {
     };
 
     // Capture main loop items
-    plbDiv.querySelectorAll('.main-loop-container > div[data-type]').forEach(itemDiv => {
+    plbDiv.querySelectorAll('.main-loop-list > div[data-type]').forEach(itemDiv => {
       const type = itemDiv.getAttribute('data-type');
       const item = { type };
 
@@ -1865,7 +1865,7 @@ function restoreState(state) {
     updatePostpatternFields(plbDiv.querySelector('.postpattern-mode'));
 
     // Restore main loop items
-    const mainContainer = plbDiv.querySelector('.main-loop-container');
+    const mainContainer = plbDiv.querySelector('.main-loop-list');
     mainContainer.innerHTML = '';
     (plbState.mainLoopItems || []).forEach(item => {
       if (item.type === 'pats') {
