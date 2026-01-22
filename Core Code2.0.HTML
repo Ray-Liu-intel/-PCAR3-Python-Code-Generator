@@ -373,6 +373,7 @@
     <button onclick="addPlb()">Add Plb</button>
     <div id="plbContainer"></div>
     <button onclick="generateCode()">Generate Code</button>
+    <button onclick="saveHtml()">Save HTML</button>
     <h3>Generated Result:</h3>
     <pre id="codebox"></pre>
   </div>
@@ -1668,6 +1669,359 @@ function generateCode() {
   code += 'if (__name__ == "__main__"):\n    pcar3.process()\n    print("Summary")\n    pcar3.report(detail=True)\n    print(pcar3.gen_plist_preview())\n';
   document.getElementById('codebox').textContent = code;
 }
+
+// State serialization and restoration functions for Save HTML feature
+
+/**
+ * Captures the current UI state into a JSON object.
+ * State schema includes:
+ * - plistfile: string
+ * - loopEnabled: boolean
+ * - nameOfInstance: string
+ * - decodeParMappings: array of {name, partition}
+ * - plbs: array of PLB configurations with all their fields and nested items
+ */
+function captureState() {
+  const state = {
+    plistfile: document.getElementById('plistfile').value,
+    loopEnabled: document.getElementById('loopPartitionToggle').checked,
+    nameOfInstance: document.getElementById('nameOfInstance').value,
+    decodeParMappings: [],
+    plbs: []
+  };
+
+  // Capture decode parameter mappings
+  const tbody = document.getElementById('decodeParTableBody');
+  tbody.querySelectorAll('tr').forEach(row => {
+    const nameInput = row.querySelector('.decode-par-name');
+    const partitionInput = row.querySelector('.decode-par-partition');
+    if (nameInput && partitionInput) {
+      state.decodeParMappings.push({
+        name: nameInput.value,
+        partition: partitionInput.value
+      });
+    }
+  });
+
+  // Capture all PLB blocks
+  document.querySelectorAll('.plb-block').forEach(plbDiv => {
+    const plbState = {
+      collapsed: plbDiv.classList.contains('plb-collapsed'),
+      plbName: plbDiv.querySelector('.plb-name').value,
+      plbHeaderText: plbDiv.querySelector('.plb-header-text').value,
+      plbHeaderOrder: plbDiv.querySelector('.plb-header-order').value,
+      preplist: plbDiv.querySelector('.preplist').value,
+      postplist: plbDiv.querySelector('.postplist').value,
+      prepatternMode: plbDiv.querySelector('.prepattern-mode').value,
+      prepatternValue: plbDiv.querySelector('.prepattern-value').value,
+      prepatternTidsValue: plbDiv.querySelector('.prepattern-tids-value').value,
+      prepatternQuerytidTestname: plbDiv.querySelector('.prepattern-querytid-testname').value,
+      prepatternQuerytidTesttype: plbDiv.querySelector('.prepattern-querytid-testtype').value,
+      postpatternMode: plbDiv.querySelector('.postpattern-mode').value,
+      postpatternValue: plbDiv.querySelector('.postpattern-value').value,
+      postpatternTidsValue: plbDiv.querySelector('.postpattern-tids-value').value,
+      postpatternQuerytidTestname: plbDiv.querySelector('.postpattern-querytid-testname').value,
+      postpatternQuerytidTesttype: plbDiv.querySelector('.postpattern-querytid-testtype').value,
+      mainLoopItems: [],
+      subLevel: {
+        enabled: plbDiv.querySelector('.sublevel-toggle').checked,
+        name: plbDiv.querySelector('.sublevel-name').value,
+        items: []
+      }
+    };
+
+    // Capture main loop items
+    plbDiv.querySelectorAll('.main-loop-container > div[data-type]').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      const item = { type };
+
+      if (type === 'pats') {
+        item.mode = itemDiv.querySelector('.pats-mode').value;
+        item.value = itemDiv.querySelector('.pats-value').value;
+        item.tidsValue = itemDiv.querySelector('.tids-value').value;
+        item.tidsChunk = itemDiv.querySelector('.tids-chunk').value;
+        item.querytidTestname = itemDiv.querySelector('.querytid-testname').value;
+        item.querytidTesttype = itemDiv.querySelector('.querytid-testtype').value;
+        item.querytidChunk = itemDiv.querySelector('.querytid-chunk').value;
+      } else if (type === 'pre' || type === 'post') {
+        item.mode = itemDiv.querySelector(`.${type}-mode`).value;
+        item.value = itemDiv.querySelector(`.${type}-value`).value;
+        item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`).value;
+        item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+        item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+        item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+        item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+      } else if (type === 'refplb') {
+        item.name = itemDiv.querySelector('.refplb-name').value;
+      } else if (type === 'comment') {
+        item.text = itemDiv.querySelector('.comment-text').value;
+      } else if (type === 'namefilter') {
+        item.include = itemDiv.querySelector('.namefilter-include').value;
+        item.exclude = itemDiv.querySelector('.namefilter-exclude').value;
+      } else if (type === 'preexecref' || type === 'postexecref') {
+        item.name = itemDiv.querySelector(`.${type}-name`).value;
+      }
+
+      plbState.mainLoopItems.push(item);
+    });
+
+    // Capture sublevel items
+    plbDiv.querySelectorAll('.sublevel-container > div[data-type]').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      const item = { type };
+
+      if (type === 'subplb') {
+        item.name = itemDiv.querySelector('.subplb-name').value;
+      } else if (type === 'pats') {
+        item.mode = itemDiv.querySelector('.pats-mode').value;
+        item.value = itemDiv.querySelector('.pats-value').value;
+        item.tidsValue = itemDiv.querySelector('.tids-value').value;
+        item.tidsChunk = itemDiv.querySelector('.tids-chunk').value;
+        item.querytidTestname = itemDiv.querySelector('.querytid-testname').value;
+        item.querytidTesttype = itemDiv.querySelector('.querytid-testtype').value;
+        item.querytidChunk = itemDiv.querySelector('.querytid-chunk').value;
+      } else if (type === 'pre' || type === 'post') {
+        item.mode = itemDiv.querySelector(`.${type}-mode`).value;
+        item.value = itemDiv.querySelector(`.${type}-value`).value;
+        item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`).value;
+        item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`).value;
+        item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`).value;
+        item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`).value;
+        item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`).value;
+      } else if (type === 'refplb') {
+        item.name = itemDiv.querySelector('.refplb-name').value;
+      } else if (type === 'comment') {
+        item.text = itemDiv.querySelector('.comment-text').value;
+      } else if (type === 'namefilter') {
+        item.include = itemDiv.querySelector('.namefilter-include').value;
+        item.exclude = itemDiv.querySelector('.namefilter-exclude').value;
+      } else if (type === 'preexecref' || type === 'postexecref') {
+        item.name = itemDiv.querySelector(`.${type}-name`).value;
+      }
+
+      plbState.subLevel.items.push(item);
+    });
+
+    state.plbs.push(plbState);
+  });
+
+  return state;
+}
+
+/**
+ * Restores the UI state from a JSON object.
+ * Hydrates all form fields, recreates dynamic PLB blocks, and restores their contents.
+ */
+function restoreState(state) {
+  // Restore basic fields
+  document.getElementById('plistfile').value = state.plistfile || '';
+  document.getElementById('loopPartitionToggle').checked = state.loopEnabled || false;
+  document.getElementById('nameOfInstance').value = state.nameOfInstance || '';
+  
+  // Trigger loop toggle to show/hide sections
+  toggleLoopPartition();
+
+  // Restore decode parameter mappings
+  const tbody = document.getElementById('decodeParTableBody');
+  tbody.innerHTML = '';
+  (state.decodeParMappings || []).forEach(mapping => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><input type="text" class="decode-par-name" style="width: 150px;" value="${mapping.name}"></td>
+      <td><input type="text" class="decode-par-partition" style="width: 300px;" value="${mapping.partition}"></td>
+      <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  // Clear existing PLBs
+  document.getElementById('plbContainer').innerHTML = '';
+  plbCount = 0;
+
+  // Restore PLB blocks
+  (state.plbs || []).forEach(plbState => {
+    addPlb();
+    const plbDiv = document.querySelectorAll('.plb-block')[document.querySelectorAll('.plb-block').length - 1];
+
+    // Restore PLB properties
+    plbDiv.querySelector('.plb-name').value = plbState.plbName || '';
+    plbDiv.querySelector('.plb-header-text').value = plbState.plbHeaderText || '';
+    plbDiv.querySelector('.plb-header-order').value = plbState.plbHeaderOrder || '';
+    plbDiv.querySelector('.preplist').value = plbState.preplist || '';
+    plbDiv.querySelector('.postplist').value = plbState.postplist || '';
+    plbDiv.querySelector('.prepattern-mode').value = plbState.prepatternMode || 'tuple';
+    plbDiv.querySelector('.prepattern-value').value = plbState.prepatternValue || '';
+    plbDiv.querySelector('.prepattern-tids-value').value = plbState.prepatternTidsValue || '';
+    plbDiv.querySelector('.prepattern-querytid-testname').value = plbState.prepatternQuerytidTestname || '';
+    plbDiv.querySelector('.prepattern-querytid-testtype').value = plbState.prepatternQuerytidTesttype || '';
+    plbDiv.querySelector('.postpattern-mode').value = plbState.postpatternMode || 'tuple';
+    plbDiv.querySelector('.postpattern-value').value = plbState.postpatternValue || '';
+    plbDiv.querySelector('.postpattern-tids-value').value = plbState.postpatternTidsValue || '';
+    plbDiv.querySelector('.postpattern-querytid-testname').value = plbState.postpatternQuerytidTestname || '';
+    plbDiv.querySelector('.postpattern-querytid-testtype').value = plbState.postpatternQuerytidTesttype || '';
+
+    // Trigger mode changes to show/hide appropriate fields
+    updatePrepatternFields(plbDiv.querySelector('.prepattern-mode'));
+    updatePostpatternFields(plbDiv.querySelector('.postpattern-mode'));
+
+    // Restore main loop items
+    const mainContainer = plbDiv.querySelector('.main-loop-container');
+    mainContainer.innerHTML = '';
+    (plbState.mainLoopItems || []).forEach(item => {
+      if (item.type === 'pats') {
+        addMainLoopItem(mainContainer, 'pats');
+        const itemDiv = mainContainer.lastElementChild;
+        itemDiv.querySelector('.pats-mode').value = item.mode || 'default';
+        itemDiv.querySelector('.pats-value').value = item.value || '';
+        itemDiv.querySelector('.tids-value').value = item.tidsValue || '';
+        itemDiv.querySelector('.tids-chunk').value = item.tidsChunk || '';
+        itemDiv.querySelector('.querytid-testname').value = item.querytidTestname || '';
+        itemDiv.querySelector('.querytid-testtype').value = item.querytidTesttype || '';
+        itemDiv.querySelector('.querytid-chunk').value = item.querytidChunk || '';
+        updatePatsFields(itemDiv.querySelector('.pats-mode'));
+      } else if (item.type === 'pre' || item.type === 'post') {
+        addMainLoopItem(mainContainer, item.type);
+        const itemDiv = mainContainer.lastElementChild;
+        itemDiv.querySelector(`.${item.type}-mode`).value = item.mode || 'default';
+        itemDiv.querySelector(`.${item.type}-value`).value = item.value || '';
+        itemDiv.querySelector(`.${item.type}-tids-value`).value = item.tidsValue || '';
+        itemDiv.querySelector(`.${item.type}-tids-chunk`).value = item.tidsChunk || '';
+        itemDiv.querySelector(`.${item.type}-querytid-testname`).value = item.querytidTestname || '';
+        itemDiv.querySelector(`.${item.type}-querytid-testtype`).value = item.querytidTesttype || '';
+        itemDiv.querySelector(`.${item.type}-querytid-chunk`).value = item.querytidChunk || '';
+        const sel = itemDiv.querySelector(`.${item.type}-mode`);
+        const type = sel.className.split('-')[0];
+        updateGenericFields(sel, type);
+      } else if (item.type === 'refplb') {
+        addMainLoopItem(mainContainer, 'refplb');
+        const itemDiv = mainContainer.lastElementChild;
+        itemDiv.querySelector('.refplb-name').value = item.name || '';
+      } else if (item.type === 'comment') {
+        addMainLoopItem(mainContainer, 'comment');
+        const itemDiv = mainContainer.lastElementChild;
+        itemDiv.querySelector('.comment-text').value = item.text || '';
+      } else if (item.type === 'namefilter') {
+        addMainLoopItem(mainContainer, 'namefilter');
+        const itemDiv = mainContainer.lastElementChild;
+        itemDiv.querySelector('.namefilter-include').value = item.include || '';
+        itemDiv.querySelector('.namefilter-exclude').value = item.exclude || '';
+      } else if (item.type === 'preexecref' || item.type === 'postexecref') {
+        addMainLoopItem(mainContainer, item.type);
+        const itemDiv = mainContainer.lastElementChild;
+        itemDiv.querySelector(`.${item.type}-name`).value = item.name || '';
+      }
+    });
+
+    // Restore sublevel
+    plbDiv.querySelector('.sublevel-toggle').checked = plbState.subLevel.enabled || false;
+    plbDiv.querySelector('.sublevel-name').value = plbState.subLevel.name || '';
+    toggleSublevel(plbDiv.querySelector('.sublevel-toggle'));
+
+    // Restore sublevel items
+    const sublevelContainer = plbDiv.querySelector('.sublevel-container');
+    sublevelContainer.innerHTML = '';
+    (plbState.subLevel.items || []).forEach(item => {
+      if (item.type === 'subplb') {
+        addSublevelItem(sublevelContainer, 'subplb');
+        const itemDiv = sublevelContainer.lastElementChild;
+        itemDiv.querySelector('.subplb-name').value = item.name || '';
+      } else if (item.type === 'pats') {
+        addSublevelItem(sublevelContainer, 'pats');
+        const itemDiv = sublevelContainer.lastElementChild;
+        itemDiv.querySelector('.pats-mode').value = item.mode || 'default';
+        itemDiv.querySelector('.pats-value').value = item.value || '';
+        itemDiv.querySelector('.tids-value').value = item.tidsValue || '';
+        itemDiv.querySelector('.tids-chunk').value = item.tidsChunk || '';
+        itemDiv.querySelector('.querytid-testname').value = item.querytidTestname || '';
+        itemDiv.querySelector('.querytid-testtype').value = item.querytidTesttype || '';
+        itemDiv.querySelector('.querytid-chunk').value = item.querytidChunk || '';
+        updatePatsFields(itemDiv.querySelector('.pats-mode'));
+      } else if (item.type === 'pre' || item.type === 'post') {
+        addSublevelItem(sublevelContainer, item.type);
+        const itemDiv = sublevelContainer.lastElementChild;
+        itemDiv.querySelector(`.${item.type}-mode`).value = item.mode || 'default';
+        itemDiv.querySelector(`.${item.type}-value`).value = item.value || '';
+        itemDiv.querySelector(`.${item.type}-tids-value`).value = item.tidsValue || '';
+        itemDiv.querySelector(`.${item.type}-tids-chunk`).value = item.tidsChunk || '';
+        itemDiv.querySelector(`.${item.type}-querytid-testname`).value = item.querytidTestname || '';
+        itemDiv.querySelector(`.${item.type}-querytid-testtype`).value = item.querytidTesttype || '';
+        itemDiv.querySelector(`.${item.type}-querytid-chunk`).value = item.querytidChunk || '';
+        const sel = itemDiv.querySelector(`.${item.type}-mode`);
+        const type = sel.className.split('-')[0];
+        updateGenericFields(sel, type);
+      } else if (item.type === 'refplb') {
+        addSublevelItem(sublevelContainer, 'refplb');
+        const itemDiv = sublevelContainer.lastElementChild;
+        itemDiv.querySelector('.refplb-name').value = item.name || '';
+      } else if (item.type === 'comment') {
+        addSublevelItem(sublevelContainer, 'comment');
+        const itemDiv = sublevelContainer.lastElementChild;
+        itemDiv.querySelector('.comment-text').value = item.text || '';
+      } else if (item.type === 'namefilter') {
+        addSublevelItem(sublevelContainer, 'namefilter');
+        const itemDiv = sublevelContainer.lastElementChild;
+        itemDiv.querySelector('.namefilter-include').value = item.include || '';
+        itemDiv.querySelector('.namefilter-exclude').value = item.exclude || '';
+      } else if (item.type === 'preexecref' || item.type === 'postexecref') {
+        addSublevelItem(sublevelContainer, item.type);
+        const itemDiv = sublevelContainer.lastElementChild;
+        itemDiv.querySelector(`.${item.type}-name`).value = item.name || '';
+      }
+    });
+
+    // Restore collapsed state
+    if (plbState.collapsed) {
+      togglePlbCollapse(plbDiv.querySelector('.plb-toggle-btn'));
+    }
+  });
+}
+
+/**
+ * Creates a downloadable HTML file with the current state embedded.
+ * The state is stored in a script tag and automatically restored on page load.
+ */
+function saveHtml() {
+  const state = captureState();
+  const stateJson = JSON.stringify(state, null, 2);
+  
+  // Get the current document HTML
+  let html = document.documentElement.outerHTML;
+  
+  // Insert the saved state as a script tag before the closing </body> tag
+  const stateScript = `
+<script id="savedState" type="application/json">
+${stateJson}
+</script>
+<script>
+// Auto-restore state on page load if savedState exists
+window.addEventListener('DOMContentLoaded', function() {
+  const savedStateEl = document.getElementById('savedState');
+  if (savedStateEl) {
+    try {
+      const state = JSON.parse(savedStateEl.textContent);
+      restoreState(state);
+    } catch (e) {
+      console.error('Failed to restore state:', e);
+    }
+  }
+});
+</script>
+</body>`;
+  
+  html = html.replace('</body>', stateScript);
+  
+  // Create a blob and download
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'PCAR3_Python_Code_Generator_State.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 </script>
 </body>
 </html>
