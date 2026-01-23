@@ -373,9 +373,6 @@
     <button onclick="addPlb()">Add Plb</button>
     <div id="plbContainer"></div>
     <button onclick="generateCode()">Generate Code</button>
-    <button onclick="exportState()">Export State</button>
-    <button onclick="document.getElementById('importStateFile').click()">Import State</button>
-    <input type="file" id="importStateFile" accept=".json" style="display:none" onchange="importState(event)">
     <h3>Generated Result:</h3>
     <pre id="codebox"></pre>
   </div>
@@ -2156,59 +2153,73 @@ function restoreState(state) {
  * Exports the current UI state as a JSON file for later import.
  * This approach avoids browser caching issues by keeping state separate from code.
  */
-function exportState() {
-  const state = captureState();
-  const stateJson = JSON.stringify(state, null, 2);
-  
-  // Create a blob and trigger download
-  const blob = new Blob([stateJson], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  
-  // Generate a default filename with timestamp (YYYYMMDD_HHMMSS format)
-  const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').slice(0, 15);
-  a.download = 'PCAR3_State_' + timestamp + '.json';
-  
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  
-  alert('State exported successfully! Save this JSON file to preserve your work.');
+/**
+ * Automatically saves the current state to localStorage.
+ * Called whenever form fields change.
+ */
+function autoSaveState() {
+  try {
+    const state = captureState();
+    const stateJson = JSON.stringify(state);
+    localStorage.setItem('pcar3_state', stateJson);
+    console.log('State auto-saved to localStorage');
+  } catch (error) {
+    console.error('Failed to auto-save state:', error);
+  }
 }
 
 /**
- * Imports a previously exported state from a JSON file.
- * Restores all form fields, PLBs, and configurations.
+ * Debounced version of autoSaveState to avoid saving too frequently.
+ * Waits 500ms after the last change before saving.
  */
-function importState(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const state = JSON.parse(e.target.result);
-      
-      // Validate that this is a PCAR3 state file
-      if (!state.hasOwnProperty('plistfile') || !state.hasOwnProperty('plbs')) {
-        throw new Error('Invalid PCAR3 state file format');
-      }
-      
-      restoreState(state);
-      alert('State imported successfully!');
-    } catch (error) {
-      console.error('Failed to import state:', error);
-      console.error('Error details:', error.message, error.stack);
-      alert('Failed to import state: ' + error.message + '\nPlease ensure you selected a valid PCAR3 state JSON file.');
-    }
-  };
-  reader.readAsText(file);
-  
-  // Reset the file input so the same file can be imported again if needed
-  event.target.value = '';
+let autoSaveTimeout;
+function debouncedAutoSaveState() {
+  clearTimeout(autoSaveTimeout);
+  autoSaveTimeout = setTimeout(autoSaveState, 500);
 }
+
+/**
+ * Automatically loads the saved state from localStorage on page load.
+ */
+function autoLoadState() {
+  try {
+    const stateJson = localStorage.getItem('pcar3_state');
+    if (stateJson) {
+      const state = JSON.parse(stateJson);
+      restoreState(state);
+      console.log('State auto-loaded from localStorage');
+    }
+  } catch (error) {
+    console.error('Failed to auto-load state:', error);
+  }
+}
+
+/**
+ * Sets up auto-save listeners on all form fields.
+ * Saves state whenever any input changes.
+ */
+function setupAutoSave() {
+  // Save on any input change in the document
+  document.addEventListener('input', debouncedAutoSaveState);
+  
+  // Save on any change event (for selects, checkboxes)
+  document.addEventListener('change', debouncedAutoSaveState);
+  
+  // Save when PLBs are added/deleted (capture button clicks)
+  const originalAddPlb = window.addPlb;
+  window.addPlb = function() {
+    originalAddPlb.apply(this, arguments);
+    autoSaveState();
+  };
+  
+  console.log('Auto-save enabled');
+}
+
+// Initialize auto-save and auto-load on page load
+window.addEventListener('load', function() {
+  autoLoadState();
+  setupAutoSave();
+});
 
 </script>
 </body>
