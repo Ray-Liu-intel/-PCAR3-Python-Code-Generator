@@ -1982,43 +1982,47 @@ function restoreState(state) {
         addMainLoopItem(plbId, 'pats');
         const itemDiv = mainContainer.lastElementChild;
         const modeSelect = itemDiv.querySelector('.pats-mode');
-        modeSelect.value = item.mode || 'default';
-        // Update fields FIRST to show the correct ones
-        updatePatsFields(modeSelect);
-        // Then set the values
-        const defaultInput = itemDiv.querySelector('.pats-value');
-        const tidsInput = itemDiv.querySelector('.tids-value');
-        const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
-        const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
-        const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
-        const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
-        if (defaultInput) defaultInput.value = item.value || '';
-        if (tidsInput) tidsInput.value = item.tidsValue || '';
-        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
-        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
-        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
-        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST to show the correct ones
+          updatePatsFields(modeSelect);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector('.pats-value');
+          const tidsInput = itemDiv.querySelector('.tids-value');
+          const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+          const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+          const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+          const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
       } else if (item.type === 'pre' || item.type === 'post') {
         addMainLoopItem(plbId, item.type);
         const itemDiv = mainContainer.lastElementChild;
         const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
-        modeSelect.value = item.mode || 'default';
-        // Update fields FIRST
-        const type = modeSelect.className.split('-')[0];
-        updateGenericFields(modeSelect, type);
-        // Then set the values
-        const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
-        const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
-        const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
-        const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
-        const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
-        const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
-        if (defaultInput) defaultInput.value = item.value || '';
-        if (tidsInput) tidsInput.value = item.tidsValue || '';
-        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
-        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
-        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
-        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST
+          const type = modeSelect.className.split('-')[0];
+          updateGenericFields(modeSelect, type);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+          const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+          const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+          const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+          const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+          const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
       } else if (item.type === 'refplb') {
         addMainLoopItem(plbId, 'refplb');
         const itemDiv = mainContainer.lastElementChild;
@@ -2082,23 +2086,25 @@ function restoreState(state) {
         addSublevelItem(sublevelContainer, item.type);
         const itemDiv = sublevelContainer.lastElementChild;
         const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
-        modeSelect.value = item.mode || 'default';
-        // Update fields FIRST
-        const type = modeSelect.className.split('-')[0];
-        updateGenericFields(modeSelect, type);
-        // Then set the values
-        const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
-        const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
-        const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
-        const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
-        const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
-        const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
-        if (defaultInput) defaultInput.value = item.value || '';
-        if (tidsInput) tidsInput.value = item.tidsValue || '';
-        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
-        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
-        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
-        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST
+          const type = modeSelect.className.split('-')[0];
+          updateGenericFields(modeSelect, type);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+          const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+          const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+          const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+          const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+          const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
       } else if (item.type === 'refplb') {
         addSublevelItem(sublevelContainer, 'refplb');
         const itemDiv = sublevelContainer.lastElementChild;
