@@ -1877,31 +1877,38 @@ function restoreState(state) {
   document.getElementById('plbContainer').innerHTML = '';
   plbCount = 0;
 
+  // Helper function to safely set value
+  const safeSetValue = (parent, selector, value) => {
+    const element = parent.querySelector(selector);
+    if (element) element.value = value || '';
+  };
+
   // Restore PLB blocks
   (state.plbs || []).forEach(plbState => {
     addPlb();
     const plbDiv = document.querySelectorAll('.plb-block')[document.querySelectorAll('.plb-block').length - 1];
 
-    // Restore PLB properties
-    plbDiv.querySelector('.plb-name').value = plbState.plbName || '';
-    plbDiv.querySelector('.plb-header-text').value = plbState.plbHeaderText || '';
-    plbDiv.querySelector('.plb-header-order').value = plbState.plbHeaderOrder || '';
-    plbDiv.querySelector('.preplist').value = plbState.preplist || '';
-    plbDiv.querySelector('.postplist').value = plbState.postplist || '';
-    plbDiv.querySelector('.prepattern-mode').value = plbState.prepatternMode || 'tuple';
-    plbDiv.querySelector('.prepattern-value').value = plbState.prepatternValue || '';
-    plbDiv.querySelector('.prepattern-tids-value').value = plbState.prepatternTidsValue || '';
-    plbDiv.querySelector('.prepattern-querytid-testname').value = plbState.prepatternQuerytidTestname || '';
-    plbDiv.querySelector('.prepattern-querytid-testtype').value = plbState.prepatternQuerytidTesttype || '';
-    plbDiv.querySelector('.postpattern-mode').value = plbState.postpatternMode || 'tuple';
-    plbDiv.querySelector('.postpattern-value').value = plbState.postpatternValue || '';
-    plbDiv.querySelector('.postpattern-tids-value').value = plbState.postpatternTidsValue || '';
-    plbDiv.querySelector('.postpattern-querytid-testname').value = plbState.postpatternQuerytidTestname || '';
-    plbDiv.querySelector('.postpattern-querytid-testtype').value = plbState.postpatternQuerytidTesttype || '';
+    // Restore PLB properties with null checks
+    safeSetValue(plbDiv, '.plb-name', plbState.plbName);
+    safeSetValue(plbDiv, '.plb-header-text', plbState.plbHeaderText);
+    safeSetValue(plbDiv, '.preplist', plbState.preplist);
+    safeSetValue(plbDiv, '.postplist', plbState.postplist);
+    safeSetValue(plbDiv, '.prepattern-mode', plbState.prepatternMode || 'tuple');
+    safeSetValue(plbDiv, '.prepattern-value', plbState.prepatternValue);
+    safeSetValue(plbDiv, '.prepattern-tids-value', plbState.prepatternTidsValue);
+    safeSetValue(plbDiv, '.prepattern-querytid-testname', plbState.prepatternQuerytidTestname);
+    safeSetValue(plbDiv, '.prepattern-querytid-testtype', plbState.prepatternQuerytidTesttype);
+    safeSetValue(plbDiv, '.postpattern-mode', plbState.postpatternMode || 'tuple');
+    safeSetValue(plbDiv, '.postpattern-value', plbState.postpatternValue);
+    safeSetValue(plbDiv, '.postpattern-tids-value', plbState.postpatternTidsValue);
+    safeSetValue(plbDiv, '.postpattern-querytid-testname', plbState.postpatternQuerytidTestname);
+    safeSetValue(plbDiv, '.postpattern-querytid-testtype', plbState.postpatternQuerytidTesttype);
 
     // Trigger mode changes to show/hide appropriate fields
-    updatePrepatternFields(plbDiv.querySelector('.prepattern-mode'));
-    updatePostpatternFields(plbDiv.querySelector('.postpattern-mode'));
+    const prepatternMode = plbDiv.querySelector('.prepattern-mode');
+    const postpatternMode = plbDiv.querySelector('.postpattern-mode');
+    if (prepatternMode) updatePrepatternFields(prepatternMode);
+    if (postpatternMode) updatePostpatternFields(postpatternMode);
 
     // Restore regular items (non-loop items to .item-list)
     const itemList = plbDiv.querySelector('.item-list');
