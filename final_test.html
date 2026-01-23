@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html><head>
   <meta charset="UTF-8">
   <title>PCAR3 Python Code Generator 2.0 - Company</title>
@@ -334,12 +335,12 @@
     <span style="font-size: 2rem; font-weight: 500;">PCAR3 Python Code Generator 2.0</span>
   </div>
   <div class="container">
-    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist" style=""></label>
+    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist"></label>
     
     <!-- Loop Partition Toggle -->
     <div class="loop-toggle-section">
       <label>
-        <input type="checkbox" id="loopPartitionToggle" onchange="toggleLoopPartition()" style="">
+        <input type="checkbox" id="loopPartitionToggle" onchange="toggleLoopPartition()">
         Enable Loop Partition
       </label>
     </div>
@@ -376,15 +377,15 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
     <button class="delete-plb-btn" onclick="deletePlb('plb1')">Delete Plb</button>
     <div class="plb-header">
       <button class="plb-toggle-btn" onclick="togglePlb('plb1', this)">⌵</button>
-      <label>Plb Name: <input type="text" class="plb-name" value="PListA" style=""></label>
-      <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST" style=""></label>
-      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def" style=""></label>
+      <label>Plb Name: <input type="text" class="plb-name" value="PListA"></label>
+      <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
+      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def"></label>
     </div>
     <div class="plb-content">
       <div class="plb-row">
         <span class="param-group">
           <b>pre:</b>
-          <label>preplist:<input type="text" class="preplist" style=""></label>
+          <label>preplist:<input type="text" class="preplist"></label>
           <label>prepattern:</label>
           <select class="prepattern-mode" onchange="togglePlbPatternMode(this, 'prepattern')">
             <option value="tuple">Tuple</option>
@@ -392,21 +393,21 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
             <option value="querytid">QueryTid</option>
           </select>
           <span class="prepattern-tuple" style="">
-            <input type="text" class="prepattern-value" value="" style="">
+            <input type="text" class="prepattern-value" value="">
           </span>
           <span class="prepattern-tids" style="display:none">
-            <label>Tids: <input type="text" class="prepattern-tids-value" value="" style=""></label>
+            <label>Tids: <input type="text" class="prepattern-tids-value" value=""></label>
           </span>
           <span class="prepattern-querytid" style="display:none">
-            <label>testname: <input type="text" class="prepattern-querytid-testname" value="" style=""></label>
-            <label>testtype: <input type="text" class="prepattern-querytid-testtype" value="" style=""></label>
+            <label>testname: <input type="text" class="prepattern-querytid-testname" value=""></label>
+            <label>testtype: <input type="text" class="prepattern-querytid-testtype" value=""></label>
           </span>
         </span>
       </div>
       <div class="plb-row">
         <span class="param-group">
           <b>post:</b>
-          <label>postplist:<input type="text" class="postplist" style=""></label>
+          <label>postplist:<input type="text" class="postplist"></label>
           <label>postpattern:</label>
           <select class="postpattern-mode" onchange="togglePlbPatternMode(this, 'postpattern')">
             <option value="tuple">Tuple</option>
@@ -414,14 +415,14 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
             <option value="querytid">QueryTid</option>
           </select>
           <span class="postpattern-tuple" style="">
-            <input type="text" class="postpattern-value" value="" style="">
+            <input type="text" class="postpattern-value" value="">
           </span>
           <span class="postpattern-tids" style="display:none">
-            <label>Tids: <input type="text" class="postpattern-tids-value" value="" style=""></label>
+            <label>Tids: <input type="text" class="postpattern-tids-value" value=""></label>
           </span>
           <span class="postpattern-querytid" style="display:none">
-            <label>testname: <input type="text" class="postpattern-querytid-testname" value="" style=""></label>
-            <label>testtype: <input type="text" class="postpattern-querytid-testtype" value="" style=""></label>
+            <label>testname: <input type="text" class="postpattern-querytid-testname" value=""></label>
+            <label>testtype: <input type="text" class="postpattern-querytid-testtype" value=""></label>
           </span>
         </span>
       </div>
@@ -434,31 +435,7 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
         <button onclick="addItem('plb1', 'post')">Add PostExecPat</button>
         <button onclick="addItem('plb1', 'comment')">Add Comment</button>
       </div>
-      <div class="item-list"><div class="item-block" data-type="pats"><span class="drag-handle">☰</span>
-      <div class="item-content">
-        <b>Pats:</b>
-        <select class="pats-mode" onchange="togglePatsMode(this)">
-          <option value="default">Tuple</option>
-          <option value="tids">Tids</option>
-          <option value="querytid">QueryTid</option>
-        </select>
-        <span class="pats-default" style="display: none;">
-          <input type="text" class="pats-value" value="" style="">
-        </span>
-        <span class="pats-tids" style="">
-          <label>Tids: <input type="text" class="tids-value" value="" style=""></label>
-          <label>chunk: <input type="text" class="tids-chunk" value="" style=""></label>
-        </span>
-        <span class="pats-querytid" style="display:none">
-          <label>testname: <input type="text" class="querytid-testname" value="" style=""></label>
-          <label>testtype: <input type="text" class="querytid-testtype" value="" style=""></label>
-          <label>chunk: <input type="text" class="querytid-chunk" value="" style=""></label>
-        </span>
-      </div>
-      <div class="item-actions">
-        <button onclick="this.closest('.item-block').remove()">Delete</button>
-      </div>
-    </div></div>
+      <div class="item-list"></div>
       
       <!-- Loop Section with if/elif/else -->
       <div class="loop-section" style="display: none;">
@@ -2182,78 +2159,18 @@ function saveHtml() {
   const state = captureState();
   const stateJson = JSON.stringify(state, null, 2);
   
-  // Get the current document HTML
-  let html = document.documentElement.outerHTML;
+  // Clone the document to avoid modifying the current page
+  const clonedDoc = document.documentElement.cloneNode(true);
   
-  // Build the state script using string concatenation to avoid template literal issues
-  // when this code is embedded in saved HTML
-  const stateScript = '\n<script id="savedState" type="application/json">\n' +
-    stateJson +
-    '\n<' + '/script>\n' +
-    '<script>\n' +
-    '// Auto-restore state on page load if savedState exists\n' +
-    'window.addEventListener(\'DOMContentLoaded\', function() {\n' +
-    '  // Find ALL savedState blocks and use the LAST one (most recent save)\n' +
-    '  const savedStateBlocks = document.querySelectorAll(\'script[id="savedState"]\');\n' +
-    '  if (savedStateBlocks.length > 0) {\n' +
-    '    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];\n' +
-    '    try {\n' +
-    '      const state = JSON.parse(savedStateEl.textContent);\n' +
-    '      restoreState(state);\n' +
-    '    } catch (e) {\n' +
-    '      console.error(\'Failed to restore state:\', e);\n' +
-    '    }\n' +
-    '  }\n' +
-    '});\n' +
-    '<' + '/script>\n' +
-    '
-<script id="savedState" type="application/json">
-{
-  "plistfile": "sample2.plist",
-  "loopEnabled": false,
-  "nameOfInstance": "",
-  "decodeParMappings": [],
-  "plbs": [
-    {
-      "collapsed": false,
-      "plbName": "Version1Test",
-      "plbHeaderText": "",
-      "plbHeaderOrder": "",
-      "preplist": "",
-      "postplist": "",
-      "prepatternMode": "tuple",
-      "prepatternValue": "",
-      "prepatternTidsValue": "",
-      "prepatternQuerytidTestname": "",
-      "prepatternQuerytidTesttype": "",
-      "postpatternMode": "tuple",
-      "postpatternValue": "",
-      "postpatternTidsValue": "",
-      "postpatternQuerytidTestname": "",
-      "postpatternQuerytidTesttype": "",
-      "items": [
-        {
-          "type": "pats",
-          "mode": "tids",
-          "value": "",
-          "tidsValue": "AAA BBB CCC",
-          "tidsChunk": "",
-          "querytidTestname": "",
-          "querytidTesttype": "",
-          "querytidChunk": ""
-        }
-      ],
-      "mainLoopItems": [],
-      "subLevel": {
-        "enabled": false,
-        "name": "",
-        "items": []
-      }
-    }
-  ]
-}
-</script>
-<script>
+  // Create the savedState script element
+  const stateScriptEl = document.createElement('script');
+  stateScriptEl.id = 'savedState';
+  stateScriptEl.type = 'application/json';
+  stateScriptEl.textContent = stateJson;
+  
+  // Create the restore script element
+  const restoreScriptEl = document.createElement('script');
+  restoreScriptEl.textContent = `
 // Auto-restore state on page load if savedState exists
 window.addEventListener('DOMContentLoaded', function() {
   // Find ALL savedState blocks and use the LAST one (most recent save)
@@ -2268,10 +2185,15 @@ window.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
-</script>
-</body>';
+`;
   
-  html = html.replace('</body>', stateScript);
+  // Append to the body of the cloned document
+  const clonedBody = clonedDoc.querySelector('body');
+  clonedBody.appendChild(stateScriptEl);
+  clonedBody.appendChild(restoreScriptEl);
+  
+  // Serialize the cloned document
+  const html = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
   
   // Create a blob and trigger download
   const blob = new Blob([html], { type: 'text/html' });
@@ -2292,4 +2214,51 @@ window.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-</body></html>
+<script id="savedState" type="application/json">{
+  "plistfile": "sample2.plist",
+  "loopEnabled": false,
+  "nameOfInstance": "",
+  "decodeParMappings": [],
+  "plbs": [
+    {
+      "collapsed": false,
+      "plbName": "PListA",
+      "plbHeaderText": "",
+      "plbHeaderOrder": "",
+      "preplist": "",
+      "postplist": "",
+      "prepatternMode": "tuple",
+      "prepatternValue": "",
+      "prepatternTidsValue": "",
+      "prepatternQuerytidTestname": "",
+      "prepatternQuerytidTesttype": "",
+      "postpatternMode": "tuple",
+      "postpatternValue": "",
+      "postpatternTidsValue": "",
+      "postpatternQuerytidTestname": "",
+      "postpatternQuerytidTesttype": "",
+      "items": [],
+      "mainLoopItems": [],
+      "subLevel": {
+        "enabled": false,
+        "name": "",
+        "items": []
+      }
+    }
+  ]
+}</script><script>
+// Auto-restore state on page load if savedState exists
+window.addEventListener('DOMContentLoaded', function() {
+  // Find ALL savedState blocks and use the LAST one (most recent save)
+  const savedStateBlocks = document.querySelectorAll('script[id="savedState"]');
+  if (savedStateBlocks.length > 0) {
+    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];
+    try {
+      const state = JSON.parse(savedStateEl.textContent);
+      restoreState(state);
+    } catch (e) {
+      console.error('Failed to restore state:', e);
+    }
+  }
+});
+</script></body></html>
