@@ -1992,7 +1992,7 @@ function restoreState(state) {
         if (modeSelect) {
           modeSelect.value = item.mode || 'default';
           // Update fields FIRST to show the correct ones
-          updatePatsFields(modeSelect);
+          togglePatsMode(modeSelect);
           // Then set the values
           const defaultInput = itemDiv.querySelector('.pats-value');
           const tidsInput = itemDiv.querySelector('.tids-value');
@@ -2079,7 +2079,7 @@ function restoreState(state) {
         if (modeSelect) {
           modeSelect.value = item.mode || 'default';
           // Update fields FIRST
-          updatePatsFields(modeSelect);
+          togglePatsMode(modeSelect);
           // Then set the values
           const defaultInput = itemDiv.querySelector('.pats-value');
           const tidsInput = itemDiv.querySelector('.tids-value');
