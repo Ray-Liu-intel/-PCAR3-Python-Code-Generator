@@ -2074,33 +2074,9 @@ function saveHtml() {
   // Get the current document HTML
   let html = document.documentElement.outerHTML;
   
-  // Remove any existing savedState blocks to prevent duplication
-  // Use string-based removal instead of regex to avoid issues when this code is embedded in saved HTML
-  let startMarker = '<script id="savedState"';
-  let endMarker = '</script>';
-  let pos = html.indexOf(startMarker);
-  while (pos !== -1) {
-    let endPos = html.indexOf(endMarker, pos);
-    if (endPos !== -1) {
-      html = html.substring(0, pos) + html.substring(endPos + endMarker.length);
-      pos = html.indexOf(startMarker);
-    } else {
-      break;
-    }
-  }
-  
-  // Remove the auto-restore script block if it exists
-  startMarker = '<script>\n// Auto-restore state';
-  pos = html.indexOf(startMarker);
-  while (pos !== -1) {
-    let endPos = html.indexOf(endMarker, pos);
-    if (endPos !== -1) {
-      html = html.substring(0, pos) + html.substring(endPos + endMarker.length);
-      pos = html.indexOf(startMarker);
-    } else {
-      break;
-    }
-  }
+  // Simple approach: Just append the state at the end before </body>
+  // Don't try to remove existing savedState blocks - just add new one
+  // The DOMContentLoaded will use the LAST savedState block found
   
   // Insert the saved state as a script tag before the closing </body> tag
   const stateScript = `
@@ -2110,8 +2086,10 @@ ${stateJson}
 <script>
 // Auto-restore state on page load if savedState exists
 window.addEventListener('DOMContentLoaded', function() {
-  const savedStateEl = document.getElementById('savedState');
-  if (savedStateEl) {
+  // Find ALL savedState blocks and use the LAST one (most recent save)
+  const savedStateBlocks = document.querySelectorAll('script[id="savedState"]');
+  if (savedStateBlocks.length > 0) {
+    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];
     try {
       const state = JSON.parse(savedStateEl.textContent);
       restoreState(state);
