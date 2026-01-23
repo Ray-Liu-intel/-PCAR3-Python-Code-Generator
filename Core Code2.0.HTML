@@ -1722,6 +1722,7 @@ function captureState() {
       postpatternTidsValue: plbDiv.querySelector('.postpattern-tids-value')?.value || '',
       postpatternQuerytidTestname: plbDiv.querySelector('.postpattern-querytid-testname')?.value || '',
       postpatternQuerytidTesttype: plbDiv.querySelector('.postpattern-querytid-testtype')?.value || '',
+      items: [],
       mainLoopItems: [],
       subLevel: {
         enabled: plbDiv.querySelector('.sublevel-toggle')?.checked || false,
@@ -1729,6 +1730,42 @@ function captureState() {
         items: []
       }
     };
+
+    // Capture regular items (non-loop items from .item-list)
+    plbDiv.querySelectorAll('.item-list > div[data-type]').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      const item = { type };
+
+      if (type === 'pats') {
+        item.mode = itemDiv.querySelector('.pats-mode')?.value || 'default';
+        item.value = itemDiv.querySelector('.pats-value')?.value || '';
+        item.tidsValue = itemDiv.querySelector('.tids-value')?.value || '';
+        item.tidsChunk = itemDiv.querySelector('.tids-chunk')?.value || '';
+        item.querytidTestname = itemDiv.querySelector('.querytid-testname')?.value || '';
+        item.querytidTesttype = itemDiv.querySelector('.querytid-testtype')?.value || '';
+        item.querytidChunk = itemDiv.querySelector('.querytid-chunk')?.value || '';
+      } else if (type === 'pre' || type === 'post') {
+        item.mode = itemDiv.querySelector(`.${type}-mode`)?.value || 'default';
+        item.value = itemDiv.querySelector(`.${type}-value`)?.value || '';
+        item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`)?.value || '';
+        item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`)?.value || '';
+        item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`)?.value || '';
+        item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`)?.value || '';
+        item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`)?.value || '';
+      } else if (type === 'ref') {
+        item.name = itemDiv.querySelector('.ref-name')?.value || '';
+        item.skipPre = itemDiv.querySelector('.skip-pre')?.checked || false;
+        item.skipPost = itemDiv.querySelector('.skip-post')?.checked || false;
+      } else if (type === 'preexecref') {
+        item.name = itemDiv.querySelector('.preexecref-name')?.value || '';
+      } else if (type === 'postexecref') {
+        item.name = itemDiv.querySelector('.postexecref-name')?.value || '';
+      } else if (type === 'comment') {
+        item.text = itemDiv.querySelector('.comment-content')?.value || '';
+      }
+
+      plbState.items.push(item);
+    });
 
     // Capture main loop items
     plbDiv.querySelectorAll('.main-loop-list > div[data-type]').forEach(itemDiv => {
@@ -1864,12 +1901,61 @@ function restoreState(state) {
     updatePrepatternFields(plbDiv.querySelector('.prepattern-mode'));
     updatePostpatternFields(plbDiv.querySelector('.postpattern-mode'));
 
+    // Restore regular items (non-loop items to .item-list)
+    const itemList = plbDiv.querySelector('.item-list');
+    itemList.innerHTML = '';
+    (plbState.items || []).forEach(item => {
+      const plbId = plbDiv.id;
+      if (item.type === 'pats') {
+        addItem(plbId, 'pats');
+        const itemDiv = itemList.lastElementChild;
+        itemDiv.querySelector('.pats-mode').value = item.mode || 'default';
+        itemDiv.querySelector('.pats-value').value = item.value || '';
+        itemDiv.querySelector('.tids-value').value = item.tidsValue || '';
+        itemDiv.querySelector('.tids-chunk').value = item.tidsChunk || '';
+        itemDiv.querySelector('.querytid-testname').value = item.querytidTestname || '';
+        itemDiv.querySelector('.querytid-testtype').value = item.querytidTesttype || '';
+        itemDiv.querySelector('.querytid-chunk').value = item.querytidChunk || '';
+        togglePatsMode(itemDiv.querySelector('.pats-mode'));
+      } else if (item.type === 'pre' || item.type === 'post') {
+        addItem(plbId, item.type);
+        const itemDiv = itemList.lastElementChild;
+        itemDiv.querySelector(`.${item.type}-mode`).value = item.mode || 'default';
+        itemDiv.querySelector(`.${item.type}-value`).value = item.value || '';
+        itemDiv.querySelector(`.${item.type}-tids-value`).value = item.tidsValue || '';
+        itemDiv.querySelector(`.${item.type}-tids-chunk`).value = item.tidsChunk || '';
+        itemDiv.querySelector(`.${item.type}-querytid-testname`).value = item.querytidTestname || '';
+        itemDiv.querySelector(`.${item.type}-querytid-testtype`).value = item.querytidTesttype || '';
+        itemDiv.querySelector(`.${item.type}-querytid-chunk`).value = item.querytidChunk || '';
+        togglePrePostMode(itemDiv.querySelector(`.${item.type}-mode`));
+      } else if (item.type === 'ref') {
+        addItem(plbId, 'ref');
+        const itemDiv = itemList.lastElementChild;
+        itemDiv.querySelector('.ref-name').value = item.name || '';
+        itemDiv.querySelector('.skip-pre').checked = item.skipPre || false;
+        itemDiv.querySelector('.skip-post').checked = item.skipPost || false;
+      } else if (item.type === 'preexecref') {
+        addItem(plbId, 'preexecref');
+        const itemDiv = itemList.lastElementChild;
+        itemDiv.querySelector('.preexecref-name').value = item.name || '';
+      } else if (item.type === 'postexecref') {
+        addItem(plbId, 'postexecref');
+        const itemDiv = itemList.lastElementChild;
+        itemDiv.querySelector('.postexecref-name').value = item.name || '';
+      } else if (item.type === 'comment') {
+        addItem(plbId, 'comment');
+        const itemDiv = itemList.lastElementChild;
+        itemDiv.querySelector('.comment-content').value = item.text || '';
+      }
+    });
+
     // Restore main loop items
     const mainContainer = plbDiv.querySelector('.main-loop-list');
     mainContainer.innerHTML = '';
     (plbState.mainLoopItems || []).forEach(item => {
+      const plbId = plbDiv.id;
       if (item.type === 'pats') {
-        addMainLoopItem(mainContainer, 'pats');
+        addMainLoopItem(plbId, 'pats');
         const itemDiv = mainContainer.lastElementChild;
         itemDiv.querySelector('.pats-mode').value = item.mode || 'default';
         itemDiv.querySelector('.pats-value').value = item.value || '';
@@ -1880,7 +1966,7 @@ function restoreState(state) {
         itemDiv.querySelector('.querytid-chunk').value = item.querytidChunk || '';
         updatePatsFields(itemDiv.querySelector('.pats-mode'));
       } else if (item.type === 'pre' || item.type === 'post') {
-        addMainLoopItem(mainContainer, item.type);
+        addMainLoopItem(plbId, item.type);
         const itemDiv = mainContainer.lastElementChild;
         itemDiv.querySelector(`.${item.type}-mode`).value = item.mode || 'default';
         itemDiv.querySelector(`.${item.type}-value`).value = item.value || '';
@@ -1893,20 +1979,20 @@ function restoreState(state) {
         const type = sel.className.split('-')[0];
         updateGenericFields(sel, type);
       } else if (item.type === 'refplb') {
-        addMainLoopItem(mainContainer, 'refplb');
+        addMainLoopItem(plbId, 'refplb');
         const itemDiv = mainContainer.lastElementChild;
         itemDiv.querySelector('.refplb-name').value = item.name || '';
       } else if (item.type === 'comment') {
-        addMainLoopItem(mainContainer, 'comment');
+        addMainLoopItem(plbId, 'comment');
         const itemDiv = mainContainer.lastElementChild;
         itemDiv.querySelector('.comment-text').value = item.text || '';
       } else if (item.type === 'namefilter') {
-        addMainLoopItem(mainContainer, 'namefilter');
+        addMainLoopItem(plbId, 'namefilter');
         const itemDiv = mainContainer.lastElementChild;
         itemDiv.querySelector('.namefilter-include').value = item.include || '';
         itemDiv.querySelector('.namefilter-exclude').value = item.exclude || '';
       } else if (item.type === 'preexecref' || item.type === 'postexecref') {
-        addMainLoopItem(mainContainer, item.type);
+        addMainLoopItem(plbId, item.type);
         const itemDiv = mainContainer.lastElementChild;
         itemDiv.querySelector(`.${item.type}-name`).value = item.name || '';
       }
@@ -1979,6 +2065,7 @@ function restoreState(state) {
 /**
  * Creates a downloadable HTML file with the current state embedded.
  * The state is stored in a script tag and automatically restored on page load.
+ * Allows user to choose save location and filename.
  */
 function saveHtml() {
   const state = captureState();
@@ -2014,12 +2101,22 @@ window.addEventListener('DOMContentLoaded', function() {
   
   html = html.replace('</body>', stateScript);
   
-  // Create a blob and download
+  // Create a blob and trigger download with user-selectable location
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'PCAR3_Python_Code_Generator_State.html';
+  
+  // Generate a default filename with timestamp
+  const now = new Date();
+  const timestamp = now.getFullYear() + 
+    String(now.getMonth() + 1).padStart(2, '0') + 
+    String(now.getDate()).padStart(2, '0') + '_' +
+    String(now.getHours()).padStart(2, '0') + 
+    String(now.getMinutes()).padStart(2, '0') + 
+    String(now.getSeconds()).padStart(2, '0');
+  a.download = `PCAR3_State_${timestamp}.html`;
+  
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
