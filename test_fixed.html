@@ -335,12 +335,12 @@
     <span style="font-size: 2rem; font-weight: 500;">PCAR3 Python Code Generator 2.0</span>
   </div>
   <div class="container">
-    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist"></label>
+    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist" style=""></label>
     
     <!-- Loop Partition Toggle -->
     <div class="loop-toggle-section">
       <label>
-        <input type="checkbox" id="loopPartitionToggle" onchange="toggleLoopPartition()">
+        <input type="checkbox" id="loopPartitionToggle" onchange="toggleLoopPartition()" style="">
         Enable Loop Partition
       </label>
     </div>
@@ -373,117 +373,7 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
     </div>
     
     <button onclick="addPlb()">Add Plb</button>
-    <div id="plbContainer"><div class="plb-block" id="plb1">
-    <button class="delete-plb-btn" onclick="deletePlb('plb1')">Delete Plb</button>
-    <div class="plb-header">
-      <button class="plb-toggle-btn" onclick="togglePlb('plb1', this)">⌵</button>
-      <label>Plb Name: <input type="text" class="plb-name" value="PListA"></label>
-      <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
-      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def"></label>
-    </div>
-    <div class="plb-content">
-      <div class="plb-row">
-        <span class="param-group">
-          <b>pre:</b>
-          <label>preplist:<input type="text" class="preplist"></label>
-          <label>prepattern:</label>
-          <select class="prepattern-mode" onchange="togglePlbPatternMode(this, 'prepattern')">
-            <option value="tuple">Tuple</option>
-            <option value="tids">Tids</option>
-            <option value="querytid">QueryTid</option>
-          </select>
-          <span class="prepattern-tuple" style="">
-            <input type="text" class="prepattern-value" value="">
-          </span>
-          <span class="prepattern-tids" style="display:none">
-            <label>Tids: <input type="text" class="prepattern-tids-value" value=""></label>
-          </span>
-          <span class="prepattern-querytid" style="display:none">
-            <label>testname: <input type="text" class="prepattern-querytid-testname" value=""></label>
-            <label>testtype: <input type="text" class="prepattern-querytid-testtype" value=""></label>
-          </span>
-        </span>
-      </div>
-      <div class="plb-row">
-        <span class="param-group">
-          <b>post:</b>
-          <label>postplist:<input type="text" class="postplist"></label>
-          <label>postpattern:</label>
-          <select class="postpattern-mode" onchange="togglePlbPatternMode(this, 'postpattern')">
-            <option value="tuple">Tuple</option>
-            <option value="tids">Tids</option>
-            <option value="querytid">QueryTid</option>
-          </select>
-          <span class="postpattern-tuple" style="">
-            <input type="text" class="postpattern-value" value="">
-          </span>
-          <span class="postpattern-tids" style="display:none">
-            <label>Tids: <input type="text" class="postpattern-tids-value" value=""></label>
-          </span>
-          <span class="postpattern-querytid" style="display:none">
-            <label>testname: <input type="text" class="postpattern-querytid-testname" value=""></label>
-            <label>testtype: <input type="text" class="postpattern-querytid-testtype" value=""></label>
-          </span>
-        </span>
-      </div>
-      <div class="plb-row">
-        <button onclick="addItem('plb1', 'pats')">Add Pats</button>
-        <button onclick="addItem('plb1', 'preexecref')">Add PreExecRefPList</button>
-        <button onclick="addItem('plb1', 'pre')">Add PreExecPat</button>
-        <button onclick="addItem('plb1', 'ref')">Add RefPlb</button>
-        <button onclick="addItem('plb1', 'postexecref')">Add PostExecRefPList</button>
-        <button onclick="addItem('plb1', 'post')">Add PostExecPat</button>
-        <button onclick="addItem('plb1', 'comment')">Add Comment</button>
-      </div>
-      <div class="item-list"><div class="item-block" data-type="pats"><span class="drag-handle">☰</span>
-      <div class="item-content">
-        <b>Pats:</b>
-        <select class="pats-mode" onchange="togglePatsMode(this)">
-          <option value="default">Tuple</option>
-          <option value="tids">Tids</option>
-          <option value="querytid">QueryTid</option>
-        </select>
-        <span class="pats-default" style="display: none;">
-          <input type="text" class="pats-value" value="">
-        </span>
-        <span class="pats-tids" style="">
-          <label>Tids: <input type="text" class="tids-value" value=""></label>
-          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
-        </span>
-        <span class="pats-querytid" style="display:none">
-          <label>testname: <input type="text" class="querytid-testname" value=""></label>
-          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
-          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
-        </span>
-      </div>
-      <div class="item-actions">
-        <button onclick="this.closest('.item-block').remove()">Delete</button>
-      </div>
-    </div></div>
-      
-      <!-- Loop Section with if/elif/else -->
-      <div class="loop-section" style="display: none;">
-        <h4>Loop Items (for name in name_of_instance)</h4>
-        <div class="plb-row">
-          <button onclick="addMainLoopItem('plb1', 'pats')">Add Pats</button>
-          <button onclick="addMainLoopItem('plb1', 'preexecref')" class="hide-main-loop-prepost">Add PreExecRefPList</button>
-          <button onclick="addMainLoopItem('plb1', 'pre')" class="hide-main-loop-prepost">Add PreExecPat</button>
-          <button onclick="addMainLoopItem('plb1', 'ref')">Add RefPlb</button>
-          <button onclick="addMainLoopItem('plb1', 'postexecref')" class="hide-main-loop-prepost">Add PostExecRefPList</button>
-          <button onclick="addMainLoopItem('plb1', 'post')" class="hide-main-loop-prepost">Add PostExecPat</button>
-          <button onclick="addMainLoopItem('plb1', 'comment')">Add Comment</button>
-        </div>
-        <div class="main-loop-list"></div>
-        
-        <div style="margin-top: 16px;">
-          <button onclick="addConditionBlock('plb1', 'if')">Add if</button>
-          <button onclick="addConditionBlock('plb1', 'elif')">Add elif</button>
-          <button onclick="addConditionBlock('plb1', 'else')">Add else</button>
-        </div>
-        <div class="condition-list"></div>
-      </div>
-    </div>
-  </div></div>
+    <div id="plbContainer"></div>
     <button onclick="generateCode()">Generate Code</button>
     <button onclick="saveHtml()">Save HTML</button>
     <h3>Generated Result:</h3>
@@ -2021,43 +1911,67 @@ function restoreState(state) {
       if (item.type === 'pats') {
         addItem(plbId, 'pats');
         const itemDiv = itemList.lastElementChild;
-        itemDiv.querySelector('.pats-mode').value = item.mode || 'default';
-        itemDiv.querySelector('.pats-value').value = item.value || '';
-        itemDiv.querySelector('.tids-value').value = item.tidsValue || '';
-        itemDiv.querySelector('.tids-chunk').value = item.tidsChunk || '';
-        itemDiv.querySelector('.querytid-testname').value = item.querytidTestname || '';
-        itemDiv.querySelector('.querytid-testtype').value = item.querytidTesttype || '';
-        itemDiv.querySelector('.querytid-chunk').value = item.querytidChunk || '';
-        togglePatsMode(itemDiv.querySelector('.pats-mode'));
+        const modeSelect = itemDiv.querySelector('.pats-mode');
+        modeSelect.value = item.mode || 'default';
+        // Toggle mode FIRST to show the correct fields
+        togglePatsMode(modeSelect);
+        // Then set the values
+        const defaultInput = itemDiv.querySelector('.pats-value');
+        const tidsInput = itemDiv.querySelector('.tids-value');
+        const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+        const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+        const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+        const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+        if (defaultInput) defaultInput.value = item.value || '';
+        if (tidsInput) tidsInput.value = item.tidsValue || '';
+        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
       } else if (item.type === 'pre' || item.type === 'post') {
         addItem(plbId, item.type);
         const itemDiv = itemList.lastElementChild;
-        itemDiv.querySelector(`.${item.type}-mode`).value = item.mode || 'default';
-        itemDiv.querySelector(`.${item.type}-value`).value = item.value || '';
-        itemDiv.querySelector(`.${item.type}-tids-value`).value = item.tidsValue || '';
-        itemDiv.querySelector(`.${item.type}-tids-chunk`).value = item.tidsChunk || '';
-        itemDiv.querySelector(`.${item.type}-querytid-testname`).value = item.querytidTestname || '';
-        itemDiv.querySelector(`.${item.type}-querytid-testtype`).value = item.querytidTesttype || '';
-        itemDiv.querySelector(`.${item.type}-querytid-chunk`).value = item.querytidChunk || '';
-        togglePrePostMode(itemDiv.querySelector(`.${item.type}-mode`));
+        const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+        modeSelect.value = item.mode || 'default';
+        // Toggle mode FIRST to show the correct fields
+        togglePrePostMode(modeSelect);
+        // Then set the values
+        const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+        const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+        const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+        const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+        const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+        const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+        if (defaultInput) defaultInput.value = item.value || '';
+        if (tidsInput) tidsInput.value = item.tidsValue || '';
+        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
       } else if (item.type === 'ref') {
         addItem(plbId, 'ref');
         const itemDiv = itemList.lastElementChild;
-        itemDiv.querySelector('.ref-name').value = item.name || '';
-        itemDiv.querySelector('.skip-pre').checked = item.skipPre || false;
-        itemDiv.querySelector('.skip-post').checked = item.skipPost || false;
+        const nameInput = itemDiv.querySelector('.ref-name');
+        const skipPreCheck = itemDiv.querySelector('.skip-pre');
+        const skipPostCheck = itemDiv.querySelector('.skip-post');
+        if (nameInput) nameInput.value = item.name || '';
+        if (skipPreCheck) skipPreCheck.checked = item.skipPre || false;
+        if (skipPostCheck) skipPostCheck.checked = item.skipPost || false;
       } else if (item.type === 'preexecref') {
         addItem(plbId, 'preexecref');
         const itemDiv = itemList.lastElementChild;
-        itemDiv.querySelector('.preexecref-name').value = item.name || '';
+        const nameInput = itemDiv.querySelector('.preexecref-name');
+        if (nameInput) nameInput.value = item.name || '';
       } else if (item.type === 'postexecref') {
         addItem(plbId, 'postexecref');
         const itemDiv = itemList.lastElementChild;
-        itemDiv.querySelector('.postexecref-name').value = item.name || '';
+        const nameInput = itemDiv.querySelector('.postexecref-name');
+        if (nameInput) nameInput.value = item.name || '';
       } else if (item.type === 'comment') {
         addItem(plbId, 'comment');
         const itemDiv = itemList.lastElementChild;
-        itemDiv.querySelector('.comment-content').value = item.text || '';
+        const contentInput = itemDiv.querySelector('.comment-content');
+        if (contentInput) contentInput.value = item.text || '';
       }
     });
 
@@ -2069,44 +1983,66 @@ function restoreState(state) {
       if (item.type === 'pats') {
         addMainLoopItem(plbId, 'pats');
         const itemDiv = mainContainer.lastElementChild;
-        itemDiv.querySelector('.pats-mode').value = item.mode || 'default';
-        itemDiv.querySelector('.pats-value').value = item.value || '';
-        itemDiv.querySelector('.tids-value').value = item.tidsValue || '';
-        itemDiv.querySelector('.tids-chunk').value = item.tidsChunk || '';
-        itemDiv.querySelector('.querytid-testname').value = item.querytidTestname || '';
-        itemDiv.querySelector('.querytid-testtype').value = item.querytidTesttype || '';
-        itemDiv.querySelector('.querytid-chunk').value = item.querytidChunk || '';
-        updatePatsFields(itemDiv.querySelector('.pats-mode'));
+        const modeSelect = itemDiv.querySelector('.pats-mode');
+        modeSelect.value = item.mode || 'default';
+        // Update fields FIRST to show the correct ones
+        updatePatsFields(modeSelect);
+        // Then set the values
+        const defaultInput = itemDiv.querySelector('.pats-value');
+        const tidsInput = itemDiv.querySelector('.tids-value');
+        const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+        const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+        const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+        const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+        if (defaultInput) defaultInput.value = item.value || '';
+        if (tidsInput) tidsInput.value = item.tidsValue || '';
+        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
       } else if (item.type === 'pre' || item.type === 'post') {
         addMainLoopItem(plbId, item.type);
         const itemDiv = mainContainer.lastElementChild;
-        itemDiv.querySelector(`.${item.type}-mode`).value = item.mode || 'default';
-        itemDiv.querySelector(`.${item.type}-value`).value = item.value || '';
-        itemDiv.querySelector(`.${item.type}-tids-value`).value = item.tidsValue || '';
-        itemDiv.querySelector(`.${item.type}-tids-chunk`).value = item.tidsChunk || '';
-        itemDiv.querySelector(`.${item.type}-querytid-testname`).value = item.querytidTestname || '';
-        itemDiv.querySelector(`.${item.type}-querytid-testtype`).value = item.querytidTesttype || '';
-        itemDiv.querySelector(`.${item.type}-querytid-chunk`).value = item.querytidChunk || '';
-        const sel = itemDiv.querySelector(`.${item.type}-mode`);
-        const type = sel.className.split('-')[0];
-        updateGenericFields(sel, type);
+        const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+        modeSelect.value = item.mode || 'default';
+        // Update fields FIRST
+        const type = modeSelect.className.split('-')[0];
+        updateGenericFields(modeSelect, type);
+        // Then set the values
+        const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+        const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+        const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+        const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+        const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+        const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+        if (defaultInput) defaultInput.value = item.value || '';
+        if (tidsInput) tidsInput.value = item.tidsValue || '';
+        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
       } else if (item.type === 'refplb') {
         addMainLoopItem(plbId, 'refplb');
         const itemDiv = mainContainer.lastElementChild;
-        itemDiv.querySelector('.refplb-name').value = item.name || '';
+        const nameInput = itemDiv.querySelector('.refplb-name');
+        if (nameInput) nameInput.value = item.name || '';
       } else if (item.type === 'comment') {
         addMainLoopItem(plbId, 'comment');
         const itemDiv = mainContainer.lastElementChild;
-        itemDiv.querySelector('.comment-text').value = item.text || '';
+        const textInput = itemDiv.querySelector('.comment-text');
+        if (textInput) textInput.value = item.text || '';
       } else if (item.type === 'namefilter') {
         addMainLoopItem(plbId, 'namefilter');
         const itemDiv = mainContainer.lastElementChild;
-        itemDiv.querySelector('.namefilter-include').value = item.include || '';
-        itemDiv.querySelector('.namefilter-exclude').value = item.exclude || '';
+        const includeInput = itemDiv.querySelector('.namefilter-include');
+        const excludeInput = itemDiv.querySelector('.namefilter-exclude');
+        if (includeInput) includeInput.value = item.include || '';
+        if (excludeInput) excludeInput.value = item.exclude || '';
       } else if (item.type === 'preexecref' || item.type === 'postexecref') {
         addMainLoopItem(plbId, item.type);
         const itemDiv = mainContainer.lastElementChild;
-        itemDiv.querySelector(`.${item.type}-name`).value = item.name || '';
+        const nameInput = itemDiv.querySelector(`.${item.type}-name`);
+        if (nameInput) nameInput.value = item.name || '';
       }
     });
 
@@ -2122,48 +2058,71 @@ function restoreState(state) {
       if (item.type === 'subplb') {
         addSublevelItem(sublevelContainer, 'subplb');
         const itemDiv = sublevelContainer.lastElementChild;
-        itemDiv.querySelector('.subplb-name').value = item.name || '';
+        const nameInput = itemDiv.querySelector('.subplb-name');
+        if (nameInput) nameInput.value = item.name || '';
       } else if (item.type === 'pats') {
         addSublevelItem(sublevelContainer, 'pats');
         const itemDiv = sublevelContainer.lastElementChild;
-        itemDiv.querySelector('.pats-mode').value = item.mode || 'default';
-        itemDiv.querySelector('.pats-value').value = item.value || '';
-        itemDiv.querySelector('.tids-value').value = item.tidsValue || '';
-        itemDiv.querySelector('.tids-chunk').value = item.tidsChunk || '';
-        itemDiv.querySelector('.querytid-testname').value = item.querytidTestname || '';
-        itemDiv.querySelector('.querytid-testtype').value = item.querytidTesttype || '';
-        itemDiv.querySelector('.querytid-chunk').value = item.querytidChunk || '';
-        updatePatsFields(itemDiv.querySelector('.pats-mode'));
+        const modeSelect = itemDiv.querySelector('.pats-mode');
+        modeSelect.value = item.mode || 'default';
+        // Update fields FIRST
+        updatePatsFields(modeSelect);
+        // Then set the values
+        const defaultInput = itemDiv.querySelector('.pats-value');
+        const tidsInput = itemDiv.querySelector('.tids-value');
+        const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+        const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+        const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+        const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+        if (defaultInput) defaultInput.value = item.value || '';
+        if (tidsInput) tidsInput.value = item.tidsValue || '';
+        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
       } else if (item.type === 'pre' || item.type === 'post') {
         addSublevelItem(sublevelContainer, item.type);
         const itemDiv = sublevelContainer.lastElementChild;
-        itemDiv.querySelector(`.${item.type}-mode`).value = item.mode || 'default';
-        itemDiv.querySelector(`.${item.type}-value`).value = item.value || '';
-        itemDiv.querySelector(`.${item.type}-tids-value`).value = item.tidsValue || '';
-        itemDiv.querySelector(`.${item.type}-tids-chunk`).value = item.tidsChunk || '';
-        itemDiv.querySelector(`.${item.type}-querytid-testname`).value = item.querytidTestname || '';
-        itemDiv.querySelector(`.${item.type}-querytid-testtype`).value = item.querytidTesttype || '';
-        itemDiv.querySelector(`.${item.type}-querytid-chunk`).value = item.querytidChunk || '';
-        const sel = itemDiv.querySelector(`.${item.type}-mode`);
-        const type = sel.className.split('-')[0];
-        updateGenericFields(sel, type);
+        const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+        modeSelect.value = item.mode || 'default';
+        // Update fields FIRST
+        const type = modeSelect.className.split('-')[0];
+        updateGenericFields(modeSelect, type);
+        // Then set the values
+        const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+        const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+        const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+        const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+        const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+        const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+        if (defaultInput) defaultInput.value = item.value || '';
+        if (tidsInput) tidsInput.value = item.tidsValue || '';
+        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
       } else if (item.type === 'refplb') {
         addSublevelItem(sublevelContainer, 'refplb');
         const itemDiv = sublevelContainer.lastElementChild;
-        itemDiv.querySelector('.refplb-name').value = item.name || '';
+        const nameInput = itemDiv.querySelector('.refplb-name');
+        if (nameInput) nameInput.value = item.name || '';
       } else if (item.type === 'comment') {
         addSublevelItem(sublevelContainer, 'comment');
         const itemDiv = sublevelContainer.lastElementChild;
-        itemDiv.querySelector('.comment-text').value = item.text || '';
+        const textInput = itemDiv.querySelector('.comment-text');
+        if (textInput) textInput.value = item.text || '';
       } else if (item.type === 'namefilter') {
         addSublevelItem(sublevelContainer, 'namefilter');
         const itemDiv = sublevelContainer.lastElementChild;
-        itemDiv.querySelector('.namefilter-include').value = item.include || '';
-        itemDiv.querySelector('.namefilter-exclude').value = item.exclude || '';
+        const includeInput = itemDiv.querySelector('.namefilter-include');
+        const excludeInput = itemDiv.querySelector('.namefilter-exclude');
+        if (includeInput) includeInput.value = item.include || '';
+        if (excludeInput) excludeInput.value = item.exclude || '';
       } else if (item.type === 'preexecref' || item.type === 'postexecref') {
         addSublevelItem(sublevelContainer, item.type);
         const itemDiv = sublevelContainer.lastElementChild;
-        itemDiv.querySelector(`.${item.type}-name`).value = item.name || '';
+        const nameInput = itemDiv.querySelector(`.${item.type}-name`);
+        if (nameInput) nameInput.value = item.name || '';
       }
     });
 
@@ -2243,44 +2202,7 @@ window.addEventListener('DOMContentLoaded', function() {
   "loopEnabled": false,
   "nameOfInstance": "",
   "decodeParMappings": [],
-  "plbs": [
-    {
-      "collapsed": false,
-      "plbName": "TEST_COMPLETE_SAVE",
-      "plbHeaderText": "",
-      "plbHeaderOrder": "",
-      "preplist": "",
-      "postplist": "",
-      "prepatternMode": "tuple",
-      "prepatternValue": "",
-      "prepatternTidsValue": "",
-      "prepatternQuerytidTestname": "",
-      "prepatternQuerytidTesttype": "",
-      "postpatternMode": "tuple",
-      "postpatternValue": "",
-      "postpatternTidsValue": "",
-      "postpatternQuerytidTestname": "",
-      "postpatternQuerytidTesttype": "",
-      "items": [
-        {
-          "type": "pats",
-          "mode": "tids",
-          "value": "",
-          "tidsValue": "VERIFY_SAVE_WORKS",
-          "tidsChunk": "",
-          "querytidTestname": "",
-          "querytidTesttype": "",
-          "querytidChunk": ""
-        }
-      ],
-      "mainLoopItems": [],
-      "subLevel": {
-        "enabled": false,
-        "name": "",
-        "items": []
-      }
-    }
-  ]
+  "plbs": []
 }</script><script>
 // Auto-restore state on page load if savedState exists
 window.addEventListener('DOMContentLoaded', function() {
