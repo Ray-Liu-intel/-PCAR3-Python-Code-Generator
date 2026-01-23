@@ -2065,7 +2065,7 @@ function restoreState(state) {
 /**
  * Creates a downloadable HTML file with the current state embedded.
  * The state is stored in a script tag and automatically restored on page load.
- * Allows user to choose save location and filename.
+ * Browser's download dialog allows user to choose save location and rename file.
  */
 function saveHtml() {
   const state = captureState();
@@ -2101,20 +2101,14 @@ window.addEventListener('DOMContentLoaded', function() {
   
   html = html.replace('</body>', stateScript);
   
-  // Create a blob and trigger download with user-selectable location
+  // Create a blob and trigger download
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   
-  // Generate a default filename with timestamp
-  const now = new Date();
-  const timestamp = now.getFullYear() + 
-    String(now.getMonth() + 1).padStart(2, '0') + 
-    String(now.getDate()).padStart(2, '0') + '_' +
-    String(now.getHours()).padStart(2, '0') + 
-    String(now.getMinutes()).padStart(2, '0') + 
-    String(now.getSeconds()).padStart(2, '0');
+  // Generate a default filename with timestamp (YYYYMMDD_HHMMSS format)
+  const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').slice(0, 15);
   a.download = `PCAR3_State_${timestamp}.html`;
   
   document.body.appendChild(a);
