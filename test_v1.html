@@ -334,12 +334,12 @@
     <span style="font-size: 2rem; font-weight: 500;">PCAR3 Python Code Generator 2.0</span>
   </div>
   <div class="container">
-    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist"></label>
+    <label>PlistFile Name: <input type="text" id="plistfile" value="sample2.plist" style=""></label>
     
     <!-- Loop Partition Toggle -->
     <div class="loop-toggle-section">
       <label>
-        <input type="checkbox" id="loopPartitionToggle" onchange="toggleLoopPartition()">
+        <input type="checkbox" id="loopPartitionToggle" onchange="toggleLoopPartition()" style="">
         Enable Loop Partition
       </label>
     </div>
@@ -376,15 +376,15 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
     <button class="delete-plb-btn" onclick="deletePlb('plb1')">Delete Plb</button>
     <div class="plb-header">
       <button class="plb-toggle-btn" onclick="togglePlb('plb1', this)">⌵</button>
-      <label>Plb Name: <input type="text" class="plb-name" value="PListA"></label>
-      <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
-      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def"></label>
+      <label>Plb Name: <input type="text" class="plb-name" value="PListA" style=""></label>
+      <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST" style=""></label>
+      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def" style=""></label>
     </div>
     <div class="plb-content">
       <div class="plb-row">
         <span class="param-group">
           <b>pre:</b>
-          <label>preplist:<input type="text" class="preplist"></label>
+          <label>preplist:<input type="text" class="preplist" style=""></label>
           <label>prepattern:</label>
           <select class="prepattern-mode" onchange="togglePlbPatternMode(this, 'prepattern')">
             <option value="tuple">Tuple</option>
@@ -392,21 +392,21 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
             <option value="querytid">QueryTid</option>
           </select>
           <span class="prepattern-tuple" style="">
-            <input type="text" class="prepattern-value" value="">
+            <input type="text" class="prepattern-value" value="" style="">
           </span>
           <span class="prepattern-tids" style="display:none">
-            <label>Tids: <input type="text" class="prepattern-tids-value" value=""></label>
+            <label>Tids: <input type="text" class="prepattern-tids-value" value="" style=""></label>
           </span>
           <span class="prepattern-querytid" style="display:none">
-            <label>testname: <input type="text" class="prepattern-querytid-testname" value=""></label>
-            <label>testtype: <input type="text" class="prepattern-querytid-testtype" value=""></label>
+            <label>testname: <input type="text" class="prepattern-querytid-testname" value="" style=""></label>
+            <label>testtype: <input type="text" class="prepattern-querytid-testtype" value="" style=""></label>
           </span>
         </span>
       </div>
       <div class="plb-row">
         <span class="param-group">
           <b>post:</b>
-          <label>postplist:<input type="text" class="postplist"></label>
+          <label>postplist:<input type="text" class="postplist" style=""></label>
           <label>postpattern:</label>
           <select class="postpattern-mode" onchange="togglePlbPatternMode(this, 'postpattern')">
             <option value="tuple">Tuple</option>
@@ -414,14 +414,14 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
             <option value="querytid">QueryTid</option>
           </select>
           <span class="postpattern-tuple" style="">
-            <input type="text" class="postpattern-value" value="">
+            <input type="text" class="postpattern-value" value="" style="">
           </span>
           <span class="postpattern-tids" style="display:none">
-            <label>Tids: <input type="text" class="postpattern-tids-value" value=""></label>
+            <label>Tids: <input type="text" class="postpattern-tids-value" value="" style=""></label>
           </span>
           <span class="postpattern-querytid" style="display:none">
-            <label>testname: <input type="text" class="postpattern-querytid-testname" value=""></label>
-            <label>testtype: <input type="text" class="postpattern-querytid-testtype" value=""></label>
+            <label>testname: <input type="text" class="postpattern-querytid-testname" value="" style=""></label>
+            <label>testtype: <input type="text" class="postpattern-querytid-testtype" value="" style=""></label>
           </span>
         </span>
       </div>
@@ -443,16 +443,16 @@ intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
           <option value="querytid">QueryTid</option>
         </select>
         <span class="pats-default" style="display: none;">
-          <input type="text" class="pats-value" value="">
+          <input type="text" class="pats-value" value="" style="">
         </span>
         <span class="pats-tids" style="">
-          <label>Tids: <input type="text" class="tids-value" value=""></label>
-          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+          <label>Tids: <input type="text" class="tids-value" value="" style=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value="" style=""></label>
         </span>
         <span class="pats-querytid" style="display:none">
-          <label>testname: <input type="text" class="querytid-testname" value=""></label>
-          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
-          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+          <label>testname: <input type="text" class="querytid-testname" value="" style=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value="" style=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value="" style=""></label>
         </span>
       </div>
       <div class="item-actions">
@@ -2185,7 +2185,28 @@ function saveHtml() {
   // Get the current document HTML
   let html = document.documentElement.outerHTML;
   
-  // Simple approach: Just append the state at the end before 
+  // Build the state script using string concatenation to avoid template literal issues
+  // when this code is embedded in saved HTML
+  const stateScript = '\n<script id="savedState" type="application/json">\n' +
+    stateJson +
+    '\n<' + '/script>\n' +
+    '<script>\n' +
+    '// Auto-restore state on page load if savedState exists\n' +
+    'window.addEventListener(\'DOMContentLoaded\', function() {\n' +
+    '  // Find ALL savedState blocks and use the LAST one (most recent save)\n' +
+    '  const savedStateBlocks = document.querySelectorAll(\'script[id="savedState"]\');\n' +
+    '  if (savedStateBlocks.length > 0) {\n' +
+    '    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];\n' +
+    '    try {\n' +
+    '      const state = JSON.parse(savedStateEl.textContent);\n' +
+    '      restoreState(state);\n' +
+    '    } catch (e) {\n' +
+    '      console.error(\'Failed to restore state:\', e);\n' +
+    '    }\n' +
+    '  }\n' +
+    '});\n' +
+    '<' + '/script>\n' +
+    '
 <script id="savedState" type="application/json">
 {
   "plistfile": "sample2.plist",
@@ -2195,7 +2216,7 @@ function saveHtml() {
   "plbs": [
     {
       "collapsed": false,
-      "plbName": "TestVersion1",
+      "plbName": "Version1Test",
       "plbHeaderText": "",
       "plbHeaderOrder": "",
       "preplist": "",
@@ -2215,7 +2236,7 @@ function saveHtml() {
           "type": "pats",
           "mode": "tids",
           "value": "",
-          "tidsValue": "test1 test2 test3",
+          "tidsValue": "AAA BBB CCC",
           "tidsChunk": "",
           "querytidTestname": "",
           "querytidTesttype": "",
@@ -2248,32 +2269,7 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-</body>
-  // Don't try to remove existing savedState blocks - just add new one
-  // The DOMContentLoaded will use the LAST savedState block found
-  
-  // Insert the saved state as a script tag before the closing </body> tag
-  const stateScript = `
-<script id="savedState" type="application/json">
-${stateJson}
-<\/script>
-<script>
-// Auto-restore state on page load if savedState exists
-window.addEventListener('DOMContentLoaded', function() {
-  // Find ALL savedState blocks and use the LAST one (most recent save)
-  const savedStateBlocks = document.querySelectorAll('script[id="savedState"]');
-  if (savedStateBlocks.length > 0) {
-    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];
-    try {
-      const state = JSON.parse(savedStateEl.textContent);
-      restoreState(state);
-    } catch (e) {
-      console.error('Failed to restore state:', e);
-    }
-  }
-});
-<\/script>
-</body>`;
+</body>';
   
   html = html.replace('</body>', stateScript);
   
@@ -2285,7 +2281,7 @@ window.addEventListener('DOMContentLoaded', function() {
   
   // Generate a default filename with timestamp (YYYYMMDD_HHMMSS format)
   const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').slice(0, 15);
-  a.download = `PCAR3_State_${timestamp}.html`;
+  a.download = 'PCAR3_State_' + timestamp + '.html';
   
   document.body.appendChild(a);
   a.click();
