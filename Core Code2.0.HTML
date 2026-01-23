@@ -2066,22 +2066,24 @@ function restoreState(state) {
         addSublevelItem(sublevelContainer, 'pats');
         const itemDiv = sublevelContainer.lastElementChild;
         const modeSelect = itemDiv.querySelector('.pats-mode');
-        modeSelect.value = item.mode || 'default';
-        // Update fields FIRST
-        updatePatsFields(modeSelect);
-        // Then set the values
-        const defaultInput = itemDiv.querySelector('.pats-value');
-        const tidsInput = itemDiv.querySelector('.tids-value');
-        const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
-        const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
-        const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
-        const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
-        if (defaultInput) defaultInput.value = item.value || '';
-        if (tidsInput) tidsInput.value = item.tidsValue || '';
-        if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
-        if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
-        if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
-        if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST
+          updatePatsFields(modeSelect);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector('.pats-value');
+          const tidsInput = itemDiv.querySelector('.tids-value');
+          const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+          const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+          const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+          const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
       } else if (item.type === 'pre' || item.type === 'post') {
         addSublevelItem(sublevelContainer, item.type);
         const itemDiv = sublevelContainer.lastElementChild;
