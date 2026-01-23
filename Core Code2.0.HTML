@@ -373,7 +373,9 @@
     <button onclick="addPlb()">Add Plb</button>
     <div id="plbContainer"></div>
     <button onclick="generateCode()">Generate Code</button>
-    <button onclick="saveHtml()">Save HTML</button>
+    <button onclick="exportState()">Export State</button>
+    <button onclick="document.getElementById('importStateFile').click()">Import State</button>
+    <input type="file" id="importStateFile" accept=".json" style="display:none" onchange="importState(event)">
     <h3>Generated Result:</h3>
     <pre id="codebox"></pre>
   </div>
@@ -2144,70 +2146,54 @@ function restoreState(state) {
 }
 
 /**
- * Creates a downloadable HTML file with the current state embedded.
- * The state is stored in a script tag and automatically restored on page load.
- * Browser's download dialog allows user to choose save location and rename file.
+ * Exports the current UI state as a JSON file for later import.
+ * This approach avoids browser caching issues by keeping state separate from code.
  */
-function saveHtml() {
+function exportState() {
   const state = captureState();
   const stateJson = JSON.stringify(state, null, 2);
   
-  // Clone the document to avoid modifying the current page
-  const clonedDoc = document.documentElement.cloneNode(true);
-  
-  // Create the savedState script element
-  const stateScriptEl = document.createElement('script');
-  stateScriptEl.id = 'savedState';
-  stateScriptEl.type = 'application/json';
-  stateScriptEl.textContent = stateJson;
-  
-  // Create the restore script element
-  const restoreScriptEl = document.createElement('script');
-  restoreScriptEl.textContent = `
-// Auto-restore state on page load if savedState exists
-// Use 'load' event instead of 'DOMContentLoaded' to ensure all scripts are executed
-window.addEventListener('load', function() {
-  // Find ALL savedState blocks and use the LAST one (most recent save)
-  const savedStateBlocks = document.querySelectorAll('script[id="savedState"]');
-  if (savedStateBlocks.length > 0) {
-    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];
-    try {
-      const state = JSON.parse(savedStateEl.textContent);
-      // Ensure restoreState function exists before calling
-      if (typeof restoreState === 'function') {
-        restoreState(state);
-      } else {
-        console.error('restoreState function not found - page scripts may not be loaded correctly');
-      }
-    } catch (e) {
-      console.error('Failed to restore state:', e);
-    }
-  }
-});
-`;
-  
-  // Append to the body of the cloned document
-  const clonedBody = clonedDoc.querySelector('body');
-  clonedBody.appendChild(stateScriptEl);
-  clonedBody.appendChild(restoreScriptEl);
-  
-  // Serialize the cloned document
-  const html = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
-  
   // Create a blob and trigger download
-  const blob = new Blob([html], { type: 'text/html' });
+  const blob = new Blob([stateJson], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   
   // Generate a default filename with timestamp (YYYYMMDD_HHMMSS format)
   const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').slice(0, 15);
-  a.download = 'PCAR3_State_' + timestamp + '.html';
+  a.download = 'PCAR3_State_' + timestamp + '.json';
   
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  
+  alert('State exported successfully! Save this JSON file to preserve your work.');
+}
+
+/**
+ * Imports a previously exported state from a JSON file.
+ * Restores all form fields, PLBs, and configurations.
+ */
+function importState(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const state = JSON.parse(e.target.result);
+      restoreState(state);
+      alert('State imported successfully!');
+    } catch (error) {
+      console.error('Failed to import state:', error);
+      alert('Failed to import state. Please ensure you selected a valid PCAR3 state JSON file.');
+    }
+  };
+  reader.readAsText(file);
+  
+  // Reset the file input so the same file can be imported again if needed
+  event.target.value = '';
 }
 
 </script>
