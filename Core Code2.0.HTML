@@ -1891,6 +1891,7 @@ function restoreState(state) {
     // Restore PLB properties with null checks
     safeSetValue(plbDiv, '.plb-name', plbState.plbName);
     safeSetValue(plbDiv, '.plb-header-text', plbState.plbHeaderText);
+    safeSetValue(plbDiv, '.plb-mask', plbState.mask);
     safeSetValue(plbDiv, '.preplist', plbState.preplist);
     safeSetValue(plbDiv, '.postplist', plbState.postplist);
     safeSetValue(plbDiv, '.prepattern-mode', plbState.prepatternMode || 'tuple');
