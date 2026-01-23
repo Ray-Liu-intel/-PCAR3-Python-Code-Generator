@@ -2183,11 +2183,18 @@ function importState(event) {
   reader.onload = function(e) {
     try {
       const state = JSON.parse(e.target.result);
+      
+      // Validate that this is a PCAR3 state file
+      if (!state.hasOwnProperty('plistfile') || !state.hasOwnProperty('plbs')) {
+        throw new Error('Invalid PCAR3 state file format');
+      }
+      
       restoreState(state);
       alert('State imported successfully!');
     } catch (error) {
       console.error('Failed to import state:', error);
-      alert('Failed to import state. Please ensure you selected a valid PCAR3 state JSON file.');
+      console.error('Error details:', error.message, error.stack);
+      alert('Failed to import state: ' + error.message + '\nPlease ensure you selected a valid PCAR3 state JSON file.');
     }
   };
   reader.readAsText(file);
