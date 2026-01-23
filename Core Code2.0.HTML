@@ -2065,8 +2065,9 @@ function restoreState(state) {
 
     // Restore sublevel items
     const sublevelContainer = plbDiv.querySelector('.sublevel-container');
-    sublevelContainer.innerHTML = '';
-    (plbState.subLevel.items || []).forEach(item => {
+    if (sublevelContainer) {
+      sublevelContainer.innerHTML = '';
+      (plbState.subLevel.items || []).forEach(item => {
       if (item.type === 'subplb') {
         addSublevelItem(sublevelContainer, 'subplb');
         const itemDiv = sublevelContainer.lastElementChild;
@@ -2141,6 +2142,7 @@ function restoreState(state) {
         if (nameInput) nameInput.value = item.name || '';
       }
     });
+    }
 
     // Restore collapsed state
     if (plbState.collapsed) {
