@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<html><head>
   <meta charset="UTF-8">
   <title>PCAR3 Python Code Generator 2.0 - Company</title>
   <style>
@@ -352,7 +350,10 @@
       <label style="display: block; margin-bottom: 8px;">
         name_of_instance (one per line):
         <br>
-        <textarea id="nameOfInstance" rows="4" style="width: 90%; margin-top: 8px;" placeholder="One per line, e.g.&#10;extemca&#10;intemca1&#10;intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
+        <textarea id="nameOfInstance" rows="4" style="width: 90%; margin-top: 8px;" placeholder="One per line, e.g.
+extemca
+intemca1
+intemca2" oninput="syncNameOfInstanceToMapping()"></textarea>
       </label>
       
       <h4>decode_par Mapping</h4>
@@ -371,14 +372,124 @@
     </div>
     
     <button onclick="addPlb()">Add Plb</button>
-    <div id="plbContainer"></div>
+    <div id="plbContainer"><div class="plb-block" id="plb1">
+    <button class="delete-plb-btn" onclick="deletePlb('plb1')">Delete Plb</button>
+    <div class="plb-header">
+      <button class="plb-toggle-btn" onclick="togglePlb('plb1', this)">⌵</button>
+      <label>Plb Name: <input type="text" class="plb-name" value="PListA"></label>
+      <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
+      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def"></label>
+    </div>
+    <div class="plb-content">
+      <div class="plb-row">
+        <span class="param-group">
+          <b>pre:</b>
+          <label>preplist:<input type="text" class="preplist"></label>
+          <label>prepattern:</label>
+          <select class="prepattern-mode" onchange="togglePlbPatternMode(this, 'prepattern')">
+            <option value="tuple">Tuple</option>
+            <option value="tids">Tids</option>
+            <option value="querytid">QueryTid</option>
+          </select>
+          <span class="prepattern-tuple" style="">
+            <input type="text" class="prepattern-value" value="">
+          </span>
+          <span class="prepattern-tids" style="display:none">
+            <label>Tids: <input type="text" class="prepattern-tids-value" value=""></label>
+          </span>
+          <span class="prepattern-querytid" style="display:none">
+            <label>testname: <input type="text" class="prepattern-querytid-testname" value=""></label>
+            <label>testtype: <input type="text" class="prepattern-querytid-testtype" value=""></label>
+          </span>
+        </span>
+      </div>
+      <div class="plb-row">
+        <span class="param-group">
+          <b>post:</b>
+          <label>postplist:<input type="text" class="postplist"></label>
+          <label>postpattern:</label>
+          <select class="postpattern-mode" onchange="togglePlbPatternMode(this, 'postpattern')">
+            <option value="tuple">Tuple</option>
+            <option value="tids">Tids</option>
+            <option value="querytid">QueryTid</option>
+          </select>
+          <span class="postpattern-tuple" style="">
+            <input type="text" class="postpattern-value" value="">
+          </span>
+          <span class="postpattern-tids" style="display:none">
+            <label>Tids: <input type="text" class="postpattern-tids-value" value=""></label>
+          </span>
+          <span class="postpattern-querytid" style="display:none">
+            <label>testname: <input type="text" class="postpattern-querytid-testname" value=""></label>
+            <label>testtype: <input type="text" class="postpattern-querytid-testtype" value=""></label>
+          </span>
+        </span>
+      </div>
+      <div class="plb-row">
+        <button onclick="addItem('plb1', 'pats')">Add Pats</button>
+        <button onclick="addItem('plb1', 'preexecref')">Add PreExecRefPList</button>
+        <button onclick="addItem('plb1', 'pre')">Add PreExecPat</button>
+        <button onclick="addItem('plb1', 'ref')">Add RefPlb</button>
+        <button onclick="addItem('plb1', 'postexecref')">Add PostExecRefPList</button>
+        <button onclick="addItem('plb1', 'post')">Add PostExecPat</button>
+        <button onclick="addItem('plb1', 'comment')">Add Comment</button>
+      </div>
+      <div class="item-list"><div class="item-block" data-type="pats"><span class="drag-handle">☰</span>
+      <div class="item-content">
+        <b>Pats:</b>
+        <select class="pats-mode" onchange="togglePatsMode(this)">
+          <option value="default">Tuple</option>
+          <option value="tids">Tids</option>
+          <option value="querytid">QueryTid</option>
+        </select>
+        <span class="pats-default" style="display: none;">
+          <input type="text" class="pats-value" value="">
+        </span>
+        <span class="pats-tids" style="">
+          <label>Tids: <input type="text" class="tids-value" value=""></label>
+          <label>chunk: <input type="text" class="tids-chunk" value=""></label>
+        </span>
+        <span class="pats-querytid" style="display:none">
+          <label>testname: <input type="text" class="querytid-testname" value=""></label>
+          <label>testtype: <input type="text" class="querytid-testtype" value=""></label>
+          <label>chunk: <input type="text" class="querytid-chunk" value=""></label>
+        </span>
+      </div>
+      <div class="item-actions">
+        <button onclick="this.closest('.item-block').remove()">Delete</button>
+      </div>
+    </div></div>
+      
+      <!-- Loop Section with if/elif/else -->
+      <div class="loop-section" style="display: none;">
+        <h4>Loop Items (for name in name_of_instance)</h4>
+        <div class="plb-row">
+          <button onclick="addMainLoopItem('plb1', 'pats')">Add Pats</button>
+          <button onclick="addMainLoopItem('plb1', 'preexecref')" class="hide-main-loop-prepost">Add PreExecRefPList</button>
+          <button onclick="addMainLoopItem('plb1', 'pre')" class="hide-main-loop-prepost">Add PreExecPat</button>
+          <button onclick="addMainLoopItem('plb1', 'ref')">Add RefPlb</button>
+          <button onclick="addMainLoopItem('plb1', 'postexecref')" class="hide-main-loop-prepost">Add PostExecRefPList</button>
+          <button onclick="addMainLoopItem('plb1', 'post')" class="hide-main-loop-prepost">Add PostExecPat</button>
+          <button onclick="addMainLoopItem('plb1', 'comment')">Add Comment</button>
+        </div>
+        <div class="main-loop-list"></div>
+        
+        <div style="margin-top: 16px;">
+          <button onclick="addConditionBlock('plb1', 'if')">Add if</button>
+          <button onclick="addConditionBlock('plb1', 'elif')">Add elif</button>
+          <button onclick="addConditionBlock('plb1', 'else')">Add else</button>
+        </div>
+        <div class="condition-list"></div>
+      </div>
+    </div>
+  </div></div>
     <button onclick="generateCode()">Generate Code</button>
     <button onclick="saveHtml()">Save HTML</button>
     <h3>Generated Result:</h3>
     <pre id="codebox"></pre>
   </div>
   <div class="intel-footer">
-    &copy; 2026 INTEL PDG CHINA. All rights reserved.
+    © 2026 INTEL PDG CHINA. All rights reserved.
   </div>
 <script>
 let plbCount = 0;
@@ -2074,28 +2185,95 @@ function saveHtml() {
   // Get the current document HTML
   let html = document.documentElement.outerHTML;
   
-  // Build the state script using string concatenation to avoid template literal issues
-  // when this code is embedded in saved HTML
-  const stateScript = '\n<script id="savedState" type="application/json">\n' +
-    stateJson +
-    '\n<' + '/script>\n' +
-    '<script>\n' +
-    '// Auto-restore state on page load if savedState exists\n' +
-    'window.addEventListener(\'DOMContentLoaded\', function() {\n' +
-    '  // Find ALL savedState blocks and use the LAST one (most recent save)\n' +
-    '  const savedStateBlocks = document.querySelectorAll(\'script[id="savedState"]\');\n' +
-    '  if (savedStateBlocks.length > 0) {\n' +
-    '    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];\n' +
-    '    try {\n' +
-    '      const state = JSON.parse(savedStateEl.textContent);\n' +
-    '      restoreState(state);\n' +
-    '    } catch (e) {\n' +
-    '      console.error(\'Failed to restore state:\', e);\n' +
-    '    }\n' +
-    '  }\n' +
-    '});\n' +
-    '<' + '/script>\n' +
-    '</body>';
+  // Simple approach: Just append the state at the end before 
+<script id="savedState" type="application/json">
+{
+  "plistfile": "sample2.plist",
+  "loopEnabled": false,
+  "nameOfInstance": "",
+  "decodeParMappings": [],
+  "plbs": [
+    {
+      "collapsed": false,
+      "plbName": "TestVersion1",
+      "plbHeaderText": "",
+      "plbHeaderOrder": "",
+      "preplist": "",
+      "postplist": "",
+      "prepatternMode": "tuple",
+      "prepatternValue": "",
+      "prepatternTidsValue": "",
+      "prepatternQuerytidTestname": "",
+      "prepatternQuerytidTesttype": "",
+      "postpatternMode": "tuple",
+      "postpatternValue": "",
+      "postpatternTidsValue": "",
+      "postpatternQuerytidTestname": "",
+      "postpatternQuerytidTesttype": "",
+      "items": [
+        {
+          "type": "pats",
+          "mode": "tids",
+          "value": "",
+          "tidsValue": "test1 test2 test3",
+          "tidsChunk": "",
+          "querytidTestname": "",
+          "querytidTesttype": "",
+          "querytidChunk": ""
+        }
+      ],
+      "mainLoopItems": [],
+      "subLevel": {
+        "enabled": false,
+        "name": "",
+        "items": []
+      }
+    }
+  ]
+}
+</script>
+<script>
+// Auto-restore state on page load if savedState exists
+window.addEventListener('DOMContentLoaded', function() {
+  // Find ALL savedState blocks and use the LAST one (most recent save)
+  const savedStateBlocks = document.querySelectorAll('script[id="savedState"]');
+  if (savedStateBlocks.length > 0) {
+    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];
+    try {
+      const state = JSON.parse(savedStateEl.textContent);
+      restoreState(state);
+    } catch (e) {
+      console.error('Failed to restore state:', e);
+    }
+  }
+});
+</script>
+</body>
+  // Don't try to remove existing savedState blocks - just add new one
+  // The DOMContentLoaded will use the LAST savedState block found
+  
+  // Insert the saved state as a script tag before the closing </body> tag
+  const stateScript = `
+<script id="savedState" type="application/json">
+${stateJson}
+<\/script>
+<script>
+// Auto-restore state on page load if savedState exists
+window.addEventListener('DOMContentLoaded', function() {
+  // Find ALL savedState blocks and use the LAST one (most recent save)
+  const savedStateBlocks = document.querySelectorAll('script[id="savedState"]');
+  if (savedStateBlocks.length > 0) {
+    const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];
+    try {
+      const state = JSON.parse(savedStateEl.textContent);
+      restoreState(state);
+    } catch (e) {
+      console.error('Failed to restore state:', e);
+    }
+  }
+});
+<\/script>
+</body>`;
   
   html = html.replace('</body>', stateScript);
   
@@ -2107,7 +2285,7 @@ function saveHtml() {
   
   // Generate a default filename with timestamp (YYYYMMDD_HHMMSS format)
   const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').slice(0, 15);
-  a.download = 'PCAR3_State_' + timestamp + '.html';
+  a.download = `PCAR3_State_${timestamp}.html`;
   
   document.body.appendChild(a);
   a.click();
@@ -2116,5 +2294,6 @@ function saveHtml() {
 }
 
 </script>
-</body>
-</html>
+
+
+</body></html>
