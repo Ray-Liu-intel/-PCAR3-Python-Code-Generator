@@ -2153,14 +2153,20 @@ function saveHtml() {
   const restoreScriptEl = document.createElement('script');
   restoreScriptEl.textContent = `
 // Auto-restore state on page load if savedState exists
-window.addEventListener('DOMContentLoaded', function() {
+// Use 'load' event instead of 'DOMContentLoaded' to ensure all scripts are executed
+window.addEventListener('load', function() {
   // Find ALL savedState blocks and use the LAST one (most recent save)
   const savedStateBlocks = document.querySelectorAll('script[id="savedState"]');
   if (savedStateBlocks.length > 0) {
     const savedStateEl = savedStateBlocks[savedStateBlocks.length - 1];
     try {
       const state = JSON.parse(savedStateEl.textContent);
-      restoreState(state);
+      // Ensure restoreState function exists before calling
+      if (typeof restoreState === 'function') {
+        restoreState(state);
+      } else {
+        console.error('restoreState function not found - page scripts may not be loaded correctly');
+      }
     } catch (e) {
       console.error('Failed to restore state:', e);
     }
