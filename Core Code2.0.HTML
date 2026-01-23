@@ -2056,9 +2056,12 @@ function restoreState(state) {
     });
 
     // Restore sublevel
-    plbDiv.querySelector('.sublevel-toggle').checked = plbState.subLevel.enabled || false;
-    plbDiv.querySelector('.sublevel-name').value = plbState.subLevel.name || '';
-    toggleSublevel(plbDiv.querySelector('.sublevel-toggle'));
+    const sublevelToggle = plbDiv.querySelector('.sublevel-toggle');
+    if (sublevelToggle) {
+      sublevelToggle.checked = plbState.subLevel.enabled || false;
+      toggleSublevel(sublevelToggle);
+    }
+    safeSetValue(plbDiv, '.sublevel-name', plbState.subLevel.name || '');
 
     // Restore sublevel items
     const sublevelContainer = plbDiv.querySelector('.sublevel-container');
