@@ -1904,12 +1904,6 @@ function restoreState(state) {
     safeSetValue(plbDiv, '.postpattern-querytid-testname', plbState.postpatternQuerytidTestname);
     safeSetValue(plbDiv, '.postpattern-querytid-testtype', plbState.postpatternQuerytidTesttype);
 
-    // Trigger mode changes to show/hide appropriate fields
-    const prepatternMode = plbDiv.querySelector('.prepattern-mode');
-    const postpatternMode = plbDiv.querySelector('.postpattern-mode');
-    if (prepatternMode) updatePrepatternFields(prepatternMode);
-    if (postpatternMode) updatePostpatternFields(postpatternMode);
-
     // Restore regular items (non-loop items to .item-list)
     const itemList = plbDiv.querySelector('.item-list');
     itemList.innerHTML = '';
