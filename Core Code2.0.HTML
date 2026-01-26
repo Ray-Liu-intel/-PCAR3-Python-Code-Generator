@@ -2288,6 +2288,17 @@ function restoreState(state) {
  * This approach avoids browser caching issues by keeping state separate from code.
  */
 /**
+ * Get a unique localStorage key based on the current file name.
+ * This ensures each HTML file (e.g., Core Code2.0 (43).HTML, Core Code2.0 (44).HTML) 
+ * has its own independent state.
+ */
+function getStorageKey() {
+  const pathname = window.location.pathname;
+  const filename = pathname.substring(pathname.lastIndexOf('/') + 1) || 'Core Code2.0.HTML';
+  return 'pcar3_state_' + filename;
+}
+
+/**
  * Automatically saves the current state to localStorage.
  * Called whenever form fields change.
  */
@@ -2295,8 +2306,8 @@ function autoSaveState() {
   try {
     const state = captureState();
     const stateJson = JSON.stringify(state);
-    localStorage.setItem('pcar3_state', stateJson);
-    console.log('State auto-saved to localStorage');
+    localStorage.setItem(getStorageKey(), stateJson);
+    console.log('State auto-saved to localStorage with key:', getStorageKey());
   } catch (error) {
     console.error('Failed to auto-save state:', error);
   }
@@ -2317,11 +2328,12 @@ function debouncedAutoSaveState() {
  */
 function autoLoadState() {
   try {
-    const stateJson = localStorage.getItem('pcar3_state');
+    const storageKey = getStorageKey();
+    const stateJson = localStorage.getItem(storageKey);
     if (stateJson) {
       const state = JSON.parse(stateJson);
       restoreState(state);
-      console.log('State auto-loaded from localStorage');
+      console.log('State auto-loaded from localStorage with key:', storageKey);
     }
   } catch (error) {
     console.error('Failed to auto-load state:', error);
