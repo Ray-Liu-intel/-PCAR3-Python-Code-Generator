@@ -1802,6 +1802,53 @@ function captureState() {
       plbState.mainLoopItems.push(item);
     });
 
+    // Capture condition blocks (if/elif/else) and their items
+    plbState.conditionBlocks = [];
+    plbDiv.querySelectorAll('.loop-section .condition-list > .condition-block').forEach(condBlock => {
+      const condType = condBlock.getAttribute('data-condition-type');
+      const conditionBlock = {
+        type: condType,
+        condition: condBlock.querySelector('.condition-expr')?.value || '',
+        items: []
+      };
+
+      // Capture items within this condition block
+      condBlock.querySelectorAll('.loop-item-list > div[data-type]').forEach(itemDiv => {
+        const type = itemDiv.getAttribute('data-type');
+        const item = { type };
+
+        if (type === 'pats') {
+          item.mode = itemDiv.querySelector('.pats-mode')?.value || 'default';
+          item.value = itemDiv.querySelector('.pats-value')?.value || '';
+          item.tidsValue = itemDiv.querySelector('.tids-value')?.value || '';
+          item.tidsChunk = itemDiv.querySelector('.tids-chunk')?.value || '';
+          item.querytidTestname = itemDiv.querySelector('.querytid-testname')?.value || '';
+          item.querytidTesttype = itemDiv.querySelector('.querytid-testtype')?.value || '';
+          item.querytidChunk = itemDiv.querySelector('.querytid-chunk')?.value || '';
+        } else if (type === 'pre' || type === 'post') {
+          item.mode = itemDiv.querySelector(`.${type}-mode`)?.value || 'default';
+          item.value = itemDiv.querySelector(`.${type}-value`)?.value || '';
+          item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`)?.value || '';
+          item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`)?.value || '';
+          item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`)?.value || '';
+          item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`)?.value || '';
+          item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`)?.value || '';
+        } else if (type === 'refplb') {
+          item.name = itemDiv.querySelector('.refplb-name')?.value || '';
+        } else if (type === 'subplb') {
+          item.name = itemDiv.querySelector('.subplb-name')?.value || '';
+        } else if (type === 'comment') {
+          item.text = itemDiv.querySelector('.comment-text')?.value || '';
+        } else if (type === 'preexecref' || type === 'postexecref') {
+          item.name = itemDiv.querySelector(`.${type}-name`)?.value || '';
+        }
+
+        conditionBlock.items.push(item);
+      });
+
+      plbState.conditionBlocks.push(conditionBlock);
+    });
+
     // Capture sublevel items
     plbDiv.querySelectorAll('.sublevel-container > div[data-type]').forEach(itemDiv => {
       const type = itemDiv.getAttribute('data-type');
@@ -2053,6 +2100,92 @@ function restoreState(state) {
         if (nameInput) nameInput.value = item.name || '';
       }
     });
+
+    // Restore condition blocks (if/elif/else)
+    const conditionList = plbDiv.querySelector('.loop-section .condition-list');
+    if (conditionList) {
+      conditionList.innerHTML = '';
+      (plbState.conditionBlocks || []).forEach(condBlock => {
+        // Add the condition block
+        addConditionBlock(plbId, condBlock.type);
+        const condBlockDiv = conditionList.lastElementChild;
+        
+        // Set condition expression if it's if or elif
+        if (condBlock.type === 'if' || condBlock.type === 'elif') {
+          const condExpr = condBlockDiv.querySelector('.condition-expr');
+          if (condExpr) condExpr.value = condBlock.condition || '';
+        }
+        
+        // Restore items within this condition block
+        const loopItemList = condBlockDiv.querySelector('.loop-item-list');
+        if (loopItemList) {
+          (condBlock.items || []).forEach(item => {
+            if (item.type === 'pats') {
+              addLoopItem(condBlockDiv, 'pats');
+              const itemDiv = loopItemList.lastElementChild;
+              const modeSelect = itemDiv.querySelector('.pats-mode');
+              if (modeSelect) {
+                modeSelect.value = item.mode || 'default';
+                togglePatsMode(modeSelect);
+                const defaultInput = itemDiv.querySelector('.pats-value');
+                const tidsInput = itemDiv.querySelector('.tids-value');
+                const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+                const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+                const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+                const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+                if (defaultInput) defaultInput.value = item.value || '';
+                if (tidsInput) tidsInput.value = item.tidsValue || '';
+                if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+                if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+                if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+                if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+              }
+            } else if (item.type === 'pre' || item.type === 'post') {
+              addLoopItem(condBlockDiv, item.type);
+              const itemDiv = loopItemList.lastElementChild;
+              const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+              if (modeSelect) {
+                modeSelect.value = item.mode || 'default';
+                const type = modeSelect.className.split('-')[0];
+                updateGenericFields(modeSelect, type);
+                const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+                const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+                const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+                const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+                const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+                const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+                if (defaultInput) defaultInput.value = item.value || '';
+                if (tidsInput) tidsInput.value = item.tidsValue || '';
+                if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+                if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+                if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+                if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+              }
+            } else if (item.type === 'refplb') {
+              addLoopItem(condBlockDiv, 'refplb');
+              const itemDiv = loopItemList.lastElementChild;
+              const nameInput = itemDiv.querySelector('.refplb-name');
+              if (nameInput) nameInput.value = item.name || '';
+            } else if (item.type === 'subplb') {
+              addLoopItem(condBlockDiv, 'subplb');
+              const itemDiv = loopItemList.lastElementChild;
+              const nameInput = itemDiv.querySelector('.subplb-name');
+              if (nameInput) nameInput.value = item.name || '';
+            } else if (item.type === 'comment') {
+              addLoopItem(condBlockDiv, 'comment');
+              const itemDiv = loopItemList.lastElementChild;
+              const textInput = itemDiv.querySelector('.comment-text');
+              if (textInput) textInput.value = item.text || '';
+            } else if (item.type === 'preexecref' || item.type === 'postexecref') {
+              addLoopItem(condBlockDiv, item.type);
+              const itemDiv = loopItemList.lastElementChild;
+              const nameInput = itemDiv.querySelector(`.${item.type}-name`);
+              if (nameInput) nameInput.value = item.name || '';
+            }
+          });
+        }
+      });
+    }
 
     // Restore sublevel
     const sublevelToggle = plbDiv.querySelector('.sublevel-toggle');
