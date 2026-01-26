@@ -2103,27 +2103,27 @@ function restoreState(state) {
 
     // Restore condition blocks (if/elif/else)
     const conditionList = plbDiv.querySelector('.loop-section .condition-list');
-    if (conditionList) {
-      conditionList.innerHTML = '';
+    if (conditionList && plbState.conditionBlocks) {
+      // Don't clear - let existing condition blocks remain if they exist
       (plbState.conditionBlocks || []).forEach(condBlock => {
         // Add the condition block
-        addConditionBlock(plbId, condBlock.type);
+        addConditionBlock(plbDiv.id, condBlock.type);
         const condBlockDiv = conditionList.lastElementChild;
         
         // Set condition expression if it's if or elif
-        if (condBlock.type === 'if' || condBlock.type === 'elif') {
+        if ((condBlock.type === 'if' || condBlock.type === 'elif') && condBlockDiv) {
           const condExpr = condBlockDiv.querySelector('.condition-expr');
           if (condExpr) condExpr.value = condBlock.condition || '';
         }
         
         // Restore items within this condition block
-        const loopItemList = condBlockDiv.querySelector('.loop-item-list');
+        const loopItemList = condBlockDiv?.querySelector('.loop-item-list');
         if (loopItemList) {
           (condBlock.items || []).forEach(item => {
             if (item.type === 'pats') {
               addLoopItem(condBlockDiv, 'pats');
               const itemDiv = loopItemList.lastElementChild;
-              const modeSelect = itemDiv.querySelector('.pats-mode');
+              const modeSelect = itemDiv?.querySelector('.pats-mode');
               if (modeSelect) {
                 modeSelect.value = item.mode || 'default';
                 togglePatsMode(modeSelect);
@@ -2143,7 +2143,7 @@ function restoreState(state) {
             } else if (item.type === 'pre' || item.type === 'post') {
               addLoopItem(condBlockDiv, item.type);
               const itemDiv = loopItemList.lastElementChild;
-              const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+              const modeSelect = itemDiv?.querySelector(`.${item.type}-mode`);
               if (modeSelect) {
                 modeSelect.value = item.mode || 'default';
                 const type = modeSelect.className.split('-')[0];
@@ -2164,22 +2164,22 @@ function restoreState(state) {
             } else if (item.type === 'refplb') {
               addLoopItem(condBlockDiv, 'refplb');
               const itemDiv = loopItemList.lastElementChild;
-              const nameInput = itemDiv.querySelector('.refplb-name');
+              const nameInput = itemDiv?.querySelector('.refplb-name');
               if (nameInput) nameInput.value = item.name || '';
             } else if (item.type === 'subplb') {
               addLoopItem(condBlockDiv, 'subplb');
               const itemDiv = loopItemList.lastElementChild;
-              const nameInput = itemDiv.querySelector('.subplb-name');
+              const nameInput = itemDiv?.querySelector('.subplb-name');
               if (nameInput) nameInput.value = item.name || '';
             } else if (item.type === 'comment') {
               addLoopItem(condBlockDiv, 'comment');
               const itemDiv = loopItemList.lastElementChild;
-              const textInput = itemDiv.querySelector('.comment-text');
+              const textInput = itemDiv?.querySelector('.comment-text');
               if (textInput) textInput.value = item.text || '';
             } else if (item.type === 'preexecref' || item.type === 'postexecref') {
               addLoopItem(condBlockDiv, item.type);
               const itemDiv = loopItemList.lastElementChild;
-              const nameInput = itemDiv.querySelector(`.${item.type}-name`);
+              const nameInput = itemDiv?.querySelector(`.${item.type}-name`);
               if (nameInput) nameInput.value = item.name || '';
             }
           });
