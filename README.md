@@ -121,20 +121,22 @@ Due to the change from tos3 to tos4, the syntax of our Plistfile also has underg
    - Click "Add Plb" to create a new Pattern List Block
    ```
 
-4. **Configure PLB**:
+3. **Configure PLB**:
 <img width="1039" height="341" alt="image" src="https://github.com/user-attachments/assets/076130bb-2abf-4053-b42b-1e01b85729d7" />
-<img width="1551" height="953" alt="image" src="https://github.com/user-attachments/assets/c15c79f1-2944-4d8f-9a5a-d2beb8caaec2" />
+
+<img width="1422" height="972" alt="image" src="https://github.com/user-attachments/assets/ed344a11-28f8-4413-b79a-84b5667e85c7" />
 
    ```
    - Enter PLB Name
    - (Optional) Enter PLB Header text which is the PLB annotation before code
    - Configure prepattern/postpattern using mode selectors （!Pay attention：Only one of the four 'preplist' 'prepattern' 'postplist' 'postpattern' can be used!）
    - Add items using the "Add Pats", "Add RefPlb", "Add Comment" buttons
-   --For detailed parameter rules, refer to the  Rules on Structures and Usage table
+   --For detailed parameter rules, refer to the Rules on Structures and Usage table
    ```
 
+4. **Generate Code**:
+   <img width="1350" height="567" alt="image" src="https://github.com/user-attachments/assets/6cdb7a12-5f8e-4c6b-b2f5-c74d81dce3e3" />
 
-6. **Generate Code**:
    ```
    - Click "Generate Code" button
    - Review the generated Python code in the text area
@@ -211,16 +213,17 @@ Due to the change from tos3 to tos4, the syntax of our Plistfile also has underg
    - Tick on Plist Builder refresh
    - Fill in the rest of the form based on your test requirement (similar to trace conversion WebUI form)
    ```
-   <img width="1327" height="727" alt="image" src="https://github.com/user-attachments/assets/f2ef0d78-50cd-4695-8675-dd64bf1e4c69" />
-   <img width="550" height="547" alt="image" src="https://github.com/user-attachments/assets/368462b1-147f-4c1c-8cbd-20b6ca9cedd3" />
+   <img width="951" height="986" alt="image" src="https://github.com/user-attachments/assets/5351511f-110a-413b-901c-6ddf02571d1a" />
 
    
-3. **Check the PList result**:
+2. **Check the PList result**:
    ```
    - Left bar > Job Submission > Results
    - Plist file > Copy Path to Clipboard (Directory of Plist Builder Results) and gvim in the UNIX.
    ```
    <img width="2121" height="132" alt="image" src="https://github.com/user-attachments/assets/a7b27f60-28d9-464b-b10d-9e9cece68572" />
+
+   <img width="1161" height="467" alt="image" src="https://github.com/user-attachments/assets/96721ad9-f599-436d-8d0c-51b56c5ae83c" />
 
 ## 💡 Usage Examples
 
@@ -455,6 +458,7 @@ if (__name__ == "__main__"):
 - ✅ {name} and {partition} placeholder support
 - ✅ Hide subPlb button (not needed)
 - ✅ Hide PreExec/PostExec in main loop
+- ✅ fix the auto-save problem
 - ✅ Copyright updated to 2026
 
 ### Core Code1.0.HTML
