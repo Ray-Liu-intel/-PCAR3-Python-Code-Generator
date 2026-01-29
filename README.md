@@ -203,7 +203,7 @@ Due to the change from tos3 to tos4, the syntax of our Plistfile also has underg
    ```
    
 ### Transfer pcar3 code to Flash
-1. **Submi PCAR3 Config file**:
+1. **Submit PCAR3 Config file**:
    ```
    - Left bar > Job Submission > Trace Conversion
    - Create a. pcar file in UNIX and copy the generated code into it
