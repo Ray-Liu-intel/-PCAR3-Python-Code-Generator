@@ -447,7 +447,7 @@ function addPlb() {
       <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">⌵</button>
       <label>Plb Name: <input type="text" class="plb-name" value="PList${String.fromCharCode(64+plbCount)}"></label>
       <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
-      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g., abc,def"></label>
+      <label>mask: <input type="text" class="plb-mask" value="" placeholder="e.g. abc,def"></label>
     </div>
     <div class="plb-content">
       <div class="plb-row">
@@ -1104,8 +1104,8 @@ function togglePrePostMode(sel) {
 // Helper function to split comma-separated values and format as array
 function formatArrayValues(input) {
   if (!input) return "''";
-  // Split by comma, trim whitespace, filter empty, and wrap each in quotes
-  const values = input.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`);
+  // Split by whitespace (space-delimited), filter empty strings, and wrap each in quotes
+  const values = input.split(/\s+/).filter(s => s).map(s => `'${s}'`);
   return values.length > 0 ? values.join(',') : "''";
 }
 
@@ -1306,7 +1306,7 @@ function generateCode() {
               if (val) {
                 if (val.includes('{name}') || val.includes('{partition}')) {
                   // Format array but keep placeholders for .format()
-                  const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  const formattedVals = val.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                   code += `    level1.add(Pats([${formattedVals}.format(name=name, partition=partition)]))\n`;
                 } else {
                   code += `    level1.add(Pats([${formatArrayValues(val)}]))\n`;
@@ -1321,7 +1321,7 @@ function generateCode() {
                 
                 if (tids.includes('{name}') || tids.includes('{partition}')) {
                   // Format array but keep placeholders for .format()
-                  const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  const formattedTids = tids.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                   code += `    level1.add(Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                 } else {
                   code += `    level1.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
@@ -1387,7 +1387,7 @@ function generateCode() {
               if (val) {
                 if (val.includes('{name}') || val.includes('{partition}')) {
                   // Format array but keep placeholders for .format()
-                  const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  const formattedVals = val.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                   code += `    level1.add(${prefix}(pat=Pats([${formattedVals}.format(name=name, partition=partition)])))\n`;
                 } else {
                   code += `    level1.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
@@ -1402,7 +1402,7 @@ function generateCode() {
                 
                 if (tids.includes('{name}') || tids.includes('{partition}')) {
                   // Format array but keep placeholders for .format()
-                  const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                  const formattedTids = tids.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                   code += `    level1.add(${prefix}(pat=Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                 } else {
                   code += `    level1.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
@@ -1509,7 +1509,7 @@ function generateCode() {
                 if (val) {
                   if (val.includes('{name}') || val.includes('{partition}')) {
                     // Format array but keep placeholders for .format()
-                    const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    const formattedVals = val.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                     code += `        level1_sub.add(Pats([${formattedVals}.format(name=name, partition=partition)]))\n`;
                   } else {
                     code += `        level1_sub.add(Pats([${formatArrayValues(val)}]))\n`;
@@ -1524,7 +1524,7 @@ function generateCode() {
                   
                   if (tids.includes('{name}') || tids.includes('{partition}')) {
                     // Format array but keep placeholders for .format()
-                    const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    const formattedTids = tids.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                     code += `        level1_sub.add(Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
                   } else {
                     code += `        level1_sub.add(Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''}))\n`;
@@ -1590,7 +1590,7 @@ function generateCode() {
                 if (val) {
                   if (val.includes('{name}') || val.includes('{partition}')) {
                     // Format array but keep placeholders for .format()
-                    const formattedVals = val.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    const formattedVals = val.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                     code += `        level1_sub.add(${prefix}(pat=Pats([${formattedVals}.format(name=name, partition=partition)])))\n`;
                   } else {
                     code += `        level1_sub.add(${prefix}(pat=Pats([${formatArrayValues(val)}])))\n`;
@@ -1605,7 +1605,7 @@ function generateCode() {
                   
                   if (tids.includes('{name}') || tids.includes('{partition}')) {
                     // Format array but keep placeholders for .format()
-                    const formattedTids = tids.split(',').map(s => s.trim()).filter(s => s).map(s => `'${s}'`).join(',');
+                    const formattedTids = tids.split(/\s+/).filter(s => s).map(s => `'${s}'`).join(',');
                     code += `        level1_sub.add(${prefix}(pat=Pats(Tids([${formattedTids}.format(name=name, partition=partition)])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
                   } else {
                     code += `        level1_sub.add(${prefix}(pat=Pats(Tids([${formatArrayValues(tids)}])${patsArgs.length ? ', ' + patsArgs.join(', ') : ''})))\n`;
@@ -1668,6 +1668,705 @@ function generateCode() {
   code += 'if (__name__ == "__main__"):\n    pcar3.process()\n    print("Summary")\n    pcar3.report(detail=True)\n    print(pcar3.gen_plist_preview())\n';
   document.getElementById('codebox').textContent = code;
 }
+
+// State serialization and restoration functions for Save HTML feature
+
+/**
+ * Captures the current UI state into a JSON object.
+ * State schema includes:
+ * - plistfile: string
+ * - loopEnabled: boolean
+ * - nameOfInstance: string
+ * - decodeParMappings: array of {name, partition}
+ * - plbs: array of PLB configurations with all their fields and nested items
+ */
+function captureState() {
+  const state = {
+    plistfile: document.getElementById('plistfile').value,
+    loopEnabled: document.getElementById('loopPartitionToggle').checked,
+    nameOfInstance: document.getElementById('nameOfInstance').value,
+    decodeParMappings: [],
+    plbs: []
+  };
+
+  // Capture decode parameter mappings
+  const tbody = document.getElementById('decodeParTableBody');
+  tbody.querySelectorAll('tr').forEach(row => {
+    const nameInput = row.querySelector('.decode-par-name');
+    const partitionInput = row.querySelector('.decode-par-partition');
+    if (nameInput && partitionInput) {
+      state.decodeParMappings.push({
+        name: nameInput.value,
+        partition: partitionInput.value
+      });
+    }
+  });
+
+  // Capture all PLB blocks
+  document.querySelectorAll('.plb-block').forEach(plbDiv => {
+    const plbState = {
+      collapsed: plbDiv.classList.contains('plb-collapsed'),
+      plbName: plbDiv.querySelector('.plb-name')?.value || '',
+      plbHeaderText: plbDiv.querySelector('.plb-header-text')?.value || '',
+      plbHeaderOrder: plbDiv.querySelector('.plb-header-order')?.value || '',
+      mask: plbDiv.querySelector('.plb-mask')?.value || '',
+      preplist: plbDiv.querySelector('.preplist')?.value || '',
+      postplist: plbDiv.querySelector('.postplist')?.value || '',
+      prepatternMode: plbDiv.querySelector('.prepattern-mode')?.value || 'tuple',
+      prepatternValue: plbDiv.querySelector('.prepattern-value')?.value || '',
+      prepatternTidsValue: plbDiv.querySelector('.prepattern-tids-value')?.value || '',
+      prepatternQuerytidTestname: plbDiv.querySelector('.prepattern-querytid-testname')?.value || '',
+      prepatternQuerytidTesttype: plbDiv.querySelector('.prepattern-querytid-testtype')?.value || '',
+      postpatternMode: plbDiv.querySelector('.postpattern-mode')?.value || 'tuple',
+      postpatternValue: plbDiv.querySelector('.postpattern-value')?.value || '',
+      postpatternTidsValue: plbDiv.querySelector('.postpattern-tids-value')?.value || '',
+      postpatternQuerytidTestname: plbDiv.querySelector('.postpattern-querytid-testname')?.value || '',
+      postpatternQuerytidTesttype: plbDiv.querySelector('.postpattern-querytid-testtype')?.value || '',
+      items: [],
+      mainLoopItems: [],
+      subLevel: {
+        enabled: plbDiv.querySelector('.sublevel-toggle')?.checked || false,
+        name: plbDiv.querySelector('.sublevel-name')?.value || '',
+        items: []
+      }
+    };
+
+    // Capture regular items (non-loop items from .item-list)
+    plbDiv.querySelectorAll('.item-list > div[data-type]').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      const item = { type };
+
+      if (type === 'pats') {
+        item.mode = itemDiv.querySelector('.pats-mode')?.value || 'default';
+        item.value = itemDiv.querySelector('.pats-value')?.value || '';
+        item.tidsValue = itemDiv.querySelector('.tids-value')?.value || '';
+        item.tidsChunk = itemDiv.querySelector('.tids-chunk')?.value || '';
+        item.querytidTestname = itemDiv.querySelector('.querytid-testname')?.value || '';
+        item.querytidTesttype = itemDiv.querySelector('.querytid-testtype')?.value || '';
+        item.querytidChunk = itemDiv.querySelector('.querytid-chunk')?.value || '';
+      } else if (type === 'pre' || type === 'post') {
+        item.mode = itemDiv.querySelector(`.${type}-mode`)?.value || 'default';
+        item.value = itemDiv.querySelector(`.${type}-value`)?.value || '';
+        item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`)?.value || '';
+        item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`)?.value || '';
+        item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`)?.value || '';
+        item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`)?.value || '';
+        item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`)?.value || '';
+      } else if (type === 'ref') {
+        item.name = itemDiv.querySelector('.ref-name')?.value || '';
+        item.skipPre = itemDiv.querySelector('.skip-pre')?.checked || false;
+        item.skipPost = itemDiv.querySelector('.skip-post')?.checked || false;
+      } else if (type === 'preexecref') {
+        item.name = itemDiv.querySelector('.preexecref-name')?.value || '';
+      } else if (type === 'postexecref') {
+        item.name = itemDiv.querySelector('.postexecref-name')?.value || '';
+      } else if (type === 'comment') {
+        item.text = itemDiv.querySelector('.comment-content')?.value || '';
+      }
+
+      plbState.items.push(item);
+    });
+
+    // Capture main loop items
+    plbDiv.querySelectorAll('.main-loop-list > div[data-type]').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      const item = { type };
+
+      if (type === 'pats') {
+        item.mode = itemDiv.querySelector('.pats-mode')?.value || 'default';
+        item.value = itemDiv.querySelector('.pats-value')?.value || '';
+        item.tidsValue = itemDiv.querySelector('.tids-value')?.value || '';
+        item.tidsChunk = itemDiv.querySelector('.tids-chunk')?.value || '';
+        item.querytidTestname = itemDiv.querySelector('.querytid-testname')?.value || '';
+        item.querytidTesttype = itemDiv.querySelector('.querytid-testtype')?.value || '';
+        item.querytidChunk = itemDiv.querySelector('.querytid-chunk')?.value || '';
+      } else if (type === 'pre' || type === 'post') {
+        item.mode = itemDiv.querySelector(`.${type}-mode`)?.value || 'default';
+        item.value = itemDiv.querySelector(`.${type}-value`)?.value || '';
+        item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`)?.value || '';
+        item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`)?.value || '';
+        item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`)?.value || '';
+        item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`)?.value || '';
+        item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`)?.value || '';
+      } else if (type === 'refplb') {
+        item.name = itemDiv.querySelector('.refplb-name')?.value || '';
+      } else if (type === 'comment') {
+        item.text = itemDiv.querySelector('.comment-text')?.value || '';
+      } else if (type === 'namefilter') {
+        item.include = itemDiv.querySelector('.namefilter-include')?.value || '';
+        item.exclude = itemDiv.querySelector('.namefilter-exclude')?.value || '';
+      } else if (type === 'preexecref' || type === 'postexecref') {
+        item.name = itemDiv.querySelector(`.${type}-name`)?.value || '';
+      }
+
+      plbState.mainLoopItems.push(item);
+    });
+
+    // Capture condition blocks (if/elif/else) and their items
+    plbState.conditionBlocks = [];
+    plbDiv.querySelectorAll('.loop-section .condition-list > .condition-block').forEach(condBlock => {
+      const condType = condBlock.getAttribute('data-condition-type');
+      const conditionBlock = {
+        type: condType,
+        condition: condBlock.querySelector('.condition-expr')?.value || '',
+        items: []
+      };
+
+      // Capture items within this condition block
+      condBlock.querySelectorAll('.loop-item-list > div[data-type]').forEach(itemDiv => {
+        const type = itemDiv.getAttribute('data-type');
+        const item = { type };
+
+        if (type === 'pats') {
+          item.mode = itemDiv.querySelector('.pats-mode')?.value || 'default';
+          item.value = itemDiv.querySelector('.pats-value')?.value || '';
+          item.tidsValue = itemDiv.querySelector('.tids-value')?.value || '';
+          item.tidsChunk = itemDiv.querySelector('.tids-chunk')?.value || '';
+          item.querytidTestname = itemDiv.querySelector('.querytid-testname')?.value || '';
+          item.querytidTesttype = itemDiv.querySelector('.querytid-testtype')?.value || '';
+          item.querytidChunk = itemDiv.querySelector('.querytid-chunk')?.value || '';
+        } else if (type === 'pre' || type === 'post') {
+          item.mode = itemDiv.querySelector(`.${type}-mode`)?.value || 'default';
+          item.value = itemDiv.querySelector(`.${type}-value`)?.value || '';
+          item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`)?.value || '';
+          item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`)?.value || '';
+          item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`)?.value || '';
+          item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`)?.value || '';
+          item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`)?.value || '';
+        } else if (type === 'refplb') {
+          item.name = itemDiv.querySelector('.refplb-name')?.value || '';
+        } else if (type === 'subplb') {
+          item.name = itemDiv.querySelector('.subplb-name')?.value || '';
+        } else if (type === 'comment') {
+          item.text = itemDiv.querySelector('.comment-text')?.value || '';
+        } else if (type === 'preexecref' || type === 'postexecref') {
+          item.name = itemDiv.querySelector(`.${type}-name`)?.value || '';
+        }
+
+        conditionBlock.items.push(item);
+      });
+
+      plbState.conditionBlocks.push(conditionBlock);
+    });
+
+    // Capture sublevel items
+    plbDiv.querySelectorAll('.sublevel-container > div[data-type]').forEach(itemDiv => {
+      const type = itemDiv.getAttribute('data-type');
+      const item = { type };
+
+      if (type === 'subplb') {
+        item.name = itemDiv.querySelector('.subplb-name')?.value || '';
+      } else if (type === 'pats') {
+        item.mode = itemDiv.querySelector('.pats-mode')?.value || 'default';
+        item.value = itemDiv.querySelector('.pats-value')?.value || '';
+        item.tidsValue = itemDiv.querySelector('.tids-value')?.value || '';
+        item.tidsChunk = itemDiv.querySelector('.tids-chunk')?.value || '';
+        item.querytidTestname = itemDiv.querySelector('.querytid-testname')?.value || '';
+        item.querytidTesttype = itemDiv.querySelector('.querytid-testtype')?.value || '';
+        item.querytidChunk = itemDiv.querySelector('.querytid-chunk')?.value || '';
+      } else if (type === 'pre' || type === 'post') {
+        item.mode = itemDiv.querySelector(`.${type}-mode`)?.value || 'default';
+        item.value = itemDiv.querySelector(`.${type}-value`)?.value || '';
+        item.tidsValue = itemDiv.querySelector(`.${type}-tids-value`)?.value || '';
+        item.tidsChunk = itemDiv.querySelector(`.${type}-tids-chunk`)?.value || '';
+        item.querytidTestname = itemDiv.querySelector(`.${type}-querytid-testname`)?.value || '';
+        item.querytidTesttype = itemDiv.querySelector(`.${type}-querytid-testtype`)?.value || '';
+        item.querytidChunk = itemDiv.querySelector(`.${type}-querytid-chunk`)?.value || '';
+      } else if (type === 'refplb') {
+        item.name = itemDiv.querySelector('.refplb-name')?.value || '';
+      } else if (type === 'comment') {
+        item.text = itemDiv.querySelector('.comment-text')?.value || '';
+      } else if (type === 'namefilter') {
+        item.include = itemDiv.querySelector('.namefilter-include')?.value || '';
+        item.exclude = itemDiv.querySelector('.namefilter-exclude')?.value || '';
+      } else if (type === 'preexecref' || type === 'postexecref') {
+        item.name = itemDiv.querySelector(`.${type}-name`)?.value || '';
+      }
+
+      plbState.subLevel.items.push(item);
+    });
+
+    state.plbs.push(plbState);
+  });
+
+  return state;
+}
+
+/**
+ * Restores the UI state from a JSON object.
+ * Hydrates all form fields, recreates dynamic PLB blocks, and restores their contents.
+ */
+function restoreState(state) {
+  // Restore basic fields
+  document.getElementById('plistfile').value = state.plistfile || '';
+  document.getElementById('loopPartitionToggle').checked = state.loopEnabled || false;
+  document.getElementById('nameOfInstance').value = state.nameOfInstance || '';
+  
+  // Trigger loop toggle to show/hide sections
+  toggleLoopPartition();
+
+  // Restore decode parameter mappings
+  const tbody = document.getElementById('decodeParTableBody');
+  tbody.innerHTML = '';
+  (state.decodeParMappings || []).forEach(mapping => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><input type="text" class="decode-par-name" style="width: 150px;" value="${mapping.name}"></td>
+      <td><input type="text" class="decode-par-partition" style="width: 300px;" value="${mapping.partition}"></td>
+      <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  // Clear existing PLBs
+  document.getElementById('plbContainer').innerHTML = '';
+  plbCount = 0;
+
+  // Helper function to safely set value
+  const safeSetValue = (parent, selector, value) => {
+    const element = parent.querySelector(selector);
+    if (element) element.value = value || '';
+  };
+
+  // Restore PLB blocks
+  (state.plbs || []).forEach(plbState => {
+    addPlb();
+    const plbDiv = document.querySelectorAll('.plb-block')[document.querySelectorAll('.plb-block').length - 1];
+
+    // Restore PLB properties with null checks
+    safeSetValue(plbDiv, '.plb-name', plbState.plbName);
+    safeSetValue(plbDiv, '.plb-header-text', plbState.plbHeaderText);
+    safeSetValue(plbDiv, '.plb-mask', plbState.mask);
+    safeSetValue(plbDiv, '.preplist', plbState.preplist);
+    safeSetValue(plbDiv, '.postplist', plbState.postplist);
+    safeSetValue(plbDiv, '.prepattern-mode', plbState.prepatternMode || 'tuple');
+    safeSetValue(plbDiv, '.prepattern-value', plbState.prepatternValue);
+    safeSetValue(plbDiv, '.prepattern-tids-value', plbState.prepatternTidsValue);
+    safeSetValue(plbDiv, '.prepattern-querytid-testname', plbState.prepatternQuerytidTestname);
+    safeSetValue(plbDiv, '.prepattern-querytid-testtype', plbState.prepatternQuerytidTesttype);
+    safeSetValue(plbDiv, '.postpattern-mode', plbState.postpatternMode || 'tuple');
+    safeSetValue(plbDiv, '.postpattern-value', plbState.postpatternValue);
+    safeSetValue(plbDiv, '.postpattern-tids-value', plbState.postpatternTidsValue);
+    safeSetValue(plbDiv, '.postpattern-querytid-testname', plbState.postpatternQuerytidTestname);
+    safeSetValue(plbDiv, '.postpattern-querytid-testtype', plbState.postpatternQuerytidTesttype);
+
+    // Restore regular items (non-loop items to .item-list)
+    const itemList = plbDiv.querySelector('.item-list');
+    itemList.innerHTML = '';
+    (plbState.items || []).forEach(item => {
+      const plbId = plbDiv.id;
+      if (item.type === 'pats') {
+        addItem(plbId, 'pats');
+        const itemDiv = itemList.lastElementChild;
+        const modeSelect = itemDiv.querySelector('.pats-mode');
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Toggle mode FIRST to show the correct fields
+          togglePatsMode(modeSelect);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector('.pats-value');
+          const tidsInput = itemDiv.querySelector('.tids-value');
+          const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+          const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+          const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+          const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
+      } else if (item.type === 'pre' || item.type === 'post') {
+        addItem(plbId, item.type);
+        const itemDiv = itemList.lastElementChild;
+        const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Toggle mode FIRST to show the correct fields
+          togglePrePostMode(modeSelect);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+          const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+          const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+          const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+          const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+          const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
+      } else if (item.type === 'ref') {
+        addItem(plbId, 'ref');
+        const itemDiv = itemList.lastElementChild;
+        const nameInput = itemDiv.querySelector('.ref-name');
+        const skipPreCheck = itemDiv.querySelector('.skip-pre');
+        const skipPostCheck = itemDiv.querySelector('.skip-post');
+        if (nameInput) nameInput.value = item.name || '';
+        if (skipPreCheck) skipPreCheck.checked = item.skipPre || false;
+        if (skipPostCheck) skipPostCheck.checked = item.skipPost || false;
+      } else if (item.type === 'preexecref') {
+        addItem(plbId, 'preexecref');
+        const itemDiv = itemList.lastElementChild;
+        const nameInput = itemDiv.querySelector('.preexecref-name');
+        if (nameInput) nameInput.value = item.name || '';
+      } else if (item.type === 'postexecref') {
+        addItem(plbId, 'postexecref');
+        const itemDiv = itemList.lastElementChild;
+        const nameInput = itemDiv.querySelector('.postexecref-name');
+        if (nameInput) nameInput.value = item.name || '';
+      } else if (item.type === 'comment') {
+        addItem(plbId, 'comment');
+        const itemDiv = itemList.lastElementChild;
+        const contentInput = itemDiv.querySelector('.comment-content');
+        if (contentInput) contentInput.value = item.text || '';
+      }
+    });
+
+    // Restore main loop items
+    const mainContainer = plbDiv.querySelector('.main-loop-list');
+    mainContainer.innerHTML = '';
+    (plbState.mainLoopItems || []).forEach(item => {
+      const plbId = plbDiv.id;
+      if (item.type === 'pats') {
+        addMainLoopItem(plbId, 'pats');
+        const itemDiv = mainContainer.lastElementChild;
+        const modeSelect = itemDiv.querySelector('.pats-mode');
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST to show the correct ones
+          togglePatsMode(modeSelect);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector('.pats-value');
+          const tidsInput = itemDiv.querySelector('.tids-value');
+          const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+          const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+          const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+          const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
+      } else if (item.type === 'pre' || item.type === 'post') {
+        addMainLoopItem(plbId, item.type);
+        const itemDiv = mainContainer.lastElementChild;
+        const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST
+          const type = modeSelect.className.split('-')[0];
+          updateGenericFields(modeSelect, type);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+          const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+          const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+          const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+          const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+          const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
+      } else if (item.type === 'refplb') {
+        addMainLoopItem(plbId, 'refplb');
+        const itemDiv = mainContainer.lastElementChild;
+        const nameInput = itemDiv.querySelector('.refplb-name');
+        if (nameInput) nameInput.value = item.name || '';
+      } else if (item.type === 'comment') {
+        addMainLoopItem(plbId, 'comment');
+        const itemDiv = mainContainer.lastElementChild;
+        const textInput = itemDiv.querySelector('.comment-text');
+        if (textInput) textInput.value = item.text || '';
+      } else if (item.type === 'namefilter') {
+        addMainLoopItem(plbId, 'namefilter');
+        const itemDiv = mainContainer.lastElementChild;
+        const includeInput = itemDiv.querySelector('.namefilter-include');
+        const excludeInput = itemDiv.querySelector('.namefilter-exclude');
+        if (includeInput) includeInput.value = item.include || '';
+        if (excludeInput) excludeInput.value = item.exclude || '';
+      } else if (item.type === 'preexecref' || item.type === 'postexecref') {
+        addMainLoopItem(plbId, item.type);
+        const itemDiv = mainContainer.lastElementChild;
+        const nameInput = itemDiv.querySelector(`.${item.type}-name`);
+        if (nameInput) nameInput.value = item.name || '';
+      }
+    });
+
+    // Restore condition blocks (if/elif/else)
+    const conditionList = plbDiv.querySelector('.loop-section .condition-list');
+    if (conditionList && plbState.conditionBlocks) {
+      // Don't clear - let existing condition blocks remain if they exist
+      (plbState.conditionBlocks || []).forEach(condBlock => {
+        // Add the condition block
+        addConditionBlock(plbDiv.id, condBlock.type);
+        const condBlockDiv = conditionList.lastElementChild;
+        
+        // Set condition expression if it's if or elif
+        if ((condBlock.type === 'if' || condBlock.type === 'elif') && condBlockDiv) {
+          const condExpr = condBlockDiv.querySelector('.condition-expr');
+          if (condExpr) condExpr.value = condBlock.condition || '';
+        }
+        
+        // Restore items within this condition block
+        const loopItemList = condBlockDiv?.querySelector('.loop-item-list');
+        if (loopItemList) {
+          (condBlock.items || []).forEach(item => {
+            if (item.type === 'pats') {
+              addLoopItem(condBlockDiv, 'pats');
+              const itemDiv = loopItemList.lastElementChild;
+              const modeSelect = itemDiv?.querySelector('.pats-mode');
+              if (modeSelect) {
+                modeSelect.value = item.mode || 'default';
+                togglePatsMode(modeSelect);
+                const defaultInput = itemDiv.querySelector('.pats-value');
+                const tidsInput = itemDiv.querySelector('.tids-value');
+                const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+                const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+                const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+                const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+                if (defaultInput) defaultInput.value = item.value || '';
+                if (tidsInput) tidsInput.value = item.tidsValue || '';
+                if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+                if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+                if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+                if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+              }
+            } else if (item.type === 'pre' || item.type === 'post') {
+              addLoopItem(condBlockDiv, item.type);
+              const itemDiv = loopItemList.lastElementChild;
+              const modeSelect = itemDiv?.querySelector(`.${item.type}-mode`);
+              if (modeSelect) {
+                modeSelect.value = item.mode || 'default';
+                const type = modeSelect.className.split('-')[0];
+                updateGenericFields(modeSelect, type);
+                const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+                const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+                const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+                const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+                const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+                const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+                if (defaultInput) defaultInput.value = item.value || '';
+                if (tidsInput) tidsInput.value = item.tidsValue || '';
+                if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+                if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+                if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+                if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+              }
+            } else if (item.type === 'refplb') {
+              addLoopItem(condBlockDiv, 'refplb');
+              const itemDiv = loopItemList.lastElementChild;
+              const nameInput = itemDiv?.querySelector('.refplb-name');
+              if (nameInput) nameInput.value = item.name || '';
+            } else if (item.type === 'subplb') {
+              addLoopItem(condBlockDiv, 'subplb');
+              const itemDiv = loopItemList.lastElementChild;
+              const nameInput = itemDiv?.querySelector('.subplb-name');
+              if (nameInput) nameInput.value = item.name || '';
+            } else if (item.type === 'comment') {
+              addLoopItem(condBlockDiv, 'comment');
+              const itemDiv = loopItemList.lastElementChild;
+              const textInput = itemDiv?.querySelector('.comment-text');
+              if (textInput) textInput.value = item.text || '';
+            } else if (item.type === 'preexecref' || item.type === 'postexecref') {
+              addLoopItem(condBlockDiv, item.type);
+              const itemDiv = loopItemList.lastElementChild;
+              const nameInput = itemDiv?.querySelector(`.${item.type}-name`);
+              if (nameInput) nameInput.value = item.name || '';
+            }
+          });
+        }
+      });
+    }
+
+    // Restore sublevel
+    const sublevelToggle = plbDiv.querySelector('.sublevel-toggle');
+    if (sublevelToggle) {
+      sublevelToggle.checked = plbState.subLevel.enabled || false;
+      toggleSublevel(sublevelToggle);
+    }
+    safeSetValue(plbDiv, '.sublevel-name', plbState.subLevel.name || '');
+
+    // Restore sublevel items
+    const sublevelContainer = plbDiv.querySelector('.sublevel-container');
+    if (sublevelContainer) {
+      sublevelContainer.innerHTML = '';
+      (plbState.subLevel.items || []).forEach(item => {
+      if (item.type === 'subplb') {
+        addSublevelItem(sublevelContainer, 'subplb');
+        const itemDiv = sublevelContainer.lastElementChild;
+        const nameInput = itemDiv.querySelector('.subplb-name');
+        if (nameInput) nameInput.value = item.name || '';
+      } else if (item.type === 'pats') {
+        addSublevelItem(sublevelContainer, 'pats');
+        const itemDiv = sublevelContainer.lastElementChild;
+        const modeSelect = itemDiv.querySelector('.pats-mode');
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST
+          togglePatsMode(modeSelect);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector('.pats-value');
+          const tidsInput = itemDiv.querySelector('.tids-value');
+          const tidsChunkInput = itemDiv.querySelector('.tids-chunk');
+          const qtTestnameInput = itemDiv.querySelector('.querytid-testname');
+          const qtTesttypeInput = itemDiv.querySelector('.querytid-testtype');
+          const qtChunkInput = itemDiv.querySelector('.querytid-chunk');
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
+      } else if (item.type === 'pre' || item.type === 'post') {
+        addSublevelItem(sublevelContainer, item.type);
+        const itemDiv = sublevelContainer.lastElementChild;
+        const modeSelect = itemDiv.querySelector(`.${item.type}-mode`);
+        if (modeSelect) {
+          modeSelect.value = item.mode || 'default';
+          // Update fields FIRST
+          const type = modeSelect.className.split('-')[0];
+          updateGenericFields(modeSelect, type);
+          // Then set the values
+          const defaultInput = itemDiv.querySelector(`.${item.type}-value`);
+          const tidsInput = itemDiv.querySelector(`.${item.type}-tids-value`);
+          const tidsChunkInput = itemDiv.querySelector(`.${item.type}-tids-chunk`);
+          const qtTestnameInput = itemDiv.querySelector(`.${item.type}-querytid-testname`);
+          const qtTesttypeInput = itemDiv.querySelector(`.${item.type}-querytid-testtype`);
+          const qtChunkInput = itemDiv.querySelector(`.${item.type}-querytid-chunk`);
+          if (defaultInput) defaultInput.value = item.value || '';
+          if (tidsInput) tidsInput.value = item.tidsValue || '';
+          if (tidsChunkInput) tidsChunkInput.value = item.tidsChunk || '';
+          if (qtTestnameInput) qtTestnameInput.value = item.querytidTestname || '';
+          if (qtTesttypeInput) qtTesttypeInput.value = item.querytidTesttype || '';
+          if (qtChunkInput) qtChunkInput.value = item.querytidChunk || '';
+        }
+      } else if (item.type === 'refplb') {
+        addSublevelItem(sublevelContainer, 'refplb');
+        const itemDiv = sublevelContainer.lastElementChild;
+        const nameInput = itemDiv.querySelector('.refplb-name');
+        if (nameInput) nameInput.value = item.name || '';
+      } else if (item.type === 'comment') {
+        addSublevelItem(sublevelContainer, 'comment');
+        const itemDiv = sublevelContainer.lastElementChild;
+        const textInput = itemDiv.querySelector('.comment-text');
+        if (textInput) textInput.value = item.text || '';
+      } else if (item.type === 'namefilter') {
+        addSublevelItem(sublevelContainer, 'namefilter');
+        const itemDiv = sublevelContainer.lastElementChild;
+        const includeInput = itemDiv.querySelector('.namefilter-include');
+        const excludeInput = itemDiv.querySelector('.namefilter-exclude');
+        if (includeInput) includeInput.value = item.include || '';
+        if (excludeInput) excludeInput.value = item.exclude || '';
+      } else if (item.type === 'preexecref' || item.type === 'postexecref') {
+        addSublevelItem(sublevelContainer, item.type);
+        const itemDiv = sublevelContainer.lastElementChild;
+        const nameInput = itemDiv.querySelector(`.${item.type}-name`);
+        if (nameInput) nameInput.value = item.name || '';
+      }
+    });
+    }
+
+    // Restore collapsed state
+    if (plbState.collapsed) {
+      togglePlbCollapse(plbDiv.querySelector('.plb-toggle-btn'));
+    }
+  });
+}
+
+/**
+ * Exports the current UI state as a JSON file for later import.
+ * This approach avoids browser caching issues by keeping state separate from code.
+ */
+/**
+ * Get a unique localStorage key based on the current file name.
+ * This ensures each HTML file (e.g., Core Code2.0 (43).HTML, Core Code2.0 (44).HTML) 
+ * has its own independent state.
+ */
+function getStorageKey() {
+  const pathname = window.location.pathname;
+  const filename = pathname.substring(pathname.lastIndexOf('/') + 1) || 'Core Code2.0.HTML';
+  return 'pcar3_state_' + filename;
+}
+
+/**
+ * Automatically saves the current state to localStorage.
+ * Called whenever form fields change.
+ */
+function autoSaveState() {
+  try {
+    const state = captureState();
+    const stateJson = JSON.stringify(state);
+    localStorage.setItem(getStorageKey(), stateJson);
+    console.log('State auto-saved to localStorage with key:', getStorageKey());
+  } catch (error) {
+    console.error('Failed to auto-save state:', error);
+  }
+}
+
+/**
+ * Debounced version of autoSaveState to avoid saving too frequently.
+ * Waits 500ms after the last change before saving.
+ */
+let autoSaveTimeout;
+function debouncedAutoSaveState() {
+  clearTimeout(autoSaveTimeout);
+  autoSaveTimeout = setTimeout(autoSaveState, 500);
+}
+
+/**
+ * Automatically loads the saved state from localStorage on page load.
+ */
+function autoLoadState() {
+  try {
+    const storageKey = getStorageKey();
+    const stateJson = localStorage.getItem(storageKey);
+    if (stateJson) {
+      const state = JSON.parse(stateJson);
+      restoreState(state);
+      console.log('State auto-loaded from localStorage with key:', storageKey);
+    }
+  } catch (error) {
+    console.error('Failed to auto-load state:', error);
+  }
+}
+
+/**
+ * Sets up auto-save listeners on all form fields.
+ * Saves state whenever any input changes.
+ */
+function setupAutoSave() {
+  // Save on any input change in the document
+  document.addEventListener('input', debouncedAutoSaveState);
+  
+  // Save on any change event (for selects, checkboxes)
+  document.addEventListener('change', debouncedAutoSaveState);
+  
+  // Save when PLBs are added/deleted (capture button clicks)
+  const originalAddPlb = window.addPlb;
+  window.addPlb = function() {
+    originalAddPlb.apply(this, arguments);
+    autoSaveState();
+  };
+  
+  console.log('Auto-save enabled');
+}
+
+// Initialize auto-save and auto-load on page load
+window.addEventListener('load', function() {
+  autoLoadState();
+  setupAutoSave();
+});
+
 </script>
 </body>
 </html>
