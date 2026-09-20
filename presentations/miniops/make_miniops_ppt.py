@@ -62,7 +62,10 @@ class Card:
 def available_font_families() -> set[str]:
     if not shutil.which("fc-list"):
         return set()
-    output = subprocess.check_output(["fc-list", ":", "family"], text=True, errors="ignore")
+    try:
+        output = subprocess.check_output(["fc-list", ":", "family"], text=True, errors="ignore")
+    except subprocess.CalledProcessError:
+        return set()
     return {
         family.strip().lower()
         for line in output.splitlines()
@@ -726,11 +729,11 @@ Sources:
 
 
 def generate(language: str, output_dir: Path) -> Iterable[Path]:
-    cn_font = resolve_font("Chinese deck", CN_FONT_CANDIDATES)
-    en_font = resolve_font("English deck", EN_FONT_CANDIDATES)
     if language in {"cn", "all"}:
+        cn_font = resolve_font("Chinese deck", CN_FONT_CANDIDATES)
         yield write_deck("MiniOps_Management_CN.pptx", cn_font, CN_CONTENT, output_dir=output_dir)
     if language in {"en", "all"}:
+        en_font = resolve_font("English deck", EN_FONT_CANDIDATES)
         yield write_deck("MiniOps_Management_EN.pptx", en_font, EN_CONTENT, output_dir=output_dir)
 
 
