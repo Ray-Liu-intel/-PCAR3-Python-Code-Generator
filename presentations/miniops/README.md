@@ -9,13 +9,27 @@ This directory contains the generated bilingual PowerPoint decks and the reprodu
 - `make_miniops_ppt.py`
 - `requirements.txt`
 
-## Direct download links on branch `copilot/create-miniops-presentation`
+## Current output-branch direct download links
+
+These exact raw URLs point to the generated files on the current output branch `copilot/create-miniops-presentation`:
 
 - Chinese deck: <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/copilot/create-miniops-presentation/presentations/miniops/MiniOps_Management_CN.pptx>
 - English deck: <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/copilot/create-miniops-presentation/presentations/miniops/MiniOps_Management_EN.pptx>
 - Generator: <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/copilot/create-miniops-presentation/presentations/miniops/make_miniops_ppt.py>
 
 If GitHub serves the PowerPoint files in-browser, use **Save link as...** to download them directly.
+
+## Stable repository paths
+
+- `presentations/miniops/MiniOps_Management_CN.pptx`
+- `presentations/miniops/MiniOps_Management_EN.pptx`
+- `presentations/miniops/make_miniops_ppt.py`
+
+After merge to the default branch, the stable raw URLs are expected to be:
+
+- <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/main/presentations/miniops/MiniOps_Management_CN.pptx>
+- <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/main/presentations/miniops/MiniOps_Management_EN.pptx>
+- <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/main/presentations/miniops/make_miniops_ppt.py>
 
 ## Local regeneration
 
