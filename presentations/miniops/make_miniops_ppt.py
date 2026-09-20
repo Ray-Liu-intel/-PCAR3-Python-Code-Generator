@@ -385,13 +385,16 @@ def validate_deck(path: Path, *, expected_filename: str, expected_title: str):
         raise AssertionError(f"{path.name}: unexpected title {prs.core_properties.title!r}")
     if len(prs.slides) != 6:
         raise AssertionError(f"{path.name}: expected 6 slides, found {len(prs.slides)}")
-    first_title = ""
+    title_found = False
     for shape in prs.slides[0].shapes:
-        if getattr(shape, "has_text_frame", False) and shape.text.strip():
-            first_title = shape.text.strip().splitlines()[0]
+        if not getattr(shape, "has_text_frame", False):
+            continue
+        text = shape.text.strip()
+        if text and text.splitlines()[0] == expected_title:
+            title_found = True
             break
-    if first_title != expected_title:
-        raise AssertionError(f"{path.name}: first slide title mismatch {first_title!r}")
+    if not title_found:
+        raise AssertionError(f"{path.name}: expected first-slide title {expected_title!r} not found")
     for index, slide in enumerate(prs.slides, start=1):
         notes = slide.notes_slide.notes_text_frame.text.strip()
         if not notes:
