@@ -12,7 +12,7 @@ from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
 
-OUTPUT_DIR = Path(__file__).resolve().parent
+DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent
 AUTHOR = "Ray Liu"
 DATE_LABEL = "September 2026"
 
@@ -371,17 +371,33 @@ def configure_presentation(title: str) -> Presentation:
     return prs
 
 
-def validate_deck(path: Path):
+def validate_deck(path: Path, *, expected_filename: str, expected_title: str):
+    if path.name != expected_filename:
+        raise AssertionError(f"expected filename {expected_filename}, got {path.name}")
+    if path.suffix.lower() != ".pptx":
+        raise AssertionError(f"{path.name}: expected .pptx suffix")
+    if not path.exists() or path.stat().st_size <= 0:
+        raise AssertionError(f"{path.name}: file was not written correctly")
     prs = Presentation(path)
+    if prs.core_properties.author != AUTHOR:
+        raise AssertionError(f"{path.name}: unexpected author {prs.core_properties.author!r}")
+    if prs.core_properties.title != expected_title:
+        raise AssertionError(f"{path.name}: unexpected title {prs.core_properties.title!r}")
     if len(prs.slides) != 6:
         raise AssertionError(f"{path.name}: expected 6 slides, found {len(prs.slides)}")
+    first_title = ""
+    for shape in prs.slides[0].shapes:
+        if getattr(shape, "has_text_frame", False) and shape.text.strip():
+            first_title = shape.text.strip().splitlines()[0]
+            break
+    if first_title != expected_title:
+        raise AssertionError(f"{path.name}: first slide title mismatch {first_title!r}")
     for index, slide in enumerate(prs.slides, start=1):
         notes = slide.notes_slide.notes_text_frame.text.strip()
         if not notes:
             raise AssertionError(f"{path.name}: slide {index} notes are empty")
 
-
-def write_deck(filename: str, font_name: str, content: dict):
+def write_deck(filename: str, font_name: str, content: dict, *, output_dir: Path):
     prs = configure_presentation(content["deck_title"])
     build_summary_slide(prs, content["slides"][0], font_name=font_name)
     build_problem_slide(prs, content["slides"][1], font_name=font_name)
@@ -389,9 +405,10 @@ def write_deck(filename: str, font_name: str, content: dict):
     build_quality_slide(prs, content["slides"][3], font_name=font_name)
     build_value_slide(prs, content["slides"][4], font_name=font_name)
     build_next_steps_slide(prs, content["slides"][5], font_name=font_name)
-    out_path = OUTPUT_DIR / filename
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out_path = output_dir / filename
     prs.save(out_path)
-    validate_deck(out_path)
+    validate_deck(out_path, expected_filename=filename, expected_title=content["deck_title"])
     return out_path
 
 
@@ -648,15 +665,29 @@ Sources:
 }
 
 
-def generate_all() -> Iterable[Path]:
-    yield write_deck("MiniOps_Management_CN.pptx", "Microsoft YaHei", CN_CONTENT)
-    yield write_deck("MiniOps_Management_EN.pptx", "Aptos", EN_CONTENT)
+def generate(language: str, output_dir: Path) -> Iterable[Path]:
+    if language in {"cn", "all"}:
+        yield write_deck("MiniOps_Management_CN.pptx", "Microsoft YaHei", CN_CONTENT, output_dir=output_dir)
+    if language in {"en", "all"}:
+        yield write_deck("MiniOps_Management_EN.pptx", "Aptos", EN_CONTENT, output_dir=output_dir)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Generate editable bilingual MiniOps management PowerPoint decks.")
-    parser.parse_args()
-    paths = list(generate_all())
+    parser.add_argument(
+        "--language",
+        choices=("all", "cn", "en"),
+        default="all",
+        help="Select which deck to generate. Defaults to all.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=DEFAULT_OUTPUT_DIR,
+        help=f"Directory for generated decks. Defaults to {DEFAULT_OUTPUT_DIR}.",
+    )
+    args = parser.parse_args()
+    paths = list(generate(args.language, args.output_dir.resolve()))
     for path in paths:
         print(f"Generated and validated: {path}")
 

@@ -28,9 +28,18 @@ python3 -m pip install -r presentations/miniops/requirements.txt
 python3 presentations/miniops/make_miniops_ppt.py
 ```
 
+Optional examples:
+
+```bash
+python3 presentations/miniops/make_miniops_ppt.py --language cn
+python3 presentations/miniops/make_miniops_ppt.py --language en --output-dir /tmp/miniops-ppt
+```
+
 The generator writes both `.pptx` files into this directory and then reopens them with `python-pptx` to verify:
 
 - valid package/open succeeds
+- expected filename and non-empty output file
+- expected deck title in core properties and first slide title
 - exactly six slides per deck
 - non-empty speaker notes on every slide
 
