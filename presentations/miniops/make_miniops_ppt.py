@@ -134,7 +134,7 @@ def add_slide_base(slide, title: str, subtitle: str, *, font_name: str, slide_nu
         Inches(7.05),
         Inches(4.2),
         Inches(0.18),
-        [f"{AUTHOR} | {DATE_LABEL}"],
+        [f"{AUTHOR} · {DATE_LABEL}"],
         font_name=font_name,
         font_size=9,
         color=GRAY,
@@ -527,7 +527,7 @@ EN_CONTENT = {
     "slides": [
         {
             "title": "Test Engineering Automation: Deliverables and Business Value",
-            "subtitle": "MiniOps management presentation | 10 minutes | editable bilingual deliverables",
+            "subtitle": "MiniOps management presentation — 10 minutes — editable bilingual deliverables",
             "headline": "Four tools are delivered; the next step is to validate team-level value rather than claim benefit numbers early.",
             "cards": (
                 Card("Visual configuration generation", ("PCAR3 Web UI generates Python configuration", "Supports multiple PLBs, Loop Partition, and conditional structures")),
