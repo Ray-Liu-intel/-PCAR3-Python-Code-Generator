@@ -25,11 +25,7 @@ If GitHub serves the PowerPoint files in-browser, use **Save link as...** to dow
 - `presentations/miniops/MiniOps_Management_EN.pptx`
 - `presentations/miniops/make_miniops_ppt.py`
 
-After merge to the default branch, the stable raw URLs are expected to be:
-
-- <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/main/presentations/miniops/MiniOps_Management_CN.pptx>
-- <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/main/presentations/miniops/MiniOps_Management_EN.pptx>
-- <https://raw.githubusercontent.com/Ray-Liu-intel/-PCAR3-Python-Code-Generator/main/presentations/miniops/make_miniops_ppt.py>
+Use these repository-relative paths on the current default branch after merge, or keep using the exact output-branch raw URLs above while the PR branch remains the source of truth.
 
 ## Local regeneration
 
