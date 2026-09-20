@@ -59,13 +59,13 @@ class Card:
 
 
 @lru_cache(maxsize=1)
-def available_font_families() -> set[str]:
+def available_font_families() -> set[str] | None:
     if not shutil.which("fc-list"):
-        return set()
+        return None
     try:
         output = subprocess.check_output(["fc-list", ":", "family"], text=True, errors="ignore")
-    except subprocess.CalledProcessError:
-        return set()
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError("fc-list is installed but failed; cannot verify fonts") from exc
     return {
         family.strip().lower()
         for line in output.splitlines()
@@ -76,6 +76,12 @@ def available_font_families() -> set[str]:
 
 def resolve_font(deck_label: str, candidates: Sequence[str]) -> str:
     available = available_font_families()
+    if available is None:
+        print(
+            f"[font] {deck_label}: fontconfig not available; using declared font '{candidates[0]}' without local verification.",
+            file=sys.stderr,
+        )
+        return candidates[0]
     if available:
         for candidate in candidates:
             if candidate.lower() in available:
@@ -88,11 +94,7 @@ def resolve_font(deck_label: str, candidates: Sequence[str]) -> str:
         raise RuntimeError(
             f"{deck_label}: none of the preferred fonts are installed: {', '.join(candidates)}"
         )
-    print(
-        f"[font] {deck_label}: fontconfig not available; using declared font '{candidates[0]}' without local verification.",
-        file=sys.stderr,
-    )
-    return candidates[0]
+    raise RuntimeError(f"{deck_label}: font verification returned no available families")
 
 
 def add_textbox(
