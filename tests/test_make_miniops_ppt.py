@@ -28,6 +28,7 @@ class MiniOpsPresentationTests(unittest.TestCase):
             self.assertEqual(6, len(prs.slides))
             self.assertEqual(miniops.AUTHOR, prs.core_properties.author)
             self.assertEqual(miniops.EN_CONTENT["deck_title"], prs.core_properties.title)
+            self.assertTrue(all(slide.notes_slide.notes_text_frame.text.strip() for slide in prs.slides))
 
     def test_generate_chinese_deck_to_temp_dir(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -42,6 +43,7 @@ class MiniOpsPresentationTests(unittest.TestCase):
             self.assertEqual(6, len(prs.slides))
             self.assertEqual(miniops.AUTHOR, prs.core_properties.author)
             self.assertEqual(miniops.CN_CONTENT["deck_title"], prs.core_properties.title)
+            self.assertTrue(all(slide.notes_slide.notes_text_frame.text.strip() for slide in prs.slides))
 
     def test_generate_all_writes_both_decks(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -62,6 +64,7 @@ class MiniOpsPresentationTests(unittest.TestCase):
                     deck_path,
                     expected_filename=deck_path.name,
                     expected_title="Wrong Title",
+                    expected_first_slide_title=miniops.EN_CONTENT["slides"][0]["title"],
                 )
 
 

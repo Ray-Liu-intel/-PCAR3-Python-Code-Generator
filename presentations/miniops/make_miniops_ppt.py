@@ -431,7 +431,13 @@ def configure_presentation(title: str) -> Presentation:
     return prs
 
 
-def validate_deck(path: Path, *, expected_filename: str, expected_title: str):
+def validate_deck(
+    path: Path,
+    *,
+    expected_filename: str,
+    expected_title: str,
+    expected_first_slide_title: str,
+):
     if path.name != expected_filename:
         raise AssertionError(f"expected filename {expected_filename}, got {path.name}")
     if path.suffix.lower() != ".pptx":
@@ -450,11 +456,13 @@ def validate_deck(path: Path, *, expected_filename: str, expected_title: str):
         if not getattr(shape, "has_text_frame", False):
             continue
         text = shape.text.strip()
-        if text and text.splitlines()[0] == expected_title:
+        if text and text.splitlines()[0] == expected_first_slide_title:
             title_found = True
             break
     if not title_found:
-        raise AssertionError(f"{path.name}: expected first-slide title {expected_title!r} not found")
+        raise AssertionError(
+            f"{path.name}: expected first-slide title {expected_first_slide_title!r} not found"
+        )
     for index, slide in enumerate(prs.slides, start=1):
         notes = slide.notes_slide.notes_text_frame.text.strip()
         if not notes:
@@ -471,7 +479,12 @@ def write_deck(filename: str, font_name: str, content: dict, *, output_dir: Path
     output_dir.mkdir(parents=True, exist_ok=True)
     out_path = output_dir / filename
     prs.save(out_path)
-    validate_deck(out_path, expected_filename=filename, expected_title=content["deck_title"])
+    validate_deck(
+        out_path,
+        expected_filename=filename,
+        expected_title=content["deck_title"],
+        expected_first_slide_title=content["slides"][0]["title"],
+    )
     return out_path
 
 
