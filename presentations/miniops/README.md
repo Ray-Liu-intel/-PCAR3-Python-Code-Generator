@@ -42,6 +42,7 @@ The generator writes both `.pptx` files into this directory and then reopens the
 - expected deck title in core properties and first slide title
 - exactly six slides per deck
 - non-empty speaker notes on every slide
+- an installed font is available from the generator's preferred font list for each deck, or generation stops with a clear error
 
 ## Scope and validation notes
 

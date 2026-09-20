@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import shutil
+import subprocess
+import sys
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -28,11 +32,64 @@ DARK = RGBColor(30, 41, 59)
 GRAY = RGBColor(90, 101, 115)
 BANNER = RGBColor(234, 244, 255)
 
+CN_FONT_CANDIDATES = (
+    "Noto Sans CJK SC",
+    "Microsoft YaHei",
+    "Source Han Sans SC",
+    "SimSun",
+    "WenQuanYi Micro Hei",
+    "Arial Unicode MS",
+    "Liberation Sans",
+    "DejaVu Sans",
+)
+
+EN_FONT_CANDIDATES = (
+    "Aptos",
+    "Arial",
+    "Liberation Sans",
+    "DejaVu Sans",
+    "Calibri",
+)
+
 
 @dataclass(frozen=True)
 class Card:
     title: str
     bullets: tuple[str, ...]
+
+
+@lru_cache(maxsize=1)
+def available_font_families() -> set[str]:
+    if not shutil.which("fc-list"):
+        return set()
+    output = subprocess.check_output(["fc-list", ":", "family"], text=True, errors="ignore")
+    return {
+        family.strip().lower()
+        for line in output.splitlines()
+        for family in line.split(",")
+        if family.strip()
+    }
+
+
+def resolve_font(deck_label: str, candidates: Sequence[str]) -> str:
+    available = available_font_families()
+    if available:
+        for candidate in candidates:
+            if candidate.lower() in available:
+                if candidate != candidates[0]:
+                    print(
+                        f"[font] {deck_label}: preferred font '{candidates[0]}' not installed; using '{candidate}' instead.",
+                        file=sys.stderr,
+                    )
+                return candidate
+        raise RuntimeError(
+            f"{deck_label}: none of the preferred fonts are installed: {', '.join(candidates)}"
+        )
+    print(
+        f"[font] {deck_label}: fontconfig not available; using declared font '{candidates[0]}' without local verification.",
+        file=sys.stderr,
+    )
+    return candidates[0]
 
 
 def add_textbox(
@@ -669,10 +726,12 @@ Sources:
 
 
 def generate(language: str, output_dir: Path) -> Iterable[Path]:
+    cn_font = resolve_font("Chinese deck", CN_FONT_CANDIDATES)
+    en_font = resolve_font("English deck", EN_FONT_CANDIDATES)
     if language in {"cn", "all"}:
-        yield write_deck("MiniOps_Management_CN.pptx", "Microsoft YaHei", CN_CONTENT, output_dir=output_dir)
+        yield write_deck("MiniOps_Management_CN.pptx", cn_font, CN_CONTENT, output_dir=output_dir)
     if language in {"en", "all"}:
-        yield write_deck("MiniOps_Management_EN.pptx", "Aptos", EN_CONTENT, output_dir=output_dir)
+        yield write_deck("MiniOps_Management_EN.pptx", en_font, EN_CONTENT, output_dir=output_dir)
 
 
 def main():
