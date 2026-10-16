@@ -134,13 +134,20 @@
       flex-shrink: 0;
       margin-left: 16px;
     }
-    .drag-handle {
+    .drag-handle,
+    .plb-drag-handle {
       cursor: grab;
       user-select: none;
       margin-right: 12px;
       font-size: 20px;
       color: #0071C5;
       flex-shrink: 0;
+    }
+    .plb-drag-handle {
+      touch-action: none;
+    }
+    .plb-drag-ghost {
+      opacity: 0.4;
     }
     input[type="text"], select, textarea {
       font-size: 15px;
@@ -370,8 +377,8 @@
       </table>
     </div>
     
-    <button onclick="addPlb()">Add Plb</button>
     <div id="plbContainer"></div>
+    <button onclick="addPlb()">Add Plb</button>
     <button onclick="generateCode()">Generate Code</button>
     <h3>Generated Result:</h3>
     <pre id="codebox"></pre>
@@ -382,6 +389,21 @@
 <script>
 let plbCount = 0;
 let loopEnabled = false;
+
+function initPlbSortable() {
+  const container = document.getElementById('plbContainer');
+  if (!container || typeof Sortable === 'undefined' || Sortable.get(container)) return;
+
+  Sortable.create(container, {
+    animation: 150,
+    draggable: '.plb-block',
+    handle: '.plb-drag-handle',
+    ghostClass: 'plb-drag-ghost',
+    onEnd: function() {
+      autoSaveState();
+    }
+  });
+}
 
 function toggleLoopPartition() {
   loopEnabled = document.getElementById('loopPartitionToggle').checked;
@@ -444,6 +466,7 @@ function addPlb() {
   plbDiv.innerHTML = `
     <button class="delete-plb-btn" onclick="deletePlb('${plbDiv.id}')">Delete Plb</button>
     <div class="plb-header">
+      <span class="plb-drag-handle" title="Drag to reorder PLB blocks">&#9776;</span>
       <button class="plb-toggle-btn" onclick="togglePlb('${plbDiv.id}', this)">⌵</button>
       <label>Plb Name: <input type="text" class="plb-name" value="PList${String.fromCharCode(64+plbCount)}"></label>
       <label>Plb Header: <input type="text" class="plb-header-text" value="" placeholder="e.g., CHAIN PLIST"></label>
@@ -529,6 +552,7 @@ function addPlb() {
     </div>
   `;
   document.getElementById('plbContainer').appendChild(plbDiv);
+  initPlbSortable();
 
   setTimeout(() => {
     const itemList = plbDiv.querySelector('.item-list');
@@ -2278,7 +2302,7 @@ function restoreState(state) {
 
     // Restore collapsed state
     if (plbState.collapsed) {
-      togglePlbCollapse(plbDiv.querySelector('.plb-toggle-btn'));
+      togglePlb(plbDiv.id, plbDiv.querySelector('.plb-toggle-btn'));
     }
   });
 }
@@ -2363,6 +2387,7 @@ function setupAutoSave() {
 
 // Initialize auto-save and auto-load on page load
 window.addEventListener('load', function() {
+  initPlbSortable();
   autoLoadState();
   setupAutoSave();
 });
