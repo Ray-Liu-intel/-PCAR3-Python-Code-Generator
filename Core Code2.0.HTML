@@ -2302,7 +2302,7 @@ function restoreState(state) {
 
     // Restore collapsed state
     if (plbState.collapsed) {
-      togglePlbCollapse(plbDiv.querySelector('.plb-toggle-btn'));
+      togglePlb(plbDiv.id, plbDiv.querySelector('.plb-toggle-btn'));
     }
   });
 }
