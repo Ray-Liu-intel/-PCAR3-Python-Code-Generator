@@ -1,4 +1,4 @@
-# PCAR3 Python Code Generator 2.0
+# PCAR3 Python Code Generator 3.0
 
 A basical, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any pcar3 syntax and just need to fill in key parameters which you need.
 ## ☀️PLIST Differences between the ToS3 and ToS4 versions
@@ -99,11 +99,27 @@ Due to the change from tos3 to tos4, the syntax of our Plistfile also has underg
 - **Responsive Design**: Clean, modern interface with Intel branding
 - **Collapsible PLBs**: Minimize sections you're not actively editing
 
+### Shared Content & Auto-Share (new in 3.0)
+By default the page keeps your work in the browser's localStorage, which is private to one browser profile on one computer. Version 3.0 can also store the content **inside the HTML file itself**, so everybody who opens the same file (for example on a shared drive) sees the same PlistFile, PLBs and loop settings.
+
+- **Embedded shared state**: the content is saved in the `embedded-state` block of the HTML file. When the page opens it shows the shared version, and your own newer local edits win only if they are newer than the shared version.
+- **Auto-share (no Save button)**: click **Enable auto-share (pick this file)** once and select the *same* HTML file you opened. After that every change is written into the file automatically (about 2 seconds after you stop editing). The browser remembers the file, so later visits only need to confirm the browser permission prompt once (choose *Allow on every visit* if offered).
+- **Source indicator**: the text next to the button tells whether you are looking at the *shared version stored in this HTML* or *local edits*, and shows `Shared at HH:MM:SS` after each write.
+- **Conflict protection**: before each write the file is re-read. If somebody else saved a newer version, auto-share pauses and asks you to reload (F5) instead of overwriting their work; **Resume auto-share (overwrite)** forces your version. On load, if your local edits were made on an older shared version, you are asked whether to keep your edits or use the shared version.
+- **Fallback**: browsers without the File System Access API (not Chrome/Edge) download an updated copy of the HTML that you can copy over the original.
+
+Notes:
+- It is not live sync: other people see your changes after they reload the page (F5).
+- Edit one at a time. Two people editing the same file simultaneously will keep pausing each other's auto-share.
+- Use a Chromium-based browser (Edge or Chrome) for auto-share.
+- The distributed `Core Code3.0.HTML` starts with an empty shared state. Anything you auto-share is written into your own copy of the file, so do not commit a file containing internal data to a public repository.
+
 ## 📋 Requirements
 
 - Modern web browser (Chrome, Firefox, Edge, Safari)
 - No server or installation required
 - No external dependencies (self-contained HTML file)
+- Auto-share (3.0) requires a Chromium-based browser (Edge or Chrome); all other features work in any modern browser
 
 ## 🚀 Quick Start
 
@@ -112,7 +128,7 @@ Due to the change from tos3 to tos4, the syntax of our Plistfile also has underg
 #### Basic Usage
 
 1. **Open the File**:
-   - Double-click `Core Code2.0.HTML` to open in your default browser
+   - Double-click `Core Code3.0.HTML` to open in your default browser
    - Or drag the file into an open browser window
 
 2. **Configure Your PlistFile**:
@@ -444,9 +460,27 @@ if (__name__ == "__main__"):
 ### Issue: Pattern mode not showing correct fields
 **Solution**: Select the mode from dropdown first, then fill in the values
 
+### Issue: Other computers open the page empty
+**Solution**: localStorage is per browser and per computer. Click **Enable auto-share (pick this file)** once on the computer that has the content, so the content is written into the HTML file itself and everybody opening that file sees it
+
+### Issue: "Auto-share paused ... Reload (F5)"
+**Solution**: Someone else saved a newer version. Press F5 to load it, then redo your edit. Use **Resume auto-share (overwrite)** only if you really want your version to replace theirs
+
+### Issue: Auto-share asks for permission every time
+**Solution**: Choose *Allow on every visit* in the browser prompt. If the prompt never appears, click the auto-share button again and pick the same HTML file
+
 ## 🔄 Version History
 
-### Core Code2.0.HTML (Latest)
+### Core Code3.0.HTML (Latest)
+- Content can be embedded in the HTML file so everyone opening the file sees the same PlistFile and PLBs
+- Auto-share: pick the HTML file once and every change is written into it automatically
+- Conflict protection: auto-share pauses instead of overwriting a newer version saved by someone else
+- Prompt on load when local edits were made on an older shared version
+- Source indicator (shared version / local edits) and `Shared at HH:MM:SS` status
+- Fallback download of an updated HTML for browsers without the File System Access API
+- Based on Core Code2.0.HTML; all 2.0 features are unchanged
+
+### Core Code2.0.HTML
 - ✅ Unified loop structure with single for loop
 - ✅ Blue dashed border for visual loop grouping
 - ✅ PLB Header support with decorative comments
@@ -474,7 +508,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🤝 Contributing
 
 This is a single-file HTML application. To contribute:
-1. Make changes to `Core Code2.0.HTML`
+1. Make changes to `Core Code3.0.HTML`
 2. Test thoroughly in multiple browsers
 3. Ensure backward compatibility
 4. Submit pull request with clear description
