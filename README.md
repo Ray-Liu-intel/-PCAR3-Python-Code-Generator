@@ -1,4 +1,4 @@
-# PCAR3 Python Code Generator 3.0
+# PCAR3 Python Code Generator 3.1
 
 A basical, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any pcar3 syntax and just need to fill in key parameters which you need.
 ## ☀️PLIST Differences between the ToS3 and ToS4 versions
@@ -112,7 +112,19 @@ Notes:
 - It is not live sync: other people see your changes after they reload the page (F5).
 - Edit one at a time. Two people editing the same file simultaneously will keep pausing each other's auto-share.
 - Use a Chromium-based browser (Edge or Chrome) for auto-share.
-- The distributed `Core Code3.0.HTML` starts with an empty shared state. Anything you auto-share is written into your own copy of the file, so do not commit a file containing internal data to a public repository.
+- The distributed `Core Code3.1.HTML` starts with an empty shared state. Anything you auto-share is written into your own copy of the file, so do not commit a file containing internal data to a public repository.
+
+### Skip Patterns with `patopt="Skip"` (new in 3.1)
+Every pattern item (Pats, PreExecPat/PostExecPat and the pre/post items) now has a **Skip** checkbox on the same row as `chunk`. When ticked, the generated `Pats(...)` call gets `patopt="Skip"`, so the pattern stays in the plist but is skipped at execution.
+
+- Works in all three modes: **Tuple**, **Tids** and **QueryTid**
+- Examples: `Pats(['1581'], patopt="Skip")`, `Pats(QueryTid(testname='X'), patopt="Skip")`
+- The state is saved and restored with the rest of the page (localStorage and shared content); older content opens with Skip unchecked
+- PLB-level `prepattern=` / `postpattern=` do not have a Skip option
+- Layout polish: `Pats: ... chunk: Skip:` stays on one row, Plb Name / RefPlb Name inputs are wider, and `Plb Name / Plb Header / mask` stay on one line
+
+### Older Versions
+Only the latest file (`Core Code3.1.HTML`) is kept in the repository root. Earlier versions (`Core Code.HTML`, `Core Code1.0.HTML`, `Core Code2.0.HTML`, `Core Code3.0.HTML`) are in the `history version` folder.
 
 ## 📋 Requirements
 
@@ -128,7 +140,7 @@ Notes:
 #### Basic Usage
 
 1. **Open the File**:
-   - Double-click `Core Code3.0.HTML` to open in your default browser
+   - Double-click `Core Code3.1.HTML` to open in your default browser
    - Or drag the file into an open browser window
 
 2. **Configure Your PlistFile**:
@@ -471,7 +483,14 @@ if (__name__ == "__main__"):
 
 ## 🔄 Version History
 
-### Core Code3.0.HTML (Latest)
+### Core Code3.1.HTML (Latest)
+- New **Skip** checkbox on every pattern item that generates `patopt="Skip"` (Tuple, Tids and QueryTid modes)
+- Skip state is saved/restored and shared like the other settings
+- Layout: Skip sits on the same row as chunk, wider Plb Name / RefPlb Name inputs, Plb Name / Plb Header / mask on one line
+- Based on Core Code3.0.HTML; all 3.0 features (shared content, auto-share) are unchanged
+- Older versions moved to the `history version` folder
+
+### Core Code3.0.HTML
 - Content can be embedded in the HTML file so everyone opening the file sees the same PlistFile and PLBs
 - Auto-share: pick the HTML file once and every change is written into it automatically
 - Conflict protection: auto-share pauses instead of overwriting a newer version saved by someone else
@@ -508,7 +527,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🤝 Contributing
 
 This is a single-file HTML application. To contribute:
-1. Make changes to `Core Code3.0.HTML`
+1. Make changes to `Core Code3.1.HTML`
 2. Test thoroughly in multiple browsers
 3. Ensure backward compatibility
 4. Submit pull request with clear description
