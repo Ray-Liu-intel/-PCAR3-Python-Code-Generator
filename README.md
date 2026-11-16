@@ -1,4 +1,4 @@
-# PCAR3 Python Code Generator 3.1
+# PCAR3 Python Code Generator 3.2
 
 A basical, browser-based web UI tool for generating PCAR3 Python code with advanced loop partition capabilities. This single-file HTML application enables users to build complex PlistFile structures with PLBs (Pattern List Blocks), pattern management, and dynamic loop generation without needing any pcar3 syntax and just need to fill in key parameters which you need.
 ## ☀️PLIST Differences between the ToS3 and ToS4 versions
@@ -112,7 +112,7 @@ Notes:
 - It is not live sync: other people see your changes after they reload the page (F5).
 - Edit one at a time. Two people editing the same file simultaneously will keep pausing each other's auto-share.
 - Use a Chromium-based browser (Edge or Chrome) for auto-share.
-- The distributed `Core Code3.1.HTML` starts with an empty shared state. Anything you auto-share is written into your own copy of the file, so do not commit a file containing internal data to a public repository.
+- The distributed `Core Code3.2.HTML` starts with an empty shared state. Anything you auto-share is written into your own copy of the file, so do not commit a file containing internal data to a public repository.
 
 ### Skip Patterns with `patopt="Skip"` (new in 3.1)
 Every pattern item (Pats, PreExecPat/PostExecPat and the pre/post items) now has a **Skip** checkbox on the same row as `chunk`. When ticked, the generated `Pats(...)` call gets `patopt="Skip"`, so the pattern stays in the plist but is skipped at execution.
@@ -123,8 +123,11 @@ Every pattern item (Pats, PreExecPat/PostExecPat and the pre/post items) now has
 - PLB-level `prepattern=` / `postpattern=` do not have a Skip option
 - Layout polish: `Pats: ... chunk: Skip:` stays on one row, Plb Name / RefPlb Name inputs are wider, and `Plb Name / Plb Header / mask` stay on one line
 
+### Copy Generated Result (new in 3.2)
+After clicking **Generate Code**, use **Copy Generated Result** directly below the generated code to copy the entire result. The page shows success or failure beside the button and supports a fallback for browsers that cannot use the Clipboard API.
+
 ### Older Versions
-Only the latest file (`Core Code3.1.HTML`) is kept in the repository root. Earlier versions (`Core Code.HTML`, `Core Code1.0.HTML`, `Core Code2.0.HTML`, `Core Code3.0.HTML`) are in the `history version` folder.
+Only the latest file (`Core Code3.2.HTML`) is kept in the repository root. Earlier versions (`Core Code.HTML`, `Core Code1.0.HTML`, `Core Code2.0.HTML`, `Core Code3.0.HTML`, `Core Code3.1.HTML`) are in the `history version` folder.
 
 ## 📋 Requirements
 
@@ -140,7 +143,7 @@ Only the latest file (`Core Code3.1.HTML`) is kept in the repository root. Earli
 #### Basic Usage
 
 1. **Open the File**:
-   - Double-click `Core Code3.1.HTML` to open in your default browser
+  - Double-click `Core Code3.2.HTML` to open in your default browser
    - Or drag the file into an open browser window
 
 2. **Configure Your PlistFile**:
@@ -169,7 +172,7 @@ Only the latest file (`Core Code3.1.HTML`) is kept in the repository root. Earli
    ```
    - Click "Generate Code" button
    - Review the generated Python code in the text area
-   - Click "Copy Code" to copy to clipboard
+  - Click "Copy Generated Result" below the code to copy it to the clipboard
    ```
 
 #### Advanced Using Loop Partition
@@ -483,7 +486,11 @@ if (__name__ == "__main__"):
 
 ## 🔄 Version History
 
-### Core Code3.1.HTML (Latest)
+### Core Code3.2.HTML (Latest)
+- Added **Copy Generated Result** beneath the generated Python code, with clipboard fallback and status feedback
+- Based on Core Code3.1.HTML; all 3.1 features are unchanged
+
+### Core Code3.1.HTML
 - New **Skip** checkbox on every pattern item that generates `patopt="Skip"` (Tuple, Tids and QueryTid modes)
 - Skip state is saved/restored and shared like the other settings
 - Layout: Skip sits on the same row as chunk, wider Plb Name / RefPlb Name inputs, Plb Name / Plb Header / mask on one line
